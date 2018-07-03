@@ -1,13 +1,13 @@
-# sportiduinoPQ
+п»ї# sportiduinoPQ
 
-### версия [последнего релиза](https://github.com/alexandervolikov/SportiduinoPQ/releases) 0.1.0
+### РІРµСЂСЃРёСЏ [РїРѕСЃР»РµРґРЅРµРіРѕ СЂРµР»РёР·Р°](https://github.com/alexandervolikov/SportiduinoPQ/releases) 0.1.0
 
-В последнем релизе можно скачать программу с exe файлом для Windows систем, установка не требуется. Либо запускать программу из под python (требуется установка PyQt).
+Р’ РїРѕСЃР»РµРґРЅРµРј СЂРµР»РёР·Рµ РјРѕР¶РЅРѕ СЃРєР°С‡Р°С‚СЊ РїСЂРѕРіСЂР°РјРјСѓ СЃ exe С„Р°Р№Р»РѕРј РґР»СЏ Windows СЃРёСЃС‚РµРј, СѓСЃС‚Р°РЅРѕРІРєР° РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ. Р›РёР±Рѕ Р·Р°РїСѓСЃРєР°С‚СЊ РїСЂРѕРіСЂР°РјРјСѓ РёР· РїРѕРґ python (С‚СЂРµР±СѓРµС‚СЃСЏ СѓСЃС‚Р°РЅРѕРІРєР° PyQt).
 
 [English](https://github.com/alexandervolikov/SportiduinoPQ/blob/master/README.md)
 
-В данном репозитории ведется разработка базового GUI программного обеспечения основанного на [python модуле](https://github.com/alexandervolikov/sportiduinoPython) и PyQt для работы с системой электронной отметки для спортивного ориентирования Sportiduino: https://github.com/alexandervolikov/sportIDuino
+Р’ РґР°РЅРЅРѕРј СЂРµРїРѕР·РёС‚РѕСЂРёРё РІРµРґРµС‚СЃСЏ СЂР°Р·СЂР°Р±РѕС‚РєР° Р±Р°Р·РѕРІРѕРіРѕ GUI РїСЂРѕРіСЂР°РјРјРЅРѕРіРѕ РѕР±РµСЃРїРµС‡РµРЅРёСЏ РѕСЃРЅРѕРІР°РЅРЅРѕРіРѕ РЅР° [python РјРѕРґСѓР»Рµ](https://github.com/alexandervolikov/sportiduinoPython) Рё PyQt РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ СЃРёСЃС‚РµРјРѕР№ СЌР»РµРєС‚СЂРѕРЅРЅРѕР№ РѕС‚РјРµС‚РєРё РґР»СЏ СЃРїРѕСЂС‚РёРІРЅРѕРіРѕ РѕСЂРёРµРЅС‚РёСЂРѕРІР°РЅРёСЏ Sportiduino: https://github.com/alexandervolikov/sportIDuino
 
-Инструкция находится в руководстве пользователя https://github.com/alexandervolikov/sportiduino
+РРЅСЃС‚СЂСѓРєС†РёСЏ РЅР°С…РѕРґРёС‚СЃСЏ РІ СЂСѓРєРѕРІРѕРґСЃС‚РІРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ https://github.com/alexandervolikov/sportiduino
 
 ![](https://raw.githubusercontent.com/alexandervolikov/SportiduinoPQ/master/image/main1.JPG)

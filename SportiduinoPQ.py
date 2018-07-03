@@ -1,8 +1,8 @@
 import sys
 sys.path.append('..')
-from sportiduino import Sportiduino, SportiduinoException
+from sportiduino import Sportiduino
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import serial
 import os.path
 
@@ -175,7 +175,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             return
 
         try:
-            self.sportiduino.init_time_card()
+            self.sportiduino.init_time_card(datetime.utcnow() + timedelta(seconds=3))
             self.addText ('\nset time')
         except:
             self.addText('\nError')
@@ -256,7 +256,6 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         try:
             data = self.sportiduino.read_backup()
             self.sportiduino.beep_ok()
-            print(data)
             try:
                 self.addText('\nread dump from CP: {}'.format(str(data['cp'])))
             except:
@@ -396,7 +395,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         
 if __name__ == '__main__':
-
+    
     buffer = 1
     time=datetime.today()
     timeLog=[]
