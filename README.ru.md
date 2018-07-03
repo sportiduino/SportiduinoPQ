@@ -10,4 +10,4 @@
 
 Инструкция находится в руководстве пользователя https://github.com/alexandervolikov/sportiduino
 
-![](https://raw.githubusercontent.com/alexandervolikov/sportiduinoProcessing/master/image/main1.JPG)
+![](https://raw.githubusercontent.com/alexandervolikov/SportiduinoPQ/master/image/main1.JPG)
