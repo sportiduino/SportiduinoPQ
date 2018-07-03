@@ -4,7 +4,7 @@
 
 ¬ последнем релизе можно скачать программу с exe файлом дл€ Windows систем, установка не требуетс€. Ћибо запускать программу из под python (требуетс€ установка PyQt).
 
-[English](https://github.com/alexandervolikov/sportiduinoProcessing/blob/master/README.md)
+[English](https://github.com/alexandervolikov/SportiduinoPQ/blob/master/README.md)
 
 ¬ данном репозитории ведетс€ разработка базового GUI программного обеспечени€ основанного на [python модуле](https://github.com/alexandervolikov/sportiduinoPython) и PyQt дл€ работы с системой электронной отметки дл€ спортивного ориентировани€ Sportiduino: https://github.com/alexandervolikov/sportIDuino
 
