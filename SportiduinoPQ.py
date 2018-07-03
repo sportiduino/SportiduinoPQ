@@ -356,21 +356,28 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
     def LoadSet_clicked(self):
         
-        sets = open('settings')
+        try:
+            sets = open(os.path.join('data','settings.txt'))
+            self.WorkTime.setCurrentText(sets.readline().rstrip())
+            self.StartFinish.setCurrentText(sets.readline().rstrip())
+            self.CheckInitTime.setCurrentText(sets.readline().rstrip())
+            self.CardCap.setCurrentText(sets.readline().rstrip())
+            self.AutoDel.setCurrentText(sets.readline().rstrip())
+            self.NewPass.setText(sets.readline().rstrip())
+            self.OldPass.setText(sets.readline().rstrip())
+            self.addText('\nload settings')
+        except:
+            self.addText('\nsettings are missing')
         
-        self.WorkTime.setCurrentText(sets.readline().rstrip())
-        self.StartFinish.setCurrentText(sets.readline().rstrip())
-        self.CheckInitTime.setCurrentText(sets.readline().rstrip())
-        self.CardCap.setCurrentText(sets.readline().rstrip())
-        self.AutoDel.setCurrentText(sets.readline().rstrip())
-        self.NewPass.setText(sets.readline().rstrip())
-        self.OldPass.setText(sets.readline().rstrip())
-
-        self.addText('\nload settings')
+        
         
     def SaveSet_clicked(self):
-        sets = open('settings','w')
-
+        try:
+            os.mkdir('data')
+        except Exception:
+            pass
+        
+        sets = open(os.path.join('data','settings.txt'),'w')
         sets.write(self.WorkTime.currentText()+'\n')
         sets.write(self.StartFinish.currentText()+'\n')
         sets.write(self.CheckInitTime.currentText()+'\n')
@@ -378,7 +385,6 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         sets.write(self.AutoDel.currentText()+'\n')
         sets.write(self.NewPass.text()+'\n')
         sets.write(self.OldPass.text())
-
         self.addText('\nsave settings')
 
     def addText(self,text):
