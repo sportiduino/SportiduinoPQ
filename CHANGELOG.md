@@ -1,3 +1,6 @@
+## [0.2.1] - 2018-07-04
+### Some minor fixes
+
 ## [0.2.0] - 2018-07-04
 ### Add save data to json
 - save data from card to json format file

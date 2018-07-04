@@ -20,7 +20,6 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.readData = []
         self.dumpData = []
         self.connected = False
-        self.AutoIn = False
         self.CardNum = '0'
         self.StatNum = '0'
         self.OldPass.setText('0')
@@ -32,7 +31,6 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.Connec.clicked.connect(self.Connec_clicked)
         self.ReadCard.clicked.connect(self.ReadCard_clicked)
         self.InitCard.clicked.connect(self.InitCard_clicked)
-        self.AutoIncriment.stateChanged.connect(self.changeAuto)
         self.SetTime.clicked.connect(self.SetTime_clicked)
         self.SetNum.clicked.connect(self.SetNum_clicked)
         self.SetStart.clicked.connect(self.SetStart_clicked)
@@ -121,6 +119,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.addText('\nError')
             
     def InitCard_clicked(self):
+        print(self.AutoIncriment.checkState())
+        
         if (self.connected == False):
             self.addText('\nmaster station is not connected')
             return
@@ -137,23 +137,16 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             try:
                 self.sportiduino.init_card(num)
                 self.addText ('\ninit card number {}'.format(num))
+                if (self.AutoIncriment.checkState() != 0):
+                    self.AutoIn = True
+                    self.CardNum = str(num + 1)
+                    self.cardLine.setText(self.CardNum)
             except:
                 self.addText('\nError')
-
-            if (self.AutoIn == True):
-                self.CardNum = str(num + 1)
-                self.cardLine.setText(self.CardNum)
-                            
+               
         else:
             self.addText("\nnot correct value")
             
-    def changeAuto(self,state):
-        
-        if (self.AutoIncriment.checkState() != 0):
-            self.AutoIn = True
-        else:
-            self.AutoIn = False   
-
     def SetNum_clicked(self):
         if (self.connected == False):
             self.addText('\nmaster station is not connected')
@@ -396,11 +389,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def addText(self,text):
 
+        logFile = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(self.initTime)),'a')
         print(text)
         self.log += text
         self.textBrowser.setPlainText(self.log[-100000:])
         self.textBrowser.verticalScrollBar().setValue(self.textBrowser.verticalScrollBar().maximum())
         logFile.write(text)
+        logFile.close()
         
         
 if __name__ == '__main__':
@@ -411,11 +406,7 @@ if __name__ == '__main__':
     except Exception:
         pass
 
-    buffer = 1
-    logFile = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(datetime.now())),'w',buffer)
-
     app = QtWidgets.QApplication(sys.argv)
     window = App()
     window.show()
     app.exec_()
-    logFile.close()

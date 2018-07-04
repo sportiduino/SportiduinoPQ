@@ -1,6 +1,6 @@
 ﻿# sportiduinoPQ
 
-### версия [последнего релиза](https://github.com/alexandervolikov/SportiduinoPQ/releases) 0.2.0
+### версия [последнего релиза](https://github.com/alexandervolikov/SportiduinoPQ/releases) 0.2.1
 
 В последнем релизе можно скачать программу с exe файлом для Windows систем, установка не требуется. Либо запускать программу из под python (требуется установка PyQt).
 
