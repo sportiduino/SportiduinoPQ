@@ -1,3 +1,9 @@
+## [0.2.0] - 2018-07-04
+### Add save data to json
+- save data from card to json format file
+- save data from dump card to json format file
+- some fixes
+
 ## [0.1.1] - 2018-07-03
 ### Fix set time bag
 

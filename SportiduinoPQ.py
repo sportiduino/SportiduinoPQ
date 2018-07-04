@@ -1,55 +1,50 @@
 import sys
 sys.path.append('..')
-from sportiduino import Sportiduino
-import time
-from datetime import datetime, timedelta
-import serial
 import os.path
-
-
-
+import time
+import datetime
+import serial
+import json
+import design
+from sportiduino import Sportiduino
+from datetime import datetime, timedelta
 from PyQt5 import QtWidgets
 
-import design
 
 class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
 
-        
+        self.log =''
+        self.readData = []
+        self.dumpData = []
         self.connected = False
-        self.Connec.clicked.connect(self.Connec_clicked)
-
+        self.AutoIn = False
+        self.CardNum = '0'
+        self.StatNum = '0'
         self.OldPass.setText('0')
         self.NewPass.setText('0')
         
+        self.initTime = datetime.now()
+        self.addText('{:%Y-%m-%d %H:%M:%S}'.format(self.initTime))
+
+        self.Connec.clicked.connect(self.Connec_clicked)
         self.ReadCard.clicked.connect(self.ReadCard_clicked)
-
         self.InitCard.clicked.connect(self.InitCard_clicked)
-        self.CardNum = '0'     
         self.AutoIncriment.stateChanged.connect(self.changeAuto)
-        self.AutoIn = False
-
         self.SetTime.clicked.connect(self.SetTime_clicked)
-
         self.SetNum.clicked.connect(self.SetNum_clicked)
-        self.StatNum = '0'
-
         self.SetStart.clicked.connect(self.SetStart_clicked)
         self.SetFinish.clicked.connect(self.SetFinish_clicked)
         self.CheckSt.clicked.connect(self.CheckSt_clicked)
         self.ClearSt.clicked.connect(self.ClearSt_clicked)
-
         self.LogCard.clicked.connect(self.LogCard_clicked)
         self.ReadLog.clicked.connect(self.ReadLog_clicked)
         self.SleepCard.clicked.connect(self.SleepCard_clicked)
-
         self.PassCard.clicked.connect(self.PassCard_clicked)
         self.SaveSet.clicked.connect(self.SaveSet_clicked)
         self.LoadSet.clicked.connect(self.LoadSet_clicked)
-
-        self.log =''
 
     def Connec_clicked(self):
 
@@ -80,34 +75,47 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if (self.connected == False):
             self.addText('\nmaster station is not connected')
             return
-        
+
+        readBuffer = ''
         try:
             data = self.sportiduino.read_card(timeout = 0.5)
             self.sportiduino.beep_ok()
-            print(data)
-            self.addText('\nthe card number: '+str(data['card_number']))
+            readBuffer +='\ncard: {}'.format(data['card_number'])
             try:
-                self.addText('\nstart time: '+str(data['start']))
+                readBuffer +='\nstart: {}'.format(data['start'])
+                startT = data['start']
+                data['start'] = int(data['start'].timestamp())
             except:
                 pass
 
             try:
-                self.addText('\nfinish time: '+str(data['finish']))
-                self.addText('\ntotal time: '+str(data['finish']-data['start']))
+                readBuffer +='\nfinish: {}'.format(data['finish'])
+                readBuffer +='\ntotal time: {}'.format(data['finish']-startT)
+                data['finish'] = int(data['finish'].timestamp())
             except:
                 pass
 
             try:
                 punches = data['punches']
-                self.addText('\npunches: '+str(len(punches))+', CP - time:')
+                bufferPunch = []
+                readBuffer +='\npunches: {}'.format(len(punches))
                 for punch in punches:
-                    self.addText('\n'+str(punch[0])+' '+str(punch[1]))
+                    readBuffer +='\n{}  {:%H:%M:%S}'.format(punch[0],punch[1])
+                    kort = (punch[0], int(punch[1].timestamp()))
+                    bufferPunch.append(kort)
+                data['punches']=bufferPunch
+                    
             except:
                 pass
 
-            
-            
-            
+            del data['page6']
+            del data['page7']
+            self.readData.append(data)
+            dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
+            json.dump(self.readData, dataFile)
+            dataFile.close()
+            self.addText(readBuffer)
+                        
         except:
             self.sportiduino.beep_error()
             self.addText('\nError')
@@ -252,22 +260,28 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if (self.connected == False):
             self.addText('\nmaster station is not connected')
             return
-        
+
+        readBuffer = ''
         try:
             data = self.sportiduino.read_backup()
             self.sportiduino.beep_ok()
             try:
-                self.addText('\nread dump from CP: {}'.format(str(data['cp'])))
+                readBuffer += '\nread dump from CP: {}'.format(data['cp'])
             except:
                 pass
             try:
                 cards = data['cards']
-                self.addText('\ntotal punches: {}\n'.format(str(len(cards))))
+                readBuffer += '\ntotal punches: {}\n'.format(len(cards))
                 for i in range(0,len(cards),1):
-                    self.addText(str(cards[i])+',')
+                    readBuffer += '{},'.format(cards[i])
             except:
                 pass
-            
+
+            self.dumpData.append(data)
+            dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
+            json.dump(self.dumpData, dumpFile)
+            dumpFile.close()
+            self.addText(readBuffer)
         except:
             self.addText('\nError')
 
@@ -367,15 +381,9 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.addText('\nload settings')
         except:
             self.addText('\nsettings are missing')
-        
-        
-        
+
     def SaveSet_clicked(self):
-        try:
-            os.mkdir('data')
-        except Exception:
-            pass
-        
+                
         sets = open(os.path.join('data','settings.txt'),'w')
         sets.write(self.WorkTime.currentText()+'\n')
         sets.write(self.StartFinish.currentText()+'\n')
@@ -387,31 +395,24 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.addText('\nsave settings')
 
     def addText(self,text):
+
         print(text)
         self.log += text
-        self.textBrowser.setPlainText(self.log)
+        self.textBrowser.setPlainText(self.log[-100000:])
         self.textBrowser.verticalScrollBar().setValue(self.textBrowser.verticalScrollBar().maximum())
         logFile.write(text)
-
+        
         
 if __name__ == '__main__':
     
-    buffer = 1
-    time=datetime.today()
-    timeLog=[]
-    timeLog.append(time.year)
-    timeLog.append(time.month)
-    timeLog.append(time.day)
-    timeLog.append(time.hour)
-    timeLog.append(time.minute)
-    timeLog.append(time.second)
-
     try:
         os.mkdir('log')
+        os.mkdir('data')
     except Exception:
         pass
 
-    logFile = open(os.path.join('log','logfile{}.txt'.format(timeLog)),'w',buffer)
+    buffer = 1
+    logFile = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(datetime.now())),'w',buffer)
 
     app = QtWidgets.QApplication(sys.argv)
     window = App()
