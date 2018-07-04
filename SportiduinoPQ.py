@@ -79,21 +79,21 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             data = self.sportiduino.read_card(timeout = 0.5)
             self.sportiduino.beep_ok()
             readBuffer +='\ncard: {}'.format(data['card_number'])
-            try:
+
+            if('start' in data):
                 readBuffer +='\nstart: {}'.format(data['start'])
                 startT = data['start']
                 data['start'] = int(data['start'].timestamp())
-            except:
-                pass
-
-            try:
+            
+            if('finish' in data):
                 readBuffer +='\nfinish: {}'.format(data['finish'])
-                readBuffer +='\ntotal time: {}'.format(data['finish']-startT)
+                finishT = data['finish']
                 data['finish'] = int(data['finish'].timestamp())
-            except:
-                pass
 
-            try:
+            if ('finish' in data and 'start' in data):
+                readBuffer +='\ntotal time: {}'.format(finishT-startT)
+
+            if ('punches' in data):
                 punches = data['punches']
                 bufferPunch = []
                 readBuffer +='\npunches: {}'.format(len(punches))
@@ -102,16 +102,15 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     kort = (punch[0], int(punch[1].timestamp()))
                     bufferPunch.append(kort)
                 data['punches']=bufferPunch
-                    
-            except:
-                pass
-
+            
             del data['page6']
             del data['page7']
             self.readData.append(data)
+            
             dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
             json.dump(self.readData, dataFile)
             dataFile.close()
+            
             self.addText(readBuffer)
                         
         except:
