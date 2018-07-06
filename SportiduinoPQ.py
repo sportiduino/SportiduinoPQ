@@ -8,7 +8,11 @@ import json
 import design
 from sportiduino import Sportiduino
 from datetime import datetime, timedelta
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtPrintSupport,QtChart, QtCore, QtGui, QtPrintSupport 
+from PyQt5.QtCore import QSizeF
+from PyQt5.QtGui import QTextDocument
+from PyQt5.QtPrintSupport import QPrinter
+from PyQt5.QtWidgets import QApplication
 
 
 class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
@@ -43,6 +47,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.PassCard.clicked.connect(self.PassCard_clicked)
         self.SaveSet.clicked.connect(self.SaveSet_clicked)
         self.LoadSet.clicked.connect(self.LoadSet_clicked)
+        self.SelectPrinter.clicked.connect(self.SelectPrinter_clicked)
+        self.Print.clicked.connect(self.Print_clicked)
 
     def Connec_clicked(self):
 
@@ -112,14 +118,16 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             dataFile.close()
             
             self.addText(readBuffer)
+            if (self.AutoPrint.checkState()!= 0):
+                self.Print_clicked()
+                
                         
         except:
             self.sportiduino.beep_error()
             self.addText('\nError')
             
     def InitCard_clicked(self):
-        print(self.AutoIncriment.checkState())
-        
+
         if (self.connected == False):
             self.addText('\nmaster station is not connected')
             return
@@ -390,11 +398,30 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         logFile = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(self.initTime)),'a')
         print(text)
-        self.log += text
-        self.textBrowser.setPlainText(self.log[-100000:])
-        self.textBrowser.verticalScrollBar().setValue(self.textBrowser.verticalScrollBar().maximum())
+        self.textBrowser.setPlainText(text)
         logFile.write(text)
         logFile.close()
+
+    def SelectPrinter_clicked(self):
+        dialog = QtPrintSupport.QPrintDialog()
+        if dialog.exec_() == QtWidgets.QDialog.Accepted:
+            self.printer = dialog.printer()
+
+    def Print_clicked(self):
+        try:
+            print (self.printer)
+        except:
+            self.printer = QPrinter()
+
+        self.printer.setFullPage(True)
+        self.printer.setPageMargins(3,3,3,3,QPrinter.Millimeter)
+        page_size = QSizeF()
+        page_size.setHeight(self.printer.height())
+        page_size.setWidth(self.printer.width())
+        self.textBrowser.document().setPageSize(page_size)
+        self.textBrowser.document().setDocumentMargin(0.0)
+        self.textBrowser.document().print_(self.printer)
+        
         
         
 if __name__ == '__main__':

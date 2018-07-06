@@ -1,3 +1,6 @@
+## [0.3.0] - 2018-07-06
+### Add split Printer
+
 ## [0.2.1] - 2018-07-04
 ### Some minor fixes
 
