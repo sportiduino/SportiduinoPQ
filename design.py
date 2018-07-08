@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'design.ui'
 #
-# Created by: PyQt5 UI code generator 5.8.2
+# Created by: PyQt5 UI code generator 5.11.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -99,7 +99,7 @@ class Ui_MainWindow(object):
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line.setObjectName("line")
         self.Print = QtWidgets.QPushButton(self.tab)
-        self.Print.setGeometry(QtCore.QRect(10, 270, 111, 31))
+        self.Print.setGeometry(QtCore.QRect(10, 280, 111, 31))
         self.Print.setObjectName("Print")
         self.line_6 = QtWidgets.QFrame(self.tab)
         self.line_6.setGeometry(QtCore.QRect(0, 199, 211, 21))
@@ -107,11 +107,15 @@ class Ui_MainWindow(object):
         self.line_6.setFrameShadow(QtWidgets.QFrame.Sunken)
         self.line_6.setObjectName("line_6")
         self.AutoPrint = QtWidgets.QCheckBox(self.tab)
-        self.AutoPrint.setGeometry(QtCore.QRect(9, 310, 151, 20))
+        self.AutoPrint.setGeometry(QtCore.QRect(9, 320, 151, 20))
         self.AutoPrint.setObjectName("AutoPrint")
         self.SelectPrinter = QtWidgets.QPushButton(self.tab)
         self.SelectPrinter.setGeometry(QtCore.QRect(10, 220, 111, 31))
         self.SelectPrinter.setObjectName("SelectPrinter")
+        self.printerName = QtWidgets.QLabel(self.tab)
+        self.printerName.setGeometry(QtCore.QRect(16, 253, 181, 20))
+        self.printerName.setText("")
+        self.printerName.setObjectName("printerName")
         self.Log.addTab(self.tab, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")

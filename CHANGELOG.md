@@ -1,3 +1,6 @@
+## [0.3.1] - 2018-07-08
+### Correct split format
+
 ## [0.3.0] - 2018-07-06
 ### Add split Printer
 

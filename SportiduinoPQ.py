@@ -28,6 +28,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.StatNum = '0'
         self.OldPass.setText('0')
         self.NewPass.setText('0')
+        self.printerName.setText(QPrinter().printerName())
         
         self.initTime = datetime.now()
         self.addText('{:%Y-%m-%d %H:%M:%S}'.format(self.initTime))
@@ -80,51 +81,17 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.addText('\nmaster station is not connected')
             return
 
-        readBuffer = ''
         try:
             data = self.sportiduino.read_card(timeout = 0.5)
             self.sportiduino.beep_ok()
-            readBuffer +='\ncard: {}'.format(data['card_number'])
-
-            if('start' in data):
-                readBuffer +='\nstart: {}'.format(data['start'])
-                startT = data['start']
-                data['start'] = int(data['start'].timestamp())
+            self.readDataFormat(data)
+            self.saveDataJson(data)
             
-            if('finish' in data):
-                readBuffer +='\nfinish: {}'.format(data['finish'])
-                finishT = data['finish']
-                data['finish'] = int(data['finish'].timestamp())
-
-            if ('finish' in data and 'start' in data):
-                readBuffer +='\ntotal time: {}'.format(finishT-startT)
-
-            if ('punches' in data):
-                punches = data['punches']
-                bufferPunch = []
-                readBuffer +='\npunches: {}'.format(len(punches))
-                for punch in punches:
-                    readBuffer +='\n{}  {:%H:%M:%S}'.format(punch[0],punch[1])
-                    kort = (punch[0], int(punch[1].timestamp()))
-                    bufferPunch.append(kort)
-                data['punches']=bufferPunch
-            
-            del data['page6']
-            del data['page7']
-            self.readData.append(data)
-            
-            dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
-            json.dump(self.readData, dataFile)
-            dataFile.close()
-            
-            self.addText(readBuffer)
-            if (self.AutoPrint.checkState()!= 0):
-                self.Print_clicked()
-                
-                        
         except:
             self.sportiduino.beep_error()
             self.addText('\nError')
+
+        
             
     def InitCard_clicked(self):
 
@@ -405,14 +372,12 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def SelectPrinter_clicked(self):
         dialog = QtPrintSupport.QPrintDialog()
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
-            self.printer = dialog.printer()
-
+            printer = dialog.printer()
+            self.printerName.setText(QPrinter().printerName())
+            
     def Print_clicked(self):
-        try:
-            print (self.printer)
-        except:
-            self.printer = QPrinter()
-
+        self.printer = QPrinter()
+        
         self.printer.setFullPage(True)
         self.printer.setPageMargins(3,3,3,3,QPrinter.Millimeter)
         page_size = QSizeF()
@@ -421,7 +386,68 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.textBrowser.document().setPageSize(page_size)
         self.textBrowser.document().setDocumentMargin(0.0)
         self.textBrowser.document().print_(self.printer)
-        
+
+    def readDataFormat(self,data):
+
+        readBuffer ='\ncard: {}'.format(data['card_number'])
+        if('start' in data):
+            readBuffer +='\nstart: {}'.format(data['start'])
+            
+        if ('punches' in data):
+            punches = data['punches']
+            predT = data['start']
+            
+            for punch in range(0, len(punches), 1):
+                if (punches[punch][1].timestamp()-predT.timestamp() > 0):
+                    readBuffer +='\n{}  ({})  {}'.format(punch,\
+                                                                punches[punch][0],\
+                                                                punches[punch][1]-predT)
+                else:
+                    readBuffer +='\n{}  ({})  error val'.format(punch,\
+                                                                punches[punch][0])
+                predT = punches[punch][1]
+                    
+        if('finish' in data):
+            if (data['finish'].timestamp()-predT.timestamp() > 0):
+                readBuffer +='\nFinish:  {}'.format(data['finish']-predT)
+            else:
+                readBuffer +='\nFinish:  error val'
+            
+        if ('finish' in data and 'start' in data):
+            if (data['finish'].timestamp()-data['start'].timestamp() > 0):
+                readBuffer +='\nTime:  {}'.format(data['finish']-data['start'])
+            else:
+                readBuffer +='\nTime:  error val'    
+                
+        self.addText(readBuffer)
+        if (self.AutoPrint.checkState()!= 0):
+            self.Print_clicked()
+            
+    def saveDataJson(self,data):
+
+        if('start' in data):
+            data['start'] = int(data['start'].timestamp())
+            
+        if('finish' in data):
+            data['finish'] = int(data['finish'].timestamp())
+
+        if ('punches' in data):
+            punches = data['punches']
+            bufferPunch = []
+            for punch in punches:
+                kort = (punch[0], int(punch[1].timestamp()))
+                bufferPunch.append(kort)
+            data['punches']=bufferPunch
+            
+        del data['page6']
+        del data['page7']
+
+        self.readData.append(data)
+            
+        dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
+        json.dump(self.readData, dataFile)
+        dataFile.close()
+            
         
         
 if __name__ == '__main__':
