@@ -9,7 +9,7 @@ import xmltodict
 from math import cos, asin, sqrt
 from sportiduino import Sportiduino
 from datetime import datetime, timedelta
-from PyQt5 import uic, QtWidgets, QtPrintSupport,QtCore
+from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore
 from PyQt5.QtCore import QSizeF
 from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtWidgets import QApplication, QFileDialog
