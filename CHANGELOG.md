@@ -1,3 +1,7 @@
+## [0.4.0] - 2018-07-09
+### add gpx
+- calc split with use gpx format file
+
 ## [0.3.1] - 2018-07-08
 ### Correct split format
 

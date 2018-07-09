@@ -243,7 +243,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>60</y>
+            <y>50</y>
             <width>111</width>
             <height>31</height>
            </rect>
@@ -256,7 +256,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>20</y>
+            <y>10</y>
             <width>111</width>
             <height>31</height>
            </rect>
@@ -266,7 +266,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>100</y>
+            <y>90</y>
             <width>151</width>
             <height>31</height>
            </rect>
@@ -279,7 +279,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>160</y>
+            <y>140</y>
             <width>111</width>
             <height>31</height>
            </rect>
@@ -292,7 +292,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>130</y>
+            <y>120</y>
             <width>211</width>
             <height>20</height>
            </rect>
@@ -305,7 +305,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>280</y>
+            <y>300</y>
             <width>111</width>
             <height>31</height>
            </rect>
@@ -318,7 +318,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>199</y>
+            <y>220</y>
             <width>211</width>
             <height>21</height>
            </rect>
@@ -331,7 +331,7 @@
           <property name="geometry">
            <rect>
             <x>9</x>
-            <y>320</y>
+            <y>340</y>
             <width>151</width>
             <height>20</height>
            </rect>
@@ -344,7 +344,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>220</y>
+            <y>250</y>
             <width>111</width>
             <height>31</height>
            </rect>
@@ -357,13 +357,39 @@
           <property name="geometry">
            <rect>
             <x>16</x>
-            <y>253</y>
+            <y>280</y>
             <width>181</width>
             <height>20</height>
            </rect>
           </property>
           <property name="text">
            <string/>
+          </property>
+         </widget>
+         <widget class="Line" name="line_7">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>170</y>
+            <width>211</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="OpenGpx">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>190</y>
+            <width>111</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Open gpx</string>
           </property>
          </widget>
         </widget>

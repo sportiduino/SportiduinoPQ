@@ -1,8 +1,21 @@
 ﻿# sportiduinoPQ
 
-### версия [последнего релиза](https://github.com/alexandervolikov/SportiduinoPQ/releases) 0.3.0
+### версия [последнего релиза](https://github.com/alexandervolikov/SportiduinoPQ/releases) 0.4.0
 
-В последнем релизе можно скачать программу с exe файлом для Windows систем, установка не требуется. Либо запускать программу из под python (требуется установка PyQt).
+В последнем релизе можно скачать программу с exe файлом для Windows систем, установка не требуется. Либо запускать программу из под python
+
+Зависимости:
+
+```commandline
+pip install pyserial pyqt5 xmltodict six
+```
+
+exe сгенерирован с помощью pyinstaller:
+
+```commandline
+pip install pyinstaller
+pyinstaller --onefile --noconsole SportiduinoPQ.py
+```
 
 [English](https://github.com/alexandervolikov/SportiduinoPQ/blob/master/README.md)
 

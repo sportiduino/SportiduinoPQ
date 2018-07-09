@@ -5,17 +5,19 @@ import time
 import datetime
 import serial
 import json
-import design
+import xmltodict
+from math import cos, asin, sqrt
 from sportiduino import Sportiduino
 from datetime import datetime, timedelta
-from PyQt5 import QtWidgets, QtPrintSupport,QtChart, QtCore, QtGui, QtPrintSupport 
+from PyQt5 import uic, QtWidgets, QtPrintSupport,QtCore
 from PyQt5.QtCore import QSizeF
-from PyQt5.QtGui import QTextDocument
 from PyQt5.QtPrintSupport import QPrinter
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QFileDialog
 
+qtFile = 'design.ui'
+Ui_MainWindow, QtBaseClass = uic.loadUiType(qtFile)
 
-class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
+class App(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
@@ -28,6 +30,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.StatNum = '0'
         self.OldPass.setText('0')
         self.NewPass.setText('0')
+        self.gps = {}
         self.printerName.setText(QPrinter().printerName())
         
         self.initTime = datetime.now()
@@ -50,6 +53,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.LoadSet.clicked.connect(self.LoadSet_clicked)
         self.SelectPrinter.clicked.connect(self.SelectPrinter_clicked)
         self.Print.clicked.connect(self.Print_clicked)
+        self.OpenGpx.clicked.connect(self.OpenGpx_clicked)
 
     def Connec_clicked(self):
 
@@ -389,6 +393,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
     def readDataFormat(self,data):
 
+        totalDist = 0
+        totalTime = 0
         readBuffer ='\ncard: {}'.format(data['card_number'])
         if('start' in data):
             readBuffer +='\nstart: {}'.format(data['start'])
@@ -396,29 +402,60 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if ('punches' in data):
             punches = data['punches']
             predT = data['start']
-            
+            predNum = 240
+            readBuffer +='\nN (CP) split, temp min/km'
             for punch in range(0, len(punches), 1):
-                if (punches[punch][1].timestamp()-predT.timestamp() > 0):
-                    readBuffer +='\n{}  ({})  {}'.format(punch,\
-                                                                punches[punch][0],\
-                                                                punches[punch][1]-predT)
+                split = punches[punch][1].timestamp()-predT.timestamp()
+                if (split > 0):
+                    dist = 0
+                    try:
+                        dist = self.distance(str(punches[punch][0]),predNum)
+                    except:
+                        pass
+                    if (dist == 0 or dist is None):
+                        dist =''
+                    else:
+                        totalDist += dist
+                        dist = '{0:4.1f}'.format((split/60)/dist)
+                    readBuffer +='\n{}  ({})  {}  {}'.format(punch+1,\
+                                                             punches[punch][0],\
+                                                             punches[punch][1]-predT,\
+                                                             dist)
                 else:
                     readBuffer +='\n{}  ({})  error val'.format(punch,\
                                                                 punches[punch][0])
                 predT = punches[punch][1]
+                predNum = punches[punch][0]
                     
         if('finish' in data):
-            if (data['finish'].timestamp()-predT.timestamp() > 0):
-                readBuffer +='\nFinish:  {}'.format(data['finish']-predT)
+            split = data['finish'].timestamp()-predT.timestamp()
+            if (split > 0):
+                dist = 0
+                try:
+                    dist = self.distance(245,predNum)
+                except:
+                    pass
+                if (dist == 0 or dist is None):
+                    totalDist += dist
+                    dist =''
+                else:
+                    dist = '{0:4.1f}'.format((split/60)/dist)
+                readBuffer +='\nFinish:  {}  {}'.format(data['finish']-predT, dist)
             else:
                 readBuffer +='\nFinish:  error val'
             
         if ('finish' in data and 'start' in data):
             if (data['finish'].timestamp()-data['start'].timestamp() > 0):
                 readBuffer +='\nTime:  {}'.format(data['finish']-data['start'])
+                totalTime = data['finish'].timestamp()-data['start'].timestamp()
             else:
-                readBuffer +='\nTime:  error val'    
-                
+                readBuffer +='\nTime:  error val'
+
+        if (totalDist != 0):
+            readBuffer += '\nDistance: {0:4.3f}km'.format(totalDist)
+            if (totalTime != 0):
+                readBuffer += '\nAverage temp: {0:4.1f}min/km'.format((totalTime/60)/totalDist)
+            
         self.addText(readBuffer)
         if (self.AutoPrint.checkState()!= 0):
             self.Print_clicked()
@@ -447,6 +484,39 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
         json.dump(self.readData, dataFile)
         dataFile.close()
+
+    def OpenGpx_clicked(self):
+
+        fname = QFileDialog.getOpenFileName(self, 'Open file', '/home')[0]
+        try:
+            gpxFile = open(fname)
+            gpx_xml = gpxFile.read()
+            gpx_dict = xmltodict.parse(gpx_xml)
+            buffer = '\nGPX file have been loaded'
+            points = gpx_dict['gpx']['wpt']
+            for point in range(0, len(points), 1):
+                coord = (points[point]['@lat'], points[point]['@lon'])
+                name = points[point]['name'] 
+                self.gps[name] = coord
+                buffer += '\n{} {}'.format(name,coord)
+            self.addText(buffer)
+        except:
+            self.addText('\nError')
+
+    def distance(self,p1, p2):
+        if (str(p1) in self.gps and str(p2) in self.gps):
+            lat1 = float(self.gps[str(p1)][0])
+            lon1 = float(self.gps[str(p1)][1])
+            lat2 = float(self.gps[str(p2)][0])
+            lon2 = float(self.gps[str(p2)][1])
+            print('ok')
+            p = 0.017453292519943295
+            a = 0.5 - cos((lat2 - lat1) * p)/2 + \
+                cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2
+            return 12742 * asin(sqrt(a))
+        else:
+            return None
+        
             
         
         
