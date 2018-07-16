@@ -6,6 +6,7 @@ import datetime
 import serial
 import json
 import xmltodict
+import copy
 from math import cos, asin, sqrt
 from sportiduino import Sportiduino
 from datetime import datetime, timedelta
@@ -84,20 +85,23 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
             
 
     def ReadCard_clicked(self):
-
+        
         if (self.connected == False):
             self.addText('\nmaster station is not connected')
             return
 
+        force_start = None
+        
         try:
             data = self.sportiduino.read_card(timeout = 0.5)
             self.sportiduino.beep_ok()
             
             if (self.ForceStart.checkState() != 0):
-                forceStartTime = self.dateTimeEdit.dateTime().toPyDateTime()
-                data['force_start'] = forceStartTime
+                forceStartTime = self.dateTimeEdit.dateTime().toMSecsSinceEpoch() // 1000
+                py_date = datetime.fromtimestamp(forceStartTime)
+                force_start = py_date
                 
-            self.readDataFormat(data)
+            self.readDataFormat(data, force_start = force_start)
             self.saveDataJson(data)
             
         except:
@@ -389,24 +393,23 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
         self.textBrowser.document().setDocumentMargin(0.0)
         self.textBrowser.document().print_(self.printer)
 
-    def readDataFormat(self,data):
+    def readDataFormat(self,data, force_start = None):
+
+        data = copy.deepcopy(data)
 
         totalDist = 0
         totalTime = 0
         readBuffer ='\nCard: {}'.format(data['card_number'])
 
+        if force_start is not None:
+            data['start'] = force_start
 
-        if('forceStart' in data):
-            readBuffer +='\nStart: {}'.format(data['forceStart'])
-        elif('start' in data):
+        if('start' in data):
             readBuffer +='\nStart: {}'.format(data['start'])
             
         if ('punches' in data):
             punches = data['punches']
-            if ('forceStart' in data):
-                predT = data['start']
-                isPredT = True
-            elif ('start' in data):
+            if ('start' in data):
                 predT = data['start']
                 isPredT = True
             elif (len(punches)>0):
@@ -467,13 +470,12 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
             readBuffer += '\nDistance: {0:4.3f}km'.format(totalDist)
             if (totalTime != 0):
                 readBuffer += '\nAverage temp: {0:4.1f}min/km'.format((totalTime/60)/totalDist)
-            
+           
         self.addText(readBuffer)
         if (self.AutoPrint.checkState()!= 0):
             self.Print_clicked()
             
     def saveDataJson(self,data):
-
         if('start' in data):
             data['start'] = int(data['start'].timestamp())
             
@@ -496,6 +498,8 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
         dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
         json.dump(self.readData, dataFile)
         dataFile.close()
+
+        
 
     def OpenGpx_clicked(self):
 

@@ -420,45 +420,6 @@
            <string>AutoIncriment</string>
           </property>
          </widget>
-         <widget class="Line" name="line">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>120</y>
-            <width>211</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="Line" name="line_6">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>220</y>
-            <width>211</width>
-            <height>21</height>
-           </rect>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="Line" name="line_7">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>170</y>
-            <width>211</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
         </widget>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
