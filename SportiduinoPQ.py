@@ -10,7 +10,7 @@ from math import cos, asin, sqrt
 from sportiduino import Sportiduino
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore
-from PyQt5.QtCore import QSizeF
+from PyQt5.QtCore import QSizeF, QDateTime
 from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
@@ -35,6 +35,9 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
         
         self.initTime = datetime.now()
         self.addText('{:%Y-%m-%d %H:%M:%S}'.format(self.initTime))
+
+        now = QtCore.QDateTime.currentDateTime()
+        self.dateTimeEdit.setDateTime(now)
 
         self.Connec.clicked.connect(self.Connec_clicked)
         self.ReadCard.clicked.connect(self.ReadCard_clicked)
@@ -81,6 +84,7 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
             
 
     def ReadCard_clicked(self):
+
         if (self.connected == False):
             self.addText('\nmaster station is not connected')
             return
@@ -88,6 +92,11 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             data = self.sportiduino.read_card(timeout = 0.5)
             self.sportiduino.beep_ok()
+            
+            if (self.ForceStart.checkState() != 0):
+                forceStartTime = self.dateTimeEdit.dateTime().toPyDateTime()
+                data['force_start'] = forceStartTime
+                
             self.readDataFormat(data)
             self.saveDataJson(data)
             
@@ -202,17 +211,6 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             self.sportiduino.init_cp_number_card(249)
             self.addText ('\nset clear statnion')
-        except:
-            self.addText('\nError')
-
-    def ClearSt_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
-            return
-        
-        try:
-            self.sportiduino.init_cp_number_card(249)
-            self.addText ('\nset clear station')
         except:
             self.addText('\nError')
 
@@ -395,13 +393,27 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
 
         totalDist = 0
         totalTime = 0
-        readBuffer ='\ncard: {}'.format(data['card_number'])
-        if('start' in data):
-            readBuffer +='\nstart: {}'.format(data['start'])
+        readBuffer ='\nCard: {}'.format(data['card_number'])
+
+
+        if('forceStart' in data):
+            readBuffer +='\nStart: {}'.format(data['forceStart'])
+        elif('start' in data):
+            readBuffer +='\nStart: {}'.format(data['start'])
             
         if ('punches' in data):
             punches = data['punches']
-            predT = data['start']
+            if ('forceStart' in data):
+                predT = data['start']
+                isPredT = True
+            elif ('start' in data):
+                predT = data['start']
+                isPredT = True
+            elif (len(punches)>0):
+                predT = punches[0][1]
+                isPredT = True
+            else:
+                isPredT = False
             predNum = 240
             readBuffer +='\nN (CP) split, temp min/km'
             for punch in range(0, len(punches), 1):
@@ -418,16 +430,16 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
                         totalDist += dist
                         dist = '{0:4.1f}'.format((split/60)/dist)
                     readBuffer +='\n{}  ({})  {}  {}'.format(punch+1,\
-                                                             punches[punch][0],\
-                                                             punches[punch][1]-predT,\
-                                                             dist)
+                                                                punches[punch][0],\
+                                                                punches[punch][1]-predT,\
+                                                                dist)
                 else:
                     readBuffer +='\n{}  ({})  error val'.format(punch,\
                                                                 punches[punch][0])
                 predT = punches[punch][1]
                 predNum = punches[punch][0]
                     
-        if('finish' in data):
+        if('finish' in data and isPredT == True):
             split = data['finish'].timestamp()-predT.timestamp()
             if (split > 0):
                 dist = 0
@@ -436,9 +448,9 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
                 except:
                     pass
                 if (dist == 0 or dist is None):
-                    totalDist += dist
                     dist =''
                 else:
+                    totalDist += dist
                     dist = '{0:4.1f}'.format((split/60)/dist)
                 readBuffer +='\nFinish:  {}  {}'.format(data['finish']-predT, dist)
             else:
@@ -509,7 +521,6 @@ class App(QtWidgets.QMainWindow, Ui_MainWindow):
             lon1 = float(self.gps[str(p1)][1])
             lat2 = float(self.gps[str(p2)][0])
             lon2 = float(self.gps[str(p2)][1])
-            print('ok')
             p = 0.017453292519943295
             a = 0.5 - cos((lat2 - lat1) * p)/2 + \
                 cos(lat1 * p) * cos(lat2 * p) * (1 - cos((lon2 - lon1) * p)) / 2

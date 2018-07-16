@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>456</height>
+    <width>408</width>
+    <height>453</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -235,6 +235,151 @@
         <property name="currentIndex">
          <number>0</number>
         </property>
+        <widget class="QWidget" name="tab_4">
+         <attribute name="title">
+          <string>Read</string>
+         </attribute>
+         <widget class="QPushButton" name="Print">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>110</y>
+            <width>111</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Print</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="SelectPrinter">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>160</y>
+            <width>111</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Select Printer</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="ReadCard">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>10</y>
+            <width>111</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Read Card</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="OpenGpx">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>60</y>
+            <width>111</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Open gpx</string>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="AutoPrint">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>200</y>
+            <width>121</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>AutoPrint</string>
+          </property>
+         </widget>
+         <widget class="QLabel" name="printerName">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>130</y>
+            <width>141</width>
+            <height>41</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="Line" name="line_8">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>40</y>
+            <width>211</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="Line" name="line_9">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>90</y>
+            <width>211</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="Line" name="line_10">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>220</y>
+            <width>211</width>
+            <height>20</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="QDateTimeEdit" name="dateTimeEdit">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>270</y>
+            <width>161</width>
+            <height>22</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QCheckBox" name="ForceStart">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>240</y>
+            <width>121</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>ForceStart</string>
+          </property>
+         </widget>
+        </widget>
         <widget class="QWidget" name="tab">
          <attribute name="title">
           <string>Card</string>
@@ -275,19 +420,6 @@
            <string>AutoIncriment</string>
           </property>
          </widget>
-         <widget class="QPushButton" name="ReadCard">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>140</y>
-            <width>111</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Read Card</string>
-          </property>
-         </widget>
          <widget class="Line" name="line">
           <property name="geometry">
            <rect>
@@ -299,19 +431,6 @@
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="Print">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>300</y>
-            <width>111</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Print</string>
           </property>
          </widget>
          <widget class="Line" name="line_6">
@@ -327,45 +446,6 @@
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
-         <widget class="QCheckBox" name="AutoPrint">
-          <property name="geometry">
-           <rect>
-            <x>9</x>
-            <y>340</y>
-            <width>151</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>AutoPrint</string>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="SelectPrinter">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>250</y>
-            <width>111</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Select Printer</string>
-          </property>
-         </widget>
-         <widget class="QLabel" name="printerName">
-          <property name="geometry">
-           <rect>
-            <x>16</x>
-            <y>280</y>
-            <width>181</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
          <widget class="Line" name="line_7">
           <property name="geometry">
            <rect>
@@ -379,23 +459,10 @@
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
-         <widget class="QPushButton" name="OpenGpx">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>190</y>
-            <width>111</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Open gpx</string>
-          </property>
-         </widget>
         </widget>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
-          <string>Station</string>
+          <string>St</string>
          </attribute>
          <widget class="QPushButton" name="SetNum">
           <property name="geometry">
@@ -594,7 +661,7 @@
         </widget>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
-          <string>Settings</string>
+          <string>Set</string>
          </attribute>
          <widget class="QComboBox" name="WorkTime">
           <property name="geometry">
@@ -923,7 +990,6 @@
   <tabstop>cardLine</tabstop>
   <tabstop>InitCard</tabstop>
   <tabstop>AutoIncriment</tabstop>
-  <tabstop>ReadCard</tabstop>
   <tabstop>SetTime</tabstop>
   <tabstop>StationLine</tabstop>
   <tabstop>SetNum</tabstop>

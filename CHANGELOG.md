@@ -1,3 +1,7 @@
+## [0.4.1] - 2018-07-16
+### add force start time
+- add force for correct split print
+
 ## [0.4.0] - 2018-07-09
 ### add gpx
 - calc split with use gpx format file
