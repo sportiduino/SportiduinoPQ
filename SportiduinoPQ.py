@@ -7,18 +7,16 @@ import serial
 import json
 import xmltodict
 import copy
+import design
 from math import cos, asin, sqrt
 from sportiduino import Sportiduino
 from datetime import datetime, timedelta
-from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore
+from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
 from PyQt5.QtCore import QSizeF, QDateTime
 from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
-qtFile = 'design.ui'
-Ui_MainWindow, QtBaseClass = uic.loadUiType(qtFile)
-
-class App(QtWidgets.QMainWindow, Ui_MainWindow):
+class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)

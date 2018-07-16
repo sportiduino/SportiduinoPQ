@@ -10,6 +10,13 @@
 pip install pyserial pyqt5 xmltodict six sip
 ```
 
+exe сгенерирован с помощью pyinstaller:
+
+```commandline
+pip install pyinstaller
+pyinstaller --onefile --noconsole SportiduinoPQ.py
+```
+
 [English](https://github.com/alexandervolikov/SportiduinoPQ/blob/master/README.md)
 
 В данном репозитории ведется разработка базового GUI программного обеспечения основанного на [python модуле](https://github.com/alexandervolikov/sportiduinoPython) и PyQt для работы с системой электронной отметки для спортивного ориентирования Sportiduino: https://github.com/alexandervolikov/sportIDuino
