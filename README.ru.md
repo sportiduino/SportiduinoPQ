@@ -1,6 +1,6 @@
 ﻿# sportiduinoPQ
 
-### версия 0.4.1
+### версия 0.5.0
 
 В [последнем релизе](https://github.com/alexandervolikov/SportiduinoPQ/releases) программу с exe файлом для Windows систем, установка не требуется (версия 0.2.1). 
 

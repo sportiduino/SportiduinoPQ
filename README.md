@@ -1,6 +1,6 @@
 ﻿# sportiduinoPQ
 
-### version 0.4.1
+### version 0.5.0
 
 In the [last release](https://github.com/alexandervolikov/SportiduinoPQ/releases), you can download the program with the exe file for Windows systems, the installation is not required. 
 

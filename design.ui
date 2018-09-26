@@ -256,7 +256,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>160</y>
+            <y>170</y>
             <width>111</width>
             <height>31</height>
            </rect>
@@ -270,32 +270,19 @@
            <rect>
             <x>10</x>
             <y>10</y>
-            <width>111</width>
-            <height>31</height>
+            <width>181</width>
+            <height>61</height>
            </rect>
           </property>
           <property name="text">
            <string>Read Card</string>
           </property>
          </widget>
-         <widget class="QPushButton" name="OpenGpx">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>60</y>
-            <width>111</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Open gpx</string>
-          </property>
-         </widget>
          <widget class="QCheckBox" name="AutoPrint">
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>200</y>
+            <y>210</y>
             <width>121</width>
             <height>31</height>
            </rect>
@@ -308,7 +295,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>130</y>
+            <y>140</y>
             <width>141</width>
             <height>41</height>
            </rect>
@@ -321,20 +308,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>40</y>
-            <width>211</width>
-            <height>20</height>
-           </rect>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="Line" name="line_9">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>90</y>
+            <y>80</y>
             <width>211</width>
             <height>20</height>
            </rect>
@@ -347,36 +321,13 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>220</y>
+            <y>240</y>
             <width>211</width>
             <height>20</height>
            </rect>
           </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="QDateTimeEdit" name="dateTimeEdit">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>270</y>
-            <width>161</width>
-            <height>22</height>
-           </rect>
-          </property>
-         </widget>
-         <widget class="QCheckBox" name="ForceStart">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>240</y>
-            <width>121</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>ForceStart</string>
           </property>
          </widget>
         </widget>
@@ -388,9 +339,9 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>50</y>
-            <width>111</width>
-            <height>31</height>
+            <y>70</y>
+            <width>171</width>
+            <height>61</height>
            </rect>
           </property>
           <property name="text">
@@ -402,8 +353,8 @@
            <rect>
             <x>10</x>
             <y>10</y>
-            <width>111</width>
-            <height>31</height>
+            <width>171</width>
+            <height>51</height>
            </rect>
           </property>
          </widget>
@@ -411,7 +362,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>90</y>
+            <y>140</y>
             <width>151</width>
             <height>31</height>
            </rect>

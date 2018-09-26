@@ -1,3 +1,6 @@
+## [0.5.0] - 2018-09-26
+### del some function
+
 ## [0.4.1] - 2018-07-16
 ### add force start time
 - add force for correct split print
