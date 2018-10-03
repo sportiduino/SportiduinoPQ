@@ -703,7 +703,7 @@
            </rect>
           </property>
           <property name="text">
-           <string>Card Capicity</string>
+           <string>Antena Gain</string>
           </property>
          </widget>
          <widget class="QComboBox" name="CardCap">
@@ -720,22 +720,32 @@
           </property>
           <item>
            <property name="text">
-            <string>auto</string>
+            <string>48</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>32</string>
+            <string>43</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>64</string>
+            <string>38</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>120</string>
+            <string>33</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>23</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>18</string>
            </property>
           </item>
          </widget>

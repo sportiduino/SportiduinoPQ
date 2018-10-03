@@ -285,21 +285,26 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         elif (checkIT == 'on'):
             c = 0b1
 
-        if (cardCap == "auto"):
-            d = 0b00
-        elif (cardCap == '32'):
-            d = 0b01
-        elif (cardCap == '64'):
-            d = 0b10
-        elif (cardCap == "120"):
-            d = 0b11
-
         if (autoDel == 'off'):
-            e = 0b0
+            d = 0b0
         elif (autoDel == 'on'):
-            e = 0b1
+            d = 0b1
 
-        setSt = a + ( b<<2) + (c<<3) + (d<<4) + (e<<6)
+        if (cardCap == '48'):
+            e = 0b111
+        elif (cardCap == '43'):
+            e = 0b110
+        elif (cardCap == '38'):
+            e = 0b101
+        elif (cardCap == '33'):
+            e = 0b100
+        elif (cardCap == '23'):
+            e = 0b11
+        elif (cardCap == '18'):
+            e = 0b10   
+
+
+        setSt = a + ( b<<2) + (c<<3) + (d<<4) + (e<<5)
         
         if (self.OldPass.text().isdigit()):
             oldPass = int(self.OldPass.text())
@@ -398,10 +403,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                     
         if('finish' in data):
             readBuffer +='\nFinish:  {}'.format(data['finish'])
-
-        if ('finish' in data and 'start' in data):
-            readBuffer += '\n{}'.format(data['finish']-data['start'])
-           
+   
         self.addText(readBuffer)
         if (self.AutoPrint.checkState()!= 0):
             self.Print_clicked()
