@@ -263,7 +263,6 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         workTime = self.WorkTime.currentText()
         stFi = self.StartFinish.currentText()
         checkIT = self.CheckInitTime.currentText()
-        cardCap = self.CardCap.currentText()
         autoDel = self.AutoDel.currentText()
 
         if (workTime == '6 hour'):
@@ -290,21 +289,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         elif (autoDel == 'on'):
             d = 0b1
 
-        if (cardCap == '48'):
-            e = 0b111
-        elif (cardCap == '43'):
-            e = 0b110
-        elif (cardCap == '38'):
-            e = 0b101
-        elif (cardCap == '33'):
-            e = 0b100
-        elif (cardCap == '23'):
-            e = 0b11
-        elif (cardCap == '18'):
-            e = 0b10   
-
-
-        setSt = a + ( b<<2) + (c<<3) + (d<<4) + (e<<5)
+        setSt = a + ( b<<2) + (c<<3) + (d<<4)
         
         if (self.OldPass.text().isdigit()):
             oldPass = int(self.OldPass.text())

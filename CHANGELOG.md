@@ -1,3 +1,6 @@
+## [0.6.1] - 2018-10-23
+### del some functions for version 1.4.2 sportiduino
+
 ## [0.6.0] - 2018-10-03
 ### add function for sportiduino v.1.4.0
 
