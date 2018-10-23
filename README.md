@@ -1,10 +1,10 @@
 ﻿# sportiduinoPQ
 
-### version 0.6.0
+### version 0.6.1
 
 In the [last release](https://github.com/alexandervolikov/SportiduinoPQ/releases), you can download the program with the exe file for Windows systems, the installation is not required. 
 
-Or run the lates program under python. For that you should install [python](https://www.python.org/). Writhe path to pip in PATH (instruction easy serching in web) and then install all requirements by command:
+Or run the lates program under python. For that you should install [python](https://www.python.org/) and then install all requirements by command:
 
 ```commandline
 pip install pyserial pyqt5 xmltodict six sip

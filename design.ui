@@ -693,67 +693,11 @@
            </property>
           </item>
          </widget>
-         <widget class="QLabel" name="label_4">
-          <property name="geometry">
-           <rect>
-            <x>10</x>
-            <y>130</y>
-            <width>131</width>
-            <height>41</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Antena Gain</string>
-          </property>
-         </widget>
-         <widget class="QComboBox" name="CardCap">
-          <property name="geometry">
-           <rect>
-            <x>130</x>
-            <y>130</y>
-            <width>71</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="editable">
-           <bool>false</bool>
-          </property>
-          <item>
-           <property name="text">
-            <string>48</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>43</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>38</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>33</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>23</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>18</string>
-           </property>
-          </item>
-         </widget>
          <widget class="QLabel" name="label_5">
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>170</y>
+            <y>130</y>
             <width>111</width>
             <height>41</height>
            </rect>
@@ -766,7 +710,7 @@
           <property name="geometry">
            <rect>
             <x>130</x>
-            <y>170</y>
+            <y>130</y>
             <width>71</width>
             <height>31</height>
            </rect>
@@ -789,7 +733,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>210</y>
+            <y>190</y>
             <width>81</width>
             <height>41</height>
            </rect>
@@ -802,7 +746,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>250</y>
+            <y>230</y>
             <width>81</width>
             <height>41</height>
            </rect>
@@ -815,7 +759,7 @@
           <property name="geometry">
            <rect>
             <x>100</x>
-            <y>210</y>
+            <y>190</y>
             <width>101</width>
             <height>31</height>
            </rect>
@@ -825,7 +769,7 @@
           <property name="geometry">
            <rect>
             <x>100</x>
-            <y>250</y>
+            <y>230</y>
             <width>101</width>
             <height>31</height>
            </rect>
@@ -925,7 +869,6 @@
   <tabstop>WorkTime</tabstop>
   <tabstop>StartFinish</tabstop>
   <tabstop>CheckInitTime</tabstop>
-  <tabstop>CardCap</tabstop>
   <tabstop>AutoDel</tabstop>
   <tabstop>NewPass</tabstop>
   <tabstop>OldPass</tabstop>
