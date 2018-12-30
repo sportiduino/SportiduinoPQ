@@ -7,6 +7,7 @@ import serial
 import json
 import copy
 import design
+import traceback
 from sportiduino import Sportiduino
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
@@ -25,8 +26,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.connected = False
         self.CardNum = '0'
         self.StatNum = '0'
-        self.OldPass.setText('0')
-        self.NewPass.setText('0')
+        # TODO self.OldPass.setText('0')
+        # TODO self.NewPass.setText('0')
         self.printerName.setText(QPrinter().printerName())
         
         self.initTime = datetime.now()
@@ -49,6 +50,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.LoadSet.clicked.connect(self.LoadSet_clicked)
         self.SelectPrinter.clicked.connect(self.SelectPrinter_clicked)
         self.Print.clicked.connect(self.Print_clicked)
+        self.btnApplyPwd.clicked.connect(self.ApplyPwd_clicked)
 
 
         
@@ -62,6 +64,12 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.sportiduino = Sportiduino(COM,debug=True)
 
+                self.sbCurPwd1.setValue(self.sportiduino.password & 0x0000FF)
+                self.sbCurPwd2.setValue((self.sportiduino.password & 0x00FF00) >> 8) 
+                self.sbCurPwd3.setValue((self.sportiduino.password & 0xFF0000) >> 16)
+                
+                self.showSettings(self.sportiduino.settings)
+                
                 self.sportiduino.beep_ok()
                 self.connected = True
                 self.addText('\nmaster station is connected')
@@ -250,10 +258,10 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             return
         
         try:
-            self.sportiduino.init_sleepcard()
+            self.sportiduino.init_sleepcard(self.dtCompetion.dateTime())
             self.addText ('\nset sleep card')
-        except:
-            self.addText('\nError')
+        except Exception:
+            traceback.print_exc()
 
     def PassCard_clicked(self):
         if (self.connected == False):
@@ -290,29 +298,25 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             d = 0b1
 
         setSt = a + ( b<<2) + (c<<3) + (d<<4)
-        
-        if (self.OldPass.text().isdigit()):
-            oldPass = int(self.OldPass.text())
-            if (oldPass <0 or oldPass > 10000000):
-                self.addText('\nnot correct old pass value')
-                oldPass = -1
-        else:
+
+        oldPass = self.sbOldPwd3.value()<<16 | self.sbOldPwd2.value()<<8 | self.sbOldPwd1.value()
+        if (oldPass <0 or oldPass > 0xffffff):
             self.addText('\nnot correct old pass value')
             oldPass = -1
 
-        if (self.NewPass.text().isdigit()):
-            newPass = int(self.NewPass.text())
-            if (newPass <0 or newPass > 10000000):
-                self.addText('\nnot correct new pass value')
-                newPass = -1
-        else:
+        newPass = self.sbNewPwd3.value()<<16 | self.sbNewPwd2.value()<<8 | self.sbNewPwd1.value()
+        if (newPass <0 or newPass > 0xffffff):
             self.addText('\nnot correct new pass value')
             newPass = -1
-
+        
         if (newPass!= -1 and oldPass!= -1):
             try:
                 self.sportiduino.init_passwd_card(oldPass,newPass,setSt)
                 self.addText ('\nset password - settings card')
+                
+                self.sbCurPwd3.setValue(self.sbNewPwd3.value())
+                self.sbCurPwd2.setValue(self.sbNewPwd2.value())
+                self.sbCurPwd1.setValue(self.sbNewPwd1.value())
             except:
                 self.addText('\nError')
             
@@ -368,6 +372,20 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.textBrowser.document().setPageSize(page_size)
         self.textBrowser.document().setDocumentMargin(0.0)
         self.textBrowser.document().print_(self.printer)
+        
+    def ApplyPwd_clicked(self):
+        if (self.connected == False):
+            self.addText('\nmaster station is not connected')
+            return
+
+        curPass = self.sbCurPwd3.value()<<16 | self.sbCurPwd2.value()<<8 | self.sbCurPwd1.value()
+        
+        try:
+            self.sportiduino.apply_pwd(curPass)
+            self.addText ('\npassword has been applied')
+
+        except:
+            self.addText('\nError')    
 
     def readDataFormat(self,data):
 
@@ -415,8 +433,20 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
         dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
         json.dump(self.readData, dataFile)
-        dataFile.close()       
+        dataFile.close()     
         
+    def showSettings(self, settings):
+        set1 = settings & 0x3
+        self.WorkTime.setCurrentIndex(set1)
+        
+        set2 = (settings & 0x4) >> 0x2
+        self.StartFinish.setCurrentIndex(set2)
+        
+        set3 = (settings & 0x8) >> 0x3
+        self.CheckInitTime.setCurrentIndex(set3)
+        
+        set4 = (settings & 0x10) >> 0x4
+        self.AutoDel.setCurrentIndex(set4)
         
 if __name__ == '__main__':
     

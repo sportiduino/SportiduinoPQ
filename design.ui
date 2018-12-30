@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>408</width>
-    <height>656</height>
+    <height>703</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -249,7 +249,7 @@
         </property>
         <widget class="QWidget" name="tab_4">
          <attribute name="title">
-          <string>Participant Card</string>
+          <string>Main</string>
          </attribute>
          <widget class="QPushButton" name="Print">
           <property name="geometry">
@@ -387,15 +387,15 @@
         </widget>
         <widget class="QWidget" name="tab_2">
          <attribute name="title">
-          <string>Config Card</string>
+          <string>Settings#1</string>
          </attribute>
          <widget class="QGroupBox" name="groupBox">
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>370</y>
+            <y>410</y>
             <width>191</width>
-            <height>121</height>
+            <height>131</height>
            </rect>
           </property>
           <property name="locale">
@@ -408,7 +408,7 @@
            <property name="geometry">
             <rect>
              <x>100</x>
-             <y>80</y>
+             <y>90</y>
              <width>81</width>
              <height>31</height>
             </rect>
@@ -429,11 +429,21 @@
              <x>10</x>
              <y>50</y>
              <width>171</width>
-             <height>21</height>
+             <height>31</height>
             </rect>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
+           </property>
+           <property name="minimumDate">
+            <date>
+             <year>2017</year>
+             <month>12</month>
+             <day>31</day>
+            </date>
+           </property>
+           <property name="displayFormat">
+            <string>dd.MM.yyyy HH:mm</string>
            </property>
            <property name="calendarPopup">
             <bool>true</bool>
@@ -460,7 +470,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>490</y>
+            <y>540</y>
             <width>191</width>
             <height>71</height>
            </rect>
@@ -519,7 +529,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>220</y>
+            <y>260</y>
             <width>191</width>
             <height>151</height>
            </rect>
@@ -653,7 +663,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>80</y>
+            <y>120</y>
             <width>191</width>
             <height>71</height>
            </rect>
@@ -688,7 +698,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>150</y>
+            <y>190</y>
             <width>191</width>
             <height>71</height>
            </rect>
@@ -699,7 +709,7 @@
           <property name="title">
            <string>GetInfo Card</string>
           </property>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="btnCreateInfoCard">
            <property name="geometry">
             <rect>
              <x>100</x>
@@ -718,6 +728,25 @@
             <string>Create</string>
            </property>
           </widget>
+          <widget class="QPushButton" name="btnReadInfo">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>30</y>
+             <width>81</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="toolTip">
+            <string>Creates a config card to get info about a base station</string>
+           </property>
+           <property name="locale">
+            <locale language="English" country="UnitedStates"/>
+           </property>
+           <property name="text">
+            <string>Read</string>
+           </property>
+          </widget>
          </widget>
          <widget class="QGroupBox" name="groupBox_6">
           <property name="geometry">
@@ -725,7 +754,7 @@
             <x>9</x>
             <y>10</y>
             <width>191</width>
-            <height>71</height>
+            <height>111</height>
            </rect>
           </property>
           <property name="toolTip">
@@ -737,26 +766,42 @@
           <property name="title">
            <string>Password</string>
           </property>
-          <widget class="QLineEdit" name="tfCurPwd1">
+          <widget class="QPushButton" name="btnApplyPwd">
            <property name="geometry">
             <rect>
-             <x>12</x>
+             <x>100</x>
+             <y>70</y>
+             <width>81</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="toolTip">
+            <string>Applies current password for all next config cards</string>
+           </property>
+           <property name="text">
+            <string>Apply</string>
+           </property>
+          </widget>
+          <widget class="QSpinBox" name="sbCurPwd3">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
              <y>30</y>
              <width>51</width>
              <height>31</height>
             </rect>
            </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="text">
-            <string>0</string>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
-          <widget class="QLineEdit" name="tfCurPwd2">
+          <widget class="QSpinBox" name="sbCurPwd2">
            <property name="geometry">
             <rect>
              <x>70</x>
@@ -765,17 +810,17 @@
              <height>31</height>
             </rect>
            </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="text">
-            <string>0</string>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
-          <widget class="QLineEdit" name="tfCurPwd3">
+          <widget class="QSpinBox" name="sbCurPwd1">
            <property name="geometry">
             <rect>
              <x>130</x>
@@ -784,21 +829,21 @@
              <height>31</height>
             </rect>
            </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="text">
-            <string>0</string>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+           <property name="maximum">
+            <number>255</number>
            </property>
           </widget>
          </widget>
         </widget>
         <widget class="QWidget" name="tab_3">
          <attribute name="title">
-          <string>Settings</string>
+          <string>Settings#2</string>
          </attribute>
          <widget class="QComboBox" name="WorkTime">
           <property name="geometry">
@@ -824,12 +869,12 @@
           </item>
           <item>
            <property name="text">
-            <string>all time</string>
+            <string>not work</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>not work</string>
+            <string>all time</string>
            </property>
           </item>
          </widget>
@@ -873,12 +918,12 @@
           </property>
           <item>
            <property name="text">
-            <string>on</string>
+            <string>off</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>off</string>
+            <string>on</string>
            </property>
           </item>
          </widget>
@@ -1020,26 +1065,26 @@
           <property name="title">
            <string>New Password</string>
           </property>
-          <widget class="QLineEdit" name="tfNewPwd1">
+          <widget class="QSpinBox" name="sbNewPwd3">
            <property name="geometry">
             <rect>
-             <x>12</x>
+             <x>10</x>
              <y>30</y>
              <width>51</width>
              <height>31</height>
             </rect>
            </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="text">
-            <string>0</string>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
-          <widget class="QLineEdit" name="tfNewPwd2">
+          <widget class="QSpinBox" name="sbNewPwd2">
            <property name="geometry">
             <rect>
              <x>70</x>
@@ -1048,17 +1093,17 @@
              <height>31</height>
             </rect>
            </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="text">
-            <string>0</string>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
-          <widget class="QLineEdit" name="tfNewPwd3">
+          <widget class="QSpinBox" name="sbNewPwd1">
            <property name="geometry">
             <rect>
              <x>130</x>
@@ -1067,14 +1112,14 @@
              <height>31</height>
             </rect>
            </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="text">
-            <string>0</string>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+           <property name="maximum">
+            <number>255</number>
            </property>
           </widget>
          </widget>
@@ -1096,26 +1141,26 @@
           <property name="title">
            <string>Old Password</string>
           </property>
-          <widget class="QLineEdit" name="tfOldPwd1">
+          <widget class="QSpinBox" name="sbOldPwd3">
            <property name="geometry">
             <rect>
-             <x>12</x>
+             <x>10</x>
              <y>30</y>
              <width>51</width>
              <height>31</height>
             </rect>
            </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="text">
-            <string>0</string>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
-          <widget class="QLineEdit" name="tfOldPwd2">
+          <widget class="QSpinBox" name="sbOldPwd2">
            <property name="geometry">
             <rect>
              <x>70</x>
@@ -1124,17 +1169,17 @@
              <height>31</height>
             </rect>
            </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="text">
-            <string>0</string>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
           </widget>
-          <widget class="QLineEdit" name="tfOldPwd3">
+          <widget class="QSpinBox" name="sbOldPwd1">
            <property name="geometry">
             <rect>
              <x>130</x>
@@ -1143,14 +1188,14 @@
              <height>31</height>
             </rect>
            </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-           <property name="text">
-            <string>0</string>
+           <property name="frame">
+            <bool>true</bool>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+           <property name="maximum">
+            <number>255</number>
            </property>
           </widget>
          </widget>
@@ -1183,11 +1228,12 @@
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
            </property>
-           <item>
-            <property name="text">
-             <string>auto</string>
-            </property>
-           </item>
+           <property name="currentText">
+            <string>0</string>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
            <item>
             <property name="text">
              <string>0</string>

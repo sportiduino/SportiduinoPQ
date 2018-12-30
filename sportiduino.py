@@ -62,6 +62,7 @@ class Sportiduino(object):
     CMD_READ_CARD         = b'\x4b'
     CMD_READ_RAW          = b'\x4c'
     CMD_INIT_SLEEPCARD    = b'\x4e'
+    CMD_APPLY_PWD         = b'\x4f'
     CMD_BEEP_ERROR        = b'\x58'
     CMD_BEEP_OK           = b'\x59'
 
@@ -167,7 +168,10 @@ class Sportiduino(object):
         """
         code, data = self._send_command(Sportiduino.CMD_READ_VERS)
         if code == Sportiduino.RESP_VERS:
-            return Sportiduino.Version(byte2int(data))
+            self.version = byte2int(data[0])
+            self.password = byte2int(data[1])<<16 | byte2int(data[2])<<8 | byte2int(data[3])
+            self.settings = byte2int(data[4])
+            return Sportiduino.Version(byte2int(data[0]))
         return None
 
 
@@ -245,10 +249,16 @@ class Sportiduino(object):
         self._send_command(Sportiduino.CMD_INIT_BACKUPREADER, wait_response=False)
 
 
-    def init_sleepcard(self):
+    def init_sleepcard(self, wakeup):
         """Initialize sleep card."""
-        self._send_command(Sportiduino.CMD_INIT_SLEEPCARD, wait_response=False)
-
+        params = b''
+        params += int2byte(wakeup.date().year() - 2000)
+        params += int2byte(wakeup.date().month())
+        params += int2byte(wakeup.date().day())
+        params += int2byte(wakeup.time().hour())
+        params += int2byte(wakeup.time().minute())
+        params += int2byte(wakeup.time().second())
+        self._send_command(Sportiduino.CMD_INIT_SLEEPCARD, params, wait_response=False)
 
     def init_cp_number_card(self, cp_number):
         """Initialize card for writing check point number to base station.
@@ -282,8 +292,17 @@ class Sportiduino(object):
         params += Sportiduino._to_str(new_passwd, 3)
         params += Sportiduino._to_str(old_passwd, 3)
         params += Sportiduino._to_str(flags, 1)
+        self.password = new_passwd
+        self.settings = flags
         self._send_command(Sportiduino.CMD_INIT_PASSWDCARD, params, wait_response=False)
 
+    def apply_pwd(self, pwd=0, flags=0):
+        
+        params = b''
+        params += Sportiduino._to_str(pwd, 3)
+        params += Sportiduino._to_str(flags, 1)
+        self.password = pwd
+        self._send_command(Sportiduino.CMD_APPLY_PWD, params, wait_response=False)
 
     def write_pages6_7(self, page6, page7):
         """Write additional pages."""
