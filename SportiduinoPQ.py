@@ -11,7 +11,7 @@ import traceback
 from sportiduino import Sportiduino
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
-from PyQt5.QtCore import QSizeF, QDateTime
+from PyQt5.QtCore import QSizeF, QDateTime, QTime
 from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtWidgets import QApplication, QFileDialog
 
@@ -26,12 +26,15 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.connected = False
         self.CardNum = '0'
         self.StatNum = '0'
-        # TODO self.OldPass.setText('0')
-        # TODO self.NewPass.setText('0')
         self.printerName.setText(QPrinter().printerName())
         
         self.initTime = datetime.now()
         self.addText('{:%Y-%m-%d %H:%M:%S}'.format(self.initTime))
+        
+        dt = QDateTime.currentDateTime()
+        tm = QTime(dt.time().hour(), dt.time().minute(), 0)
+        dt.setTime(tm)
+        self.dtCompetion.setDateTime(dt)
 
         self.Connec.clicked.connect(self.Connec_clicked)
         self.ReadCard.clicked.connect(self.ReadCard_clicked)
@@ -258,7 +261,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             return
         
         try:
-            self.sportiduino.init_sleepcard(self.dtCompetion.dateTime())
+            self.sportiduino.init_sleepcard(self.dtCompetion.dateTime().toUTC())
             self.addText ('\nset sleep card')
         except Exception:
             traceback.print_exc()
