@@ -63,6 +63,7 @@ class Sportiduino(object):
     CMD_READ_RAW          = b'\x4c'
     CMD_INIT_SLEEPCARD    = b'\x4e'
     CMD_APPLY_PWD         = b'\x4f'
+    CMD_INIT_INFOCARD     = b'\x50'
     CMD_BEEP_ERROR        = b'\x58'
     CMD_BEEP_OK           = b'\x59'
 
@@ -295,6 +296,14 @@ class Sportiduino(object):
         self.password = new_passwd
         self.settings = flags
         self._send_command(Sportiduino.CMD_INIT_PASSWDCARD, params, wait_response=False)
+        
+    def init_info_card(self):
+        """Initialize card for writing check point number to base station.
+        @param cp_number: Check point number.
+        """
+        params = b''
+        self._send_command(Sportiduino.CMD_INIT_INFOCARD, params, wait_response=False)
+
 
     def apply_pwd(self, pwd=0, flags=0):
         

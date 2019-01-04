@@ -54,7 +54,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.SelectPrinter.clicked.connect(self.SelectPrinter_clicked)
         self.Print.clicked.connect(self.Print_clicked)
         self.btnApplyPwd.clicked.connect(self.ApplyPwd_clicked)
-
+        self.btnCreateInfoCard.clicked.connect(self.CreateInfo_clicked)
+        self.btnReadInfo.clicked.connect(self.ReadInfo_clicked)
 
         
     def Connec_clicked(self):
@@ -95,6 +96,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             return
 
         try:
+            self.textBrowser.setPlainText('')
             data = self.sportiduino.read_card(timeout = 0.5)
             self.sportiduino.beep_ok()
             
@@ -354,7 +356,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         logFile = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(self.initTime)),'a')
         print(text)
-        self.textBrowser.setPlainText(text)
+        self.textBrowser.setPlainText(self.textBrowser.toPlainText() + text)
         logFile.write(text)
         logFile.close()
 
@@ -388,7 +390,71 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.addText ('\npassword has been applied')
 
         except:
-            self.addText('\nError')    
+            self.addText('\nError')
+            
+    def CreateInfo_clicked(self):
+        if (self.connected == False):
+            self.addText('\nmaster station is not connected')
+            return
+        
+        try:
+            self.sportiduino.init_info_card()
+            self.addText ('\nGetInfo Card has been created')
+        except:
+            self.addText('\nError')
+        
+    def ReadInfo_clicked(self):
+        if (self.connected == False):
+            self.addText('\nmaster station is not connected')
+            return
+        
+        try:
+            pageData = self.sportiduino.read_card_raw()
+            
+            self.addText('\nReads Info Card')
+            self.addText ('\nVersion: ' + str(pageData[8][0]))
+            
+            stationNum = pageData[9][0];
+            self.addText('\nStation Num: ' + str(pageData[9][0]))
+            
+            if(stationNum == 240):
+                self.addText('(Start)')
+            elif (stationNum == 245):
+                self.addText('(Finish)')
+            elif (stationNum == 248):
+                self.addText('(Check)')
+            elif (stationNum == 249):
+                self.addText('(Clear)')
+                
+            settings = pageData[9][1];
+            self.showSettings(settings)
+            self.addText('\nSettings: ' + bin(settings).lstrip('-0b').zfill(8))
+            
+            batteryOk = pageData[9][2];
+            if(batteryOk):
+                self.addText('\nBattery: Ok')
+            else:
+                self.addText('\nBattery: Low')
+                
+            mode = pageData[9][3]
+            if(mode == 0):
+                self.addText('\nMode: Active')
+            elif(mode == 1):
+                self.addText('\nMode: Wait')
+            elif(mode == 2):
+                self.addText('\nMode: Sleep')
+                
+            timestamp = pageData[10][0] << 24;
+            timestamp |= pageData[10][1] << 16;
+            timestamp |= pageData[10][2] << 8;
+            timestamp |= pageData[10][3];
+            
+            self.addText('\nDate&Time: ' + datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y %H:%M:%S"))
+            
+            self.sportiduino.beep_ok()
+            
+        except:
+            self.addText('\nError')
 
     def readDataFormat(self,data):
 
