@@ -451,6 +451,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             self.addText('\nDate&Time: ' + datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y %H:%M:%S"))
             
+            timestamp = pageData[11][0] << 24;
+            timestamp |= pageData[11][1] << 16;
+            timestamp |= pageData[11][2] << 8;
+            timestamp |= pageData[11][3];
+            
+            self.addText('\nWake Up: ' + datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y %H:%M:%S"))
+            
             self.sportiduino.beep_ok()
             
         except:
