@@ -540,19 +540,6 @@
           <property name="title">
            <string>StationNum Card</string>
           </property>
-          <widget class="QLineEdit" name="StationLine">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>30</y>
-             <width>81</width>
-             <height>31</height>
-            </rect>
-           </property>
-           <property name="locale">
-            <locale language="English" country="UnitedStates"/>
-           </property>
-          </widget>
           <widget class="QPushButton" name="SetNum">
            <property name="geometry">
             <rect>
@@ -656,6 +643,28 @@
            </property>
            <property name="text">
             <string>Clear St</string>
+           </property>
+          </widget>
+          <widget class="QSpinBox" name="sbStationNum">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>30</y>
+             <width>81</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>255</number>
            </property>
           </widget>
          </widget>
@@ -883,7 +892,7 @@
            <rect>
             <x>10</x>
             <y>10</y>
-            <width>91</width>
+            <width>111</width>
             <height>31</height>
            </rect>
           </property>
@@ -932,8 +941,8 @@
            <rect>
             <x>10</x>
             <y>90</y>
-            <width>131</width>
-            <height>41</height>
+            <width>111</width>
+            <height>31</height>
            </rect>
           </property>
           <property name="text">
@@ -969,7 +978,7 @@
             <x>10</x>
             <y>130</y>
             <width>111</width>
-            <height>41</height>
+            <height>31</height>
            </rect>
           </property>
           <property name="text">
@@ -1003,7 +1012,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>320</y>
+            <y>350</y>
             <width>191</width>
             <height>31</height>
            </rect>
@@ -1019,7 +1028,7 @@
           <property name="geometry">
            <rect>
             <x>110</x>
-            <y>360</y>
+            <y>390</y>
             <width>91</width>
             <height>31</height>
            </rect>
@@ -1035,7 +1044,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>360</y>
+            <y>390</y>
             <width>91</width>
             <height>31</height>
            </rect>
@@ -1051,7 +1060,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>170</y>
+            <y>200</y>
             <width>191</width>
             <height>71</height>
            </rect>
@@ -1127,7 +1136,7 @@
           <property name="geometry">
            <rect>
             <x>10</x>
-            <y>240</y>
+            <y>270</y>
             <width>191</width>
             <height>71</height>
            </rect>
@@ -1202,8 +1211,8 @@
          <widget class="QGroupBox" name="groupBox_9">
           <property name="geometry">
            <rect>
-            <x>9</x>
-            <y>399</y>
+            <x>10</x>
+            <y>430</y>
             <width>191</width>
             <height>151</height>
            </rect>
@@ -1443,16 +1452,6 @@
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
            </property>
           </widget>
-          <widget class="QLineEdit" name="tfStationNumByUart">
-           <property name="geometry">
-            <rect>
-             <x>120</x>
-             <y>70</y>
-             <width>61</width>
-             <height>31</height>
-            </rect>
-           </property>
-          </widget>
           <widget class="QPushButton" name="btnUartRead">
            <property name="geometry">
             <rect>
@@ -1485,6 +1484,64 @@
             <string>Write</string>
            </property>
           </widget>
+          <widget class="QSpinBox" name="sbStationNumByUart">
+           <property name="geometry">
+            <rect>
+             <x>120</x>
+             <y>70</y>
+             <width>61</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="frame">
+            <bool>true</bool>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>255</number>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QLabel" name="label_6">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>170</y>
+            <width>111</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Fast Mark</string>
+          </property>
+         </widget>
+         <widget class="QComboBox" name="cbFastMark">
+          <property name="geometry">
+           <rect>
+            <x>130</x>
+            <y>170</y>
+            <width>71</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="editable">
+           <bool>false</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string>off</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>on</string>
+           </property>
+          </item>
          </widget>
         </widget>
        </widget>
@@ -1529,7 +1586,6 @@
   <tabstop>choiseCom</tabstop>
   <tabstop>Log</tabstop>
   <tabstop>SetTime</tabstop>
-  <tabstop>StationLine</tabstop>
   <tabstop>SetNum</tabstop>
   <tabstop>SetStart</tabstop>
   <tabstop>SetFinish</tabstop>

@@ -25,7 +25,6 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.dumpData = []
         self.connected = False
         self.CardNum = '0'
-        self.StatNum = '0'
         self.printerName.setText(QPrinter().printerName())
         
         self.initTime = datetime.now()
@@ -141,15 +140,10 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if (self.connected == False):
             self.addText('\nmaster station is not connected')
             return
-        
-        text = self.StationLine.text()
-        if(text.isdigit()):
-            self.StatNum = text
-        else:
-            self.StatNum = '0'
             
-        num = int(self.StatNum)
-        if (num > 0 and num < 240):
+        num = self.sbStationNum.value()
+        
+        if (num > 0 and num <= 255):
             
             try:
                 self.sportiduino.init_cp_number_card(num)
@@ -179,6 +173,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         try:
             self.sportiduino.init_cp_number_card(240)
+            self.sbStationNum.setValue(240)
             self.addText ('\nset start statnion')
         except:
             self.addText('\nError')
@@ -190,6 +185,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         try:
             self.sportiduino.init_cp_number_card(245)
+            self.sbStationNum.setValue(245)
             self.addText ('\nset finish statnion')
         except:
             self.addText('\nError')
@@ -202,6 +198,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         try:
             self.sportiduino.init_cp_number_card(248)
+            self.sbStationNum.setValue(248)
             self.addText ('\nset check statnion')
         except:
             self.addText('\nError')
@@ -213,6 +210,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         try:
             self.sportiduino.init_cp_number_card(249)
+            self.sbStationNum.setValue(249)
             self.addText ('\nset clear statnion')
         except:
             self.addText('\nError')
@@ -277,6 +275,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         stFi = self.StartFinish.currentText()
         checkIT = self.CheckInitTime.currentText()
         autoDel = self.AutoDel.currentText()
+        fastMark = self.cbFastMark.currentText()
 
         if (workTime == '6 hour'):
             a = 0b00
@@ -301,8 +300,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             d = 0b0
         elif (autoDel == 'on'):
             d = 0b1
+            
+        if (fastMark == 'off'):
+            e = 0b0
+        elif (fastMark == 'on'):
+            e = 0b1
 
-        setSt = a + ( b<<2) + (c<<3) + (d<<4)
+        setSt = a + ( b<<2) + (c<<3) + (d<<4) + (e<<5)
 
         oldPass = self.sbOldPwd3.value()<<16 | self.sbOldPwd2.value()<<8 | self.sbOldPwd1.value()
         if (oldPass <0 or oldPass > 0xffffff):
@@ -523,6 +527,9 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         set4 = (settings & 0x10) >> 0x4
         self.AutoDel.setCurrentIndex(set4)
+        
+        set5 = (settings & 0x20) >> 0x5
+        self.cbFastMark.setCurrentIndex(set5)
         
 if __name__ == '__main__':
     
