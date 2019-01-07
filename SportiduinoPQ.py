@@ -78,7 +78,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 
                 self.sportiduino.beep_ok()
                 self.connected = True
-                self.addText('\nMaster station is connected')
+                self.addText('\nmaster station is connected')
                 
             except:
                 self.addText('\nError')
@@ -128,7 +128,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             try:
                 self.sportiduino.init_card(num)
-                self.addText ('\ninit card number {}'.format(num))
+                self.addText ('\n\ninit card number {}'.format(num))
                 if (self.AutoIncriment.checkState() != 0):
                     self.AutoIn = True
                     self.CardNum = str(num + 1)
@@ -406,7 +406,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         try:
             self.sportiduino.init_info_card()
-            self.addText ('\nGetInfo Card has been created')
+            self.addText ('\n\nGetInfo Card has been created')
         except:
             self.addText('\nError')
         
@@ -418,7 +418,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         try:
             pageData = self.sportiduino.read_card_raw()
             
-            self.addText('\nReads Info Card')
+            self.addText('\n\nReads Info Card')
             self.addText ('\nVersion: ' + str(pageData[8][0]))
             
             stationNum = pageData[9][0];
@@ -472,7 +472,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
     
     def SerialRead_clicked(self):
         try:
-            self.addText('\nReads info about station by UART')
+            self.addText('\n\nReads info about station by UART')
             port = 'COM' + self.cbUartPort.currentText()
             ser = Serial(port, baudrate=9600, timeout=10)
             
@@ -492,13 +492,17 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             msg.insert(0,0x02)
             msg.insert(0,0x01)
+            # Обязательно в начале сообщения дублируем первый байт
+            # Потому что после получения первого байта процессор только просыпается
+            # и UART не успевает синхронизироваться
+            msg.insert(0,0x01)
             msg.append(0x03)
             msg.append(0x04)
             
             bmsg = bytes(msg)
             
             ser.write(bmsg)
-                
+            msg.clear()    
             msg = ser.read(32)
             ser.close()
             
