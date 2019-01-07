@@ -8,6 +8,7 @@ import json
 import copy
 import design
 import traceback
+from serial import Serial
 from sportiduino import Sportiduino
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
@@ -55,6 +56,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.btnApplyPwd.clicked.connect(self.ApplyPwd_clicked)
         self.btnCreateInfoCard.clicked.connect(self.CreateInfo_clicked)
         self.btnReadInfo.clicked.connect(self.ReadInfo_clicked)
+        self.btnUartRead.clicked.connect(self.SerialRead_clicked)
+        self.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
 
         
     def Connec_clicked(self):
@@ -75,7 +78,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 
                 self.sportiduino.beep_ok()
                 self.connected = True
-                self.addText('\nmaster station is connected')
+                self.addText('\nMaster station is connected')
                 
             except:
                 self.addText('\nError')
@@ -466,6 +469,105 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
         except:
             self.addText('\nError')
+    
+    def SerialRead_clicked(self):
+        try:
+            self.addText('\nReads info about station by UART')
+            port = 'COM' + self.cbUartPort.currentText()
+            ser = Serial(port, baudrate=9600, timeout=10)
+            
+            msg = []
+
+            msg.append(0xF0)
+            msg.append(self.sbCurPwd1.value())
+            msg.append(self.sbCurPwd2.value())
+            msg.append(self.sbCurPwd3.value())
+        
+            crc8 = 0
+            
+            for x in msg:
+                crc8 ^= x
+            
+            msg.append(crc8)
+            
+            msg.insert(0,0x02)
+            msg.insert(0,0x01)
+            msg.append(0x03)
+            msg.append(0x04)
+            
+            bmsg = bytes(msg)
+            
+            ser.write(bmsg)
+                
+            msg = ser.read(32)
+            ser.close()
+            
+            pos = 2;
+            version = msg[pos]
+            pos += 1
+            self.addText('\nVersion: ' + str(version))
+
+            stationNum = msg[pos]
+            pos += 1;
+            self.addText('\nStation Num: ' + str(stationNum))
+            
+            if(stationNum == 240):
+                self.addText('(Start)')
+            elif (stationNum == 245):
+                self.addText('(Finish)')
+            elif (stationNum == 248):
+                self.addText('(Check)')
+            elif (stationNum == 249):
+                self.addText('(Clear)')
+                
+            settings = msg[pos]
+            pos += 1
+            self.showSettings(settings)
+            self.addText('\nSettings: ' + bin(settings).lstrip('-0b').zfill(8))
+            
+            batteryOk = msg[pos]
+            pos += 1
+            if(batteryOk):
+                self.addText('\nBattery: Ok')
+            else:
+                self.addText('\nBattery: Low')
+                
+            mode = msg[pos]
+            pos += 1
+            if(mode == 0):
+                self.addText('\nMode: Active')
+            elif(mode == 1):
+                self.addText('\nMode: Wait')
+            elif(mode == 2):
+                self.addText('\nMode: Sleep')
+                
+            timestamp = msg[pos] << 24
+            pos += 1
+            timestamp |= msg[pos] << 16
+            pos += 1
+            timestamp |= msg[pos] << 8
+            pos += 1
+            timestamp |= msg[pos]
+            pos += 1
+            
+            self.addText('\nDate&Time: ' + datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y %H:%M:%S"))
+            
+            timestamp = msg[pos] << 24
+            pos += 1
+            timestamp |= msg[pos] << 16
+            pos += 1
+            timestamp |= msg[pos] << 8
+            pos += 1
+            timestamp |= msg[pos]
+            pos += 1
+            
+            self.addText('\nWake Up: ' + datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y %H:%M:%S"))
+        except:
+            traceback.print_exc()
+            self.addText('\nError')
+
+    def SerialWrite_clicked(self):
+        return
 
     def readDataFormat(self,data):
 
