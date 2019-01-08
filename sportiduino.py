@@ -665,3 +665,61 @@ class BaseStation(object):
         pos += 1
         self.wakeup |= msg[pos]
         pos += 1
+        
+    def writeSettingsBySerial(self, port, oldPwd1, oldPwd2, oldPwd3, newPwd1, newPwd2, newPwd3, num, settings, wakeup):
+        ser = Serial(port, baudrate=9600, timeout=1)
+        
+        msg = []
+
+        msg.append(BaseStation.SERIAL_FUNC_WRITE_SETTINGS)
+        
+        # старый пароль
+        msg.append(oldPwd1)
+        msg.append(oldPwd2)
+        msg.append(oldPwd3)
+        # текущее время
+        utc = datetime.utcnow();
+        msg.append(utc.year - 2000)
+        msg.append(utc.month)
+        msg.append(utc.day)
+        msg.append(utc.hour)
+        msg.append(utc.minute)
+        msg.append(utc.second)
+        # новый пароль
+        msg.append(newPwd1)
+        msg.append(newPwd2)
+        msg.append(newPwd3)
+        # номер станции
+        msg.append(num)
+        # настройки
+        msg.append(settings)
+        # время пробуждения
+        msg.append(wakeup.year - 2000)
+        msg.append(wakeup.month)
+        msg.append(wakeup.day)
+        msg.append(wakeup.hour)
+        msg.append(wakeup.minute)
+        msg.append(wakeup.second)
+        
+        crc8 = 0
+        
+        for x in msg:
+            crc8 ^= x
+        
+        msg.append(crc8)
+        
+        msg.insert(0,BaseStation.SERIAL_MSG_START2)
+        msg.insert(0,BaseStation.SERIAL_MSG_START1)
+        # Обязательно в начале сообщения дублируем первый байт
+        # Потому что после получения первого байта процессор только просыпается
+        # и UART не успевает синхронизироваться, поэтому первый байт не принимается
+        # и его нужно продублировать
+        msg.insert(0,BaseStation.SERIAL_MSG_START1)
+        msg.append(BaseStation.SERIAL_MSG_END1)
+        msg.append(BaseStation.SERIAL_MSG_END2)
+        
+        bmsg = bytes(msg)
+        
+        ser.write(bmsg)
+        ser.close()
+    

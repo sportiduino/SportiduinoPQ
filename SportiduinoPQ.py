@@ -70,9 +70,9 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 else:
                     self.sportiduino = Sportiduino(COM,debug=True)
 
-                self.sbCurPwd1.setValue(self.sportiduino.password & 0x0000FF)
+                self.sbCurPwd1.setValue((self.sportiduino.password & 0xFF0000) >> 16)
                 self.sbCurPwd2.setValue((self.sportiduino.password & 0x00FF00) >> 8) 
-                self.sbCurPwd3.setValue((self.sportiduino.password & 0xFF0000) >> 16)
+                self.sbCurPwd3.setValue(self.sportiduino.password & 0x0000FF)
                 
                 self.showSettings(self.sportiduino.settings)
                 
@@ -274,49 +274,14 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.addText('\nmaster station is not connected')
             return
 
-        workTime = self.WorkTime.currentText()
-        stFi = self.StartFinish.currentText()
-        checkIT = self.CheckInitTime.currentText()
-        autoDel = self.AutoDel.currentText()
-        fastMark = self.cbFastMark.currentText()
+        setSt = self.getSettingsFromUI()
 
-        if (workTime == '6 hour'):
-            a = 0b00
-        elif (workTime == '24 hour'):
-            a = 0b01
-        elif (workTime == 'not work'):
-            a = 0b10
-        elif (workTime == 'all time'):
-            a = 0b11
-
-        if (stFi == "off"):
-            b = 0b0
-        elif (stFi == 'on'):
-            b = 0b1
-
-        if (checkIT == 'off'):
-            c = 0b0
-        elif (checkIT == 'on'):
-            c = 0b1
-
-        if (autoDel == 'off'):
-            d = 0b0
-        elif (autoDel == 'on'):
-            d = 0b1
-            
-        if (fastMark == 'off'):
-            e = 0b0
-        elif (fastMark == 'on'):
-            e = 0b1
-
-        setSt = a + ( b<<2) + (c<<3) + (d<<4) + (e<<5)
-
-        oldPass = self.sbOldPwd3.value()<<16 | self.sbOldPwd2.value()<<8 | self.sbOldPwd1.value()
+        oldPass = self.sbOldPwd1.value()<<16 | self.sbOldPwd2.value()<<8 | self.sbOldPwd3.value()
         if (oldPass <0 or oldPass > 0xffffff):
             self.addText('\nnot correct old pass value')
             oldPass = -1
 
-        newPass = self.sbNewPwd3.value()<<16 | self.sbNewPwd2.value()<<8 | self.sbNewPwd1.value()
+        newPass = self.sbNewPwd1.value()<<16 | self.sbNewPwd2.value()<<8 | self.sbNewPwd3.value()
         if (newPass <0 or newPass > 0xffffff):
             self.addText('\nnot correct new pass value')
             newPass = -1
@@ -390,7 +355,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.addText('\nmaster station is not connected')
             return
 
-        curPass = self.sbCurPwd3.value()<<16 | self.sbCurPwd2.value()<<8 | self.sbCurPwd1.value()
+        curPass = self.sbCurPwd1.value()<<16 | self.sbCurPwd2.value()<<8 | self.sbCurPwd3.value()
         
         try:
             self.sportiduino.apply_pwd(curPass)
@@ -417,92 +382,50 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         try:
             self.addText('\n\nReads Info Card')
-            
             bs = self.sportiduino.read_info_card()
-            
-            self.addText ('\nVersion: ' + str(bs.version))
-            self.addText('\nStation Num: ' + str(bs.num))
-            
-            if(bs.num == BaseStation.START_STATION_NUM):
-                self.addText('(Start)')
-            elif (bs.num == BaseStation.FINISH_STATION_NUM):
-                self.addText('(Finish)')
-            elif (bs.num == BaseStation.CHECK_STATION_NUM):
-                self.addText('(Check)')
-            elif (bs.num == CLEAR_STATION_NUM):
-                self.addText('(Clear)')
-                
-            self.showSettings(bs.settings)
-            self.addText('\nSettings: ' + bin(bs.settings).lstrip('-0b').zfill(8))
-            
-            if(bs.batteryOk):
-                self.addText('\nBattery: Ok')
-            else:
-                self.addText('\nBattery: Low')
-                
-            if(bs.mode == BaseStation.MODE_ACTIVE):
-                self.addText('\nMode: Active')
-            elif(bs.mode == BaseStation.MODE_WAIT):
-                self.addText('\nMode: Wait')
-            elif(bs.mode == BaseStation.MODE_SLEEP):
-                self.addText('\nMode: Sleep')
-            
-            self.addText('\nDate&Time: ' + datetime.fromtimestamp(bs.timestamp).strftime("%d-%m-%Y %H:%M:%S"))
-
-            self.addText('\nWake Up: ' + datetime.fromtimestamp(bs.wakeup).strftime("%d-%m-%Y %H:%M:%S"))
-
+            self.showBaseStationInfo(bs)
         except:
             self.addText('\nError')
     
     def SerialRead_clicked(self):
         try:
-            self.addText('\n\nReads info about station by UART')
+            self.addText('\n\nReads info about a base station by UART')
             port = 'COM' + self.cbUartPort.currentText()
             
             bs = BaseStation()
             bs.readInfoBySerial(port, self.sbCurPwd1.value(), self.sbCurPwd2.value(), self.sbCurPwd3.value())
 
-            self.addText('\nVersion: ' + str(bs.version))
-            self.addText('\nStation Num: ' + str(bs.num))
+            self.showBaseStationInfo(bs)
+        except:
+            traceback.print_exc()
+            self.addText('\nError')
+        
+
+    def SerialWrite_clicked(self):
+        
+        try:
+            self.addText('\n\nWrites settings to a base station by UART')
+            port = 'COM' + self.cbUartPort.currentText()
             
-            if(bs.num == BaseStation.START_STATION_NUM):
-                self.addText('(Start)')
-            elif (bs.num == BaseStation.FINISH_STATION_NUM):
-                self.addText('(Finish)')
-            elif (bs.num == BaseStation.CHECK_STATION_NUM):
-                self.addText('(Check)')
-            elif (bs.num == BaseStation.CLEAR_STATION_NUM):
-                self.addText('(Clear)')
-                
-            self.sbStationNum.setValue(bs.num)
-            self.sbStationNumByUart.setValue(bs.num)
-                
-            self.showSettings(bs.settings)
-            self.addText('\nSettings: ' + bin(bs.settings).lstrip('-0b').zfill(8))
+            oldPwd1 = self.sbOldPwd1.value()
+            oldPwd2 = self.sbOldPwd2.value()
+            oldPwd3 = self.sbOldPwd3.value()
             
-            if(bs.batteryOk):
-                self.addText('\nBattery: Ok')
-            else:
-                self.addText('\nBattery: Low')
-                
-            if(bs.mode == BaseStation.MODE_ACTIVE):
-                self.addText('\nMode: Active')
-            elif(bs.mode == BaseStation.MODE_WAIT):
-                self.addText('\nMode: Wait')
-            elif(bs.mode == BaseStation.MODE_SLEEP):
-                self.addText('\nMode: Sleep')
-                
-            self.addText('\nDate&Time: ' + datetime.fromtimestamp(bs.timestamp).strftime("%d-%m-%Y %H:%M:%S"))
-            self.addText('\nWake Up: ' + datetime.fromtimestamp(bs.wakeup).strftime("%d-%m-%Y %H:%M:%S"))
+            newPwd1 = self.sbNewPwd1.value()
+            newPwd2 = self.sbNewPwd2.value()
+            newPwd3 = self.sbNewPwd3.value()
+            
+            num = self.sbStationNumByUart.value()
+            sets = self.getSettingsFromUI()
+            wakeup = self.dtCompetion.dateTime().toUTC().toPyDateTime()
+            
+            bs = BaseStation()
+            bs.writeSettingsBySerial(port, oldPwd1, oldPwd2, oldPwd3, newPwd1, newPwd2, newPwd3, num, sets, wakeup)
         except:
             traceback.print_exc()
             self.addText('\nError')
 
-    def SerialWrite_clicked(self):
-        return
-
     def readDataFormat(self,data):
-
         data = copy.deepcopy(data)
 
         readBuffer ='\nCard: {}'.format(data['card_number'])
@@ -564,6 +487,82 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         set5 = (settings & 0x20) >> 0x5
         self.cbFastMark.setCurrentIndex(set5)
+        
+    def getSettingsFromUI(self):
+        workTime = self.WorkTime.currentText()
+        stFi = self.StartFinish.currentText()
+        checkIT = self.CheckInitTime.currentText()
+        autoDel = self.AutoDel.currentText()
+        fastMark = self.cbFastMark.currentText()
+
+        if (workTime == '6 hour'):
+            a = 0b00
+        elif (workTime == '24 hour'):
+            a = 0b01
+        elif (workTime == 'not work'):
+            a = 0b10
+        elif (workTime == 'all time'):
+            a = 0b11
+
+        if (stFi == "off"):
+            b = 0b0
+        elif (stFi == 'on'):
+            b = 0b1
+
+        if (checkIT == 'off'):
+            c = 0b0
+        elif (checkIT == 'on'):
+            c = 0b1
+
+        if (autoDel == 'off'):
+            d = 0b0
+        elif (autoDel == 'on'):
+            d = 0b1
+            
+        if (fastMark == 'off'):
+            e = 0b0
+        elif (fastMark == 'on'):
+            e = 0b1
+
+        setSt = a + ( b<<2) + (c<<3) + (d<<4) + (e<<5)
+        
+        return setSt
+    
+    def showBaseStationInfo(self, bs):
+        self.addText('\nVersion: ' + str(bs.version))
+        self.addText('\nStation Num: ' + str(bs.num))
+        
+        if(bs.num == BaseStation.START_STATION_NUM):
+            self.addText('(Start)')
+        elif (bs.num == BaseStation.FINISH_STATION_NUM):
+            self.addText('(Finish)')
+        elif (bs.num == BaseStation.CHECK_STATION_NUM):
+            self.addText('(Check)')
+        elif (bs.num == BaseStation.CLEAR_STATION_NUM):
+            self.addText('(Clear)')
+            
+        self.sbStationNum.setValue(bs.num)
+        self.sbStationNumByUart.setValue(bs.num)
+            
+        self.showSettings(bs.settings)
+        self.addText('\nSettings: ' + bin(bs.settings).lstrip('-0b').zfill(8))
+        
+        if(bs.batteryOk):
+            self.addText('\nBattery: Ok')
+        else:
+            self.addText('\nBattery: Low')
+            
+        if(bs.mode == BaseStation.MODE_ACTIVE):
+            self.addText('\nMode: Active')
+        elif(bs.mode == BaseStation.MODE_WAIT):
+            self.addText('\nMode: Wait')
+        elif(bs.mode == BaseStation.MODE_SLEEP):
+            self.addText('\nMode: Sleep')
+            
+        self.addText('\nDate&Time: ' + datetime.fromtimestamp(bs.timestamp).strftime("%d-%m-%Y %H:%M:%S"))
+        self.addText('\nWake Up: ' + datetime.fromtimestamp(bs.wakeup).strftime("%d-%m-%Y %H:%M:%S"))
+        
+        self.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))
         
 if __name__ == '__main__':
     
