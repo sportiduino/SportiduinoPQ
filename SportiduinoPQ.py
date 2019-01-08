@@ -58,6 +58,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.btnReadInfo.clicked.connect(self.ReadInfo_clicked)
         self.btnUartRead.clicked.connect(self.SerialRead_clicked)
         self.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
+        self.btnClearText.clicked.connect(self.ClearText_clicked)
 
         
     def Connec_clicked(self):
@@ -424,6 +425,9 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         except:
             traceback.print_exc()
             self.addText('\nError')
+            
+    def ClearText_clicked(self):
+        self.textBrowser.setPlainText('')
 
     def readDataFormat(self,data):
         data = copy.deepcopy(data)

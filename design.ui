@@ -1549,14 +1549,33 @@
      </layout>
     </item>
     <item>
-     <widget class="QTextBrowser" name="textBrowser">
-      <property name="locale">
-       <locale language="English" country="UnitedStates"/>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
       </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
-      </property>
-     </widget>
+      <item>
+       <widget class="QTextBrowser" name="textBrowser">
+        <property name="locale">
+         <locale language="English" country="UnitedStates"/>
+        </property>
+        <property name="horizontalScrollBarPolicy">
+         <enum>Qt::ScrollBarAlwaysOff</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnClearText">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Clear</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -1601,7 +1620,6 @@
   <tabstop>PassCard</tabstop>
   <tabstop>LoadSet</tabstop>
   <tabstop>SaveSet</tabstop>
-  <tabstop>textBrowser</tabstop>
  </tabstops>
  <resources/>
  <connections/>
