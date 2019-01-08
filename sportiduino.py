@@ -172,6 +172,7 @@ class Sportiduino(object):
             self.version = byte2int(data[0])
             self.password = byte2int(data[1])<<16 | byte2int(data[2])<<8 | byte2int(data[3])
             self.settings = byte2int(data[4])
+            self.antennaGain = byte2int(data[5])
             return Sportiduino.Version(byte2int(data[0]))
         return None
 
@@ -283,7 +284,7 @@ class Sportiduino(object):
         self._send_command(Sportiduino.CMD_INIT_TIMECARD, params, wait_response=False)
 
 
-    def init_passwd_card(self, old_passwd=0, new_passwd=0, flags=0):
+    def init_passwd_card(self, old_passwd, new_passwd, settings, antennaGain):
         """Initialize card for writing new password to base station.
         @param old_passwd: Old password (default 0x000000).
         @param new_passwd: New password (default 0x000000).
@@ -292,9 +293,10 @@ class Sportiduino(object):
         params = b''
         params += Sportiduino._to_str(new_passwd, 3)
         params += Sportiduino._to_str(old_passwd, 3)
-        params += Sportiduino._to_str(flags, 1)
+        params += Sportiduino._to_str(settings, 1)
+        params += Sportiduino._to_str(antennaGain, 1)
         self.password = new_passwd
-        self.settings = flags
+        self.settings = settings
         self._send_command(Sportiduino.CMD_INIT_PASSWDCARD, params, wait_response=False)
         
     def init_info_card(self):
@@ -309,6 +311,7 @@ class Sportiduino(object):
         pageData = self.read_card_raw()
             
         bs.version = pageData[8][0]
+        bs.antennaGain = pageData[8][3]
         bs.num = pageData[9][0]
         bs.settings = pageData[9][1]
         bs.batteryOk = pageData[9][2]
@@ -597,6 +600,7 @@ class BaseStation(object):
         self.timestamp = 0
         self.wakeup = 0
         self.batteryOk = 0
+        self.antennaGain = 7<<4
     
     def readInfoBySerial(self, port, pwd1, pwd2, pwd3):
         ser = Serial(port, baudrate=9600, timeout=10)
@@ -666,7 +670,9 @@ class BaseStation(object):
         self.wakeup |= msg[pos]
         pos += 1
         
-    def writeSettingsBySerial(self, port, oldPwd1, oldPwd2, oldPwd3, newPwd1, newPwd2, newPwd3, num, settings, wakeup):
+        self.antennaGain = msg[pos]
+        
+    def writeSettingsBySerial(self, port, oldPwd1, oldPwd2, oldPwd3, newPwd1, newPwd2, newPwd3, num, settings, wakeup, gain):
         ser = Serial(port, baudrate=9600, timeout=1)
         
         msg = []
@@ -700,6 +706,8 @@ class BaseStation(object):
         msg.append(wakeup.hour)
         msg.append(wakeup.minute)
         msg.append(wakeup.second)
+        # усиление антенны
+        msg.append(gain)
         
         crc8 = 0
         

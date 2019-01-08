@@ -76,6 +76,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 self.sbCurPwd3.setValue(self.sportiduino.password & 0x0000FF)
                 
                 self.showSettings(self.sportiduino.settings)
+                idx = (self.sportiduino.antennaGain >> 4) - 2
+                self.cbAntennaGain.setCurrentIndex(idx)
                 
                 self.sportiduino.beep_ok()
                 self.connected = True
@@ -286,10 +288,12 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if (newPass <0 or newPass > 0xffffff):
             self.addText('\nnot correct new pass value')
             newPass = -1
+            
+        gain = (self.cbAntennaGain.currentIndex() + 2) << 4
         
         if (newPass!= -1 and oldPass!= -1):
             try:
-                self.sportiduino.init_passwd_card(oldPass,newPass,setSt)
+                self.sportiduino.init_passwd_card(oldPass,newPass,setSt,gain)
                 self.addText ('\nset password - settings card')
                 
                 self.sbCurPwd3.setValue(self.sbNewPwd3.value())
@@ -419,9 +423,11 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             num = self.sbStationNumByUart.value()
             sets = self.getSettingsFromUI()
             wakeup = self.dtCompetion.dateTime().toUTC().toPyDateTime()
+            gain = (self.cbAntennaGain.currentIndex() + 2) << 4
             
             bs = BaseStation()
-            bs.writeSettingsBySerial(port, oldPwd1, oldPwd2, oldPwd3, newPwd1, newPwd2, newPwd3, num, sets, wakeup)
+            bs.writeSettingsBySerial(port, oldPwd1, oldPwd2, oldPwd3, 
+                                     newPwd1, newPwd2, newPwd3, num, sets, wakeup, gain)
         except:
             traceback.print_exc()
             self.addText('\nError')
@@ -567,6 +573,10 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.addText('\nWake Up: ' + datetime.fromtimestamp(bs.wakeup).strftime("%d-%m-%Y %H:%M:%S"))
         
         self.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))
+        
+        idx = (bs.antennaGain >> 4) - 2;
+        self.cbAntennaGain.setCurrentIndex(idx)
+        self.addText('\nAntenna Gain: ' + self.cbAntennaGain.currentText())
         
 if __name__ == '__main__':
     
