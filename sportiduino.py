@@ -304,6 +304,27 @@ class Sportiduino(object):
         params = b''
         self._send_command(Sportiduino.CMD_INIT_INFOCARD, params, wait_response=False)
 
+    def read_info_card(self):
+        bs = BaseStation()
+        pageData = self.read_card_raw()
+            
+        bs.version = pageData[8][0]
+        bs.num = pageData[9][0]
+        bs.settings = pageData[9][1]
+        bs.batteryOk = pageData[9][2]
+        bs.mode = pageData[9][3]
+        bs.timestamp = pageData[10][0] << 24
+        bs.timestamp |= pageData[10][1] << 16
+        bs.timestamp |= pageData[10][2] << 8
+        bs.timestamp |= pageData[10][3]
+ 
+        bs.wakeup = pageData[11][0] << 24
+        bs.wakeup |= pageData[11][1] << 16
+        bs.wakeup |= pageData[11][2] << 8
+        bs.wakeup |= pageData[11][3]
+
+        self.beep_ok()
+        return bs
 
     def apply_pwd(self, pwd=0, flags=0):
         
@@ -549,3 +570,98 @@ class SportiduinoException(Exception):
 class SportiduinoTimeout(SportiduinoException):
     pass
 
+class BaseStation(object):
+    MODE_ACTIVE = 0
+    MODE_WAIT = 1
+    MODE_SLEEP = 2
+    
+    START_STATION_NUM = 240
+    FINISH_STATION_NUM = 245
+    CHECK_STATION_NUM = 248
+    CLEAR_STATION_NUM = 249
+    
+    # UART
+    SERIAL_MSG_START1 = 0xFE
+    SERIAL_MSG_START2 = 0xEF
+    SERIAL_MSG_END1 = 0xFD
+    SERIAL_MSG_END2 = 0xDF
+
+    SERIAL_FUNC_READ_INFO = 0xF0
+    SERIAL_FUNC_WRITE_SETTINGS = 0xF1
+    
+    def __init__(self):
+        self.version = 0
+        self.mode = BaseStation.MODE_ACTIVE
+        self.settings = 0
+        self.num = 0
+        self.timestamp = 0
+        self.wakeup = 0
+        self.batteryOk = 0
+    
+    def readInfoBySerial(self, port, pwd1, pwd2, pwd3):
+        ser = Serial(port, baudrate=9600, timeout=10)
+        
+        msg = []
+
+        msg.append(BaseStation.SERIAL_FUNC_READ_INFO)
+        msg.append(pwd1)
+        msg.append(pwd2)
+        msg.append(pwd3)
+    
+        crc8 = 0
+        
+        for x in msg:
+            crc8 ^= x
+        
+        msg.append(crc8)
+        
+        msg.insert(0,BaseStation.SERIAL_MSG_START2)
+        msg.insert(0,BaseStation.SERIAL_MSG_START1)
+        # Обязательно в начале сообщения дублируем первый байт
+        # Потому что после получения первого байта процессор только просыпается
+        # и UART не успевает синхронизироваться, поэтому первый байт не принимается
+        # и его нужно продублировать
+        msg.insert(0,BaseStation.SERIAL_MSG_START1)
+        msg.append(BaseStation.SERIAL_MSG_END1)
+        msg.append(BaseStation.SERIAL_MSG_END2)
+        
+        bmsg = bytes(msg)
+        
+        ser.write(bmsg)
+        msg.clear()    
+        msg = ser.read(32)
+        ser.close()
+        
+        pos = 2;
+        self.version = msg[pos]
+        pos += 1
+        
+        self.num = msg[pos]
+        pos += 1;
+        
+        self.settings = msg[pos]
+        pos += 1    
+           
+        self.batteryOk = msg[pos]
+        pos += 1
+        
+        self.mode = msg[pos]
+        pos += 1
+        
+        self.timestamp = msg[pos] << 24
+        pos += 1
+        self.timestamp |= msg[pos] << 16
+        pos += 1
+        self.timestamp |= msg[pos] << 8
+        pos += 1
+        self.timestamp |= msg[pos]
+        pos += 1
+        
+        self.wakeup = msg[pos] << 24
+        pos += 1
+        self.wakeup |= msg[pos] << 16
+        pos += 1
+        self.wakeup |= msg[pos] << 8
+        pos += 1
+        self.wakeup |= msg[pos]
+        pos += 1

@@ -9,7 +9,7 @@ import copy
 import design
 import traceback
 from serial import Serial
-from sportiduino import Sportiduino
+from sportiduino import Sportiduino, BaseStation
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
 from PyQt5.QtCore import QSizeF, QDateTime, QTime
@@ -416,57 +416,41 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             return
         
         try:
-            pageData = self.sportiduino.read_card_raw()
-            
             self.addText('\n\nReads Info Card')
-            self.addText ('\nVersion: ' + str(pageData[8][0]))
             
-            stationNum = pageData[9][0];
-            self.addText('\nStation Num: ' + str(pageData[9][0]))
+            bs = self.sportiduino.read_info_card()
             
-            if(stationNum == 240):
+            self.addText ('\nVersion: ' + str(bs.version))
+            self.addText('\nStation Num: ' + str(bs.num))
+            
+            if(bs.num == BaseStation.START_STATION_NUM):
                 self.addText('(Start)')
-            elif (stationNum == 245):
+            elif (bs.num == BaseStation.FINISH_STATION_NUM):
                 self.addText('(Finish)')
-            elif (stationNum == 248):
+            elif (bs.num == BaseStation.CHECK_STATION_NUM):
                 self.addText('(Check)')
-            elif (stationNum == 249):
+            elif (bs.num == CLEAR_STATION_NUM):
                 self.addText('(Clear)')
                 
-            settings = pageData[9][1];
-            self.showSettings(settings)
-            self.addText('\nSettings: ' + bin(settings).lstrip('-0b').zfill(8))
+            self.showSettings(bs.settings)
+            self.addText('\nSettings: ' + bin(bs.settings).lstrip('-0b').zfill(8))
             
-            batteryOk = pageData[9][2];
-            if(batteryOk):
+            if(bs.batteryOk):
                 self.addText('\nBattery: Ok')
             else:
                 self.addText('\nBattery: Low')
                 
-            mode = pageData[9][3]
-            if(mode == 0):
+            if(bs.mode == BaseStation.MODE_ACTIVE):
                 self.addText('\nMode: Active')
-            elif(mode == 1):
+            elif(bs.mode == BaseStation.MODE_WAIT):
                 self.addText('\nMode: Wait')
-            elif(mode == 2):
+            elif(bs.mode == BaseStation.MODE_SLEEP):
                 self.addText('\nMode: Sleep')
-                
-            timestamp = pageData[10][0] << 24;
-            timestamp |= pageData[10][1] << 16;
-            timestamp |= pageData[10][2] << 8;
-            timestamp |= pageData[10][3];
             
-            self.addText('\nDate&Time: ' + datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y %H:%M:%S"))
-            
-            timestamp = pageData[11][0] << 24;
-            timestamp |= pageData[11][1] << 16;
-            timestamp |= pageData[11][2] << 8;
-            timestamp |= pageData[11][3];
-            
-            self.addText('\nWake Up: ' + datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y %H:%M:%S"))
-            
-            self.sportiduino.beep_ok()
-            
+            self.addText('\nDate&Time: ' + datetime.fromtimestamp(bs.timestamp).strftime("%d-%m-%Y %H:%M:%S"))
+
+            self.addText('\nWake Up: ' + datetime.fromtimestamp(bs.wakeup).strftime("%d-%m-%Y %H:%M:%S"))
+
         except:
             self.addText('\nError')
     
@@ -474,98 +458,42 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         try:
             self.addText('\n\nReads info about station by UART')
             port = 'COM' + self.cbUartPort.currentText()
-            ser = Serial(port, baudrate=9600, timeout=10)
             
-            msg = []
+            bs = BaseStation()
+            bs.readInfoBySerial(port, self.sbCurPwd1.value(), self.sbCurPwd2.value(), self.sbCurPwd3.value())
 
-            msg.append(0xF0)
-            msg.append(self.sbCurPwd1.value())
-            msg.append(self.sbCurPwd2.value())
-            msg.append(self.sbCurPwd3.value())
-        
-            crc8 = 0
+            self.addText('\nVersion: ' + str(bs.version))
+            self.addText('\nStation Num: ' + str(bs.num))
             
-            for x in msg:
-                crc8 ^= x
-            
-            msg.append(crc8)
-            
-            msg.insert(0,0x02)
-            msg.insert(0,0x01)
-            # Обязательно в начале сообщения дублируем первый байт
-            # Потому что после получения первого байта процессор только просыпается
-            # и UART не успевает синхронизироваться
-            msg.insert(0,0x01)
-            msg.append(0x03)
-            msg.append(0x04)
-            
-            bmsg = bytes(msg)
-            
-            ser.write(bmsg)
-            msg.clear()    
-            msg = ser.read(32)
-            ser.close()
-            
-            pos = 2;
-            version = msg[pos]
-            pos += 1
-            self.addText('\nVersion: ' + str(version))
-
-            stationNum = msg[pos]
-            pos += 1;
-            self.addText('\nStation Num: ' + str(stationNum))
-            
-            if(stationNum == 240):
+            if(bs.num == BaseStation.START_STATION_NUM):
                 self.addText('(Start)')
-            elif (stationNum == 245):
+            elif (bs.num == BaseStation.FINISH_STATION_NUM):
                 self.addText('(Finish)')
-            elif (stationNum == 248):
+            elif (bs.num == BaseStation.CHECK_STATION_NUM):
                 self.addText('(Check)')
-            elif (stationNum == 249):
+            elif (bs.num == BaseStation.CLEAR_STATION_NUM):
                 self.addText('(Clear)')
                 
-            settings = msg[pos]
-            pos += 1
-            self.showSettings(settings)
-            self.addText('\nSettings: ' + bin(settings).lstrip('-0b').zfill(8))
+            self.sbStationNum.setValue(bs.num)
+            self.sbStationNumByUart.setValue(bs.num)
+                
+            self.showSettings(bs.settings)
+            self.addText('\nSettings: ' + bin(bs.settings).lstrip('-0b').zfill(8))
             
-            batteryOk = msg[pos]
-            pos += 1
-            if(batteryOk):
+            if(bs.batteryOk):
                 self.addText('\nBattery: Ok')
             else:
                 self.addText('\nBattery: Low')
                 
-            mode = msg[pos]
-            pos += 1
-            if(mode == 0):
+            if(bs.mode == BaseStation.MODE_ACTIVE):
                 self.addText('\nMode: Active')
-            elif(mode == 1):
+            elif(bs.mode == BaseStation.MODE_WAIT):
                 self.addText('\nMode: Wait')
-            elif(mode == 2):
+            elif(bs.mode == BaseStation.MODE_SLEEP):
                 self.addText('\nMode: Sleep')
                 
-            timestamp = msg[pos] << 24
-            pos += 1
-            timestamp |= msg[pos] << 16
-            pos += 1
-            timestamp |= msg[pos] << 8
-            pos += 1
-            timestamp |= msg[pos]
-            pos += 1
-            
-            self.addText('\nDate&Time: ' + datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y %H:%M:%S"))
-            
-            timestamp = msg[pos] << 24
-            pos += 1
-            timestamp |= msg[pos] << 16
-            pos += 1
-            timestamp |= msg[pos] << 8
-            pos += 1
-            timestamp |= msg[pos]
-            pos += 1
-            
-            self.addText('\nWake Up: ' + datetime.fromtimestamp(timestamp).strftime("%d-%m-%Y %H:%M:%S"))
+            self.addText('\nDate&Time: ' + datetime.fromtimestamp(bs.timestamp).strftime("%d-%m-%Y %H:%M:%S"))
+            self.addText('\nWake Up: ' + datetime.fromtimestamp(bs.wakeup).strftime("%d-%m-%Y %H:%M:%S"))
         except:
             traceback.print_exc()
             self.addText('\nError')
