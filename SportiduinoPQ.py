@@ -8,6 +8,7 @@ import json
 import copy
 import design
 import traceback
+
 from serial import Serial
 from sportiduino import Sportiduino, BaseStation
 from datetime import datetime, timedelta
@@ -15,6 +16,8 @@ from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
 from PyQt5.QtCore import QSizeF, QDateTime, QTime
 from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtWidgets import QApplication, QFileDialog
+from PyQt5.QtCore import QTranslator
+from PyQt5.QtCore import QLocale
 
 class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def __init__(self):
@@ -81,16 +84,17 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 
                 self.sportiduino.beep_ok()
                 self.connected = True
-                self.addText('\nmaster station is connected')
+                text = self.tr("\nMaster station {0} on port {1} is connected").format(self.sportiduino.version, self.sportiduino.port)
+                self.addText(text)
                 
-            except:
-                self.addText('\nError')
+            except BaseException as err:
+                self.addText(self.tr('\nError {0}').format(err))
                 self.connected = False
                 
 
         else:
             self.sportiduino.disconnect()
-            self.addText('\nmaster station is disconnected')
+            self.addText(self.tr('\nMaster station is disconnected'))
             self.connected = False
             
 
@@ -101,15 +105,12 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             return
 
         try:
-            self.textBrowser.setPlainText('')
             data = self.sportiduino.read_card(timeout = 0.5)
-            self.sportiduino.beep_ok()
             
             self.readDataFormat(data)
             self.saveDataJson(data)
             
         except:
-            self.sportiduino.beep_error()
             self.addText('\nError')
 
         
@@ -130,17 +131,21 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if (num > 0 and num < 65000):
             
             try:
-                self.sportiduino.init_card(num)
-                self.addText ('\n\ninit card number {}'.format(num))
+                code, data = self.sportiduino.init_card(num)
+                self.addText ('\n\nInit card number {}'.format(num))
                 if (self.AutoIncriment.checkState() != 0):
                     self.AutoIn = True
                     self.CardNum = str(num + 1)
                     self.cardLine.setText(self.CardNum)
+                if code == Sportiduino.RESP_OK :
+                    self.addText("The card (" + self.sportiduino.card_type_to_str(data[1]) + ") has been initialized succefully")
+            except SportiduinoException as err:
+                self.addText("\n" + err)
             except:
-                self.addText('\nError')
+                self.addText('\nUnknown error')
                
         else:
-            self.addText("\nnot correct value")
+            self.addText("\nError: not correct card number")
             
     def SetNum_clicked(self):
         if (self.connected == False):
@@ -170,7 +175,6 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.addText ('\nset time')
         except:
             self.addText('\nError')
-            sportiduino.beep_error()
 
     def SetStart_clicked(self):
         if (self.connected == False):
@@ -240,7 +244,6 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         readBuffer = ''
         try:
             data = self.sportiduino.read_backup()
-            self.sportiduino.beep_ok()
             try:
                 readBuffer += '\nread dump from CP: {}'.format(data['cp'])
             except:
@@ -333,7 +336,9 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         logFile = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(self.initTime)),'a')
         print(text)
-        self.textBrowser.setPlainText(self.textBrowser.toPlainText() + text)
+        browserText = self.textBrowser.toPlainText()
+        browserText = browserText + text
+        self.textBrowser.setPlainText(browserText)
         logFile.write(text)
         logFile.close()
 
@@ -587,6 +592,12 @@ if __name__ == '__main__':
         pass
 
     app = QtWidgets.QApplication(sys.argv)
+    
+    translator = QTranslator()
+    translator.load("sportiduinopq_" + QLocale.system().name(), "./translation")
+    if not app.installTranslator(translator):
+        print("Can not install translation!")
+
     window = App()
     window.show()
     app.exec_()

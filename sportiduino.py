@@ -81,22 +81,24 @@ class Sportiduino(object):
     ERR_WRITE_CARD      = b'\x02'
     ERR_READ_CARD       = b'\x03'
     ERR_READ_EEPROM     = b'\x04'
+    ERR_CARD_NOT_FOUND  = b'\x05'
 
     class Version(object):
-        """Sportiduino firmware version."""
+        """Sportiduino version."""
         def __init__(self, value):
             """Initializes version by byte from master station.
             @param value: Byte from master station.
             """
             self.value = value
-            self.major = value // 100
-            self.minor = value % 100
+            self.hw = (value >> 6) + 1
+            self.major = ((value >> 2) & 0x0F) + 1
+            self.minor = value & 0x03
 
         def __str__(self):
             """Override __str__ method.
             @return: User friendly version string.
             """
-            return 'v%d.%d.x' % (self.major, self.minor)
+            return 'v%d.%d.%d' % (self.hw, self.major, self.minor)
 
     def __init__(self, port=None, debug=False, logger=None):
         """Initializes communication with master station at port.
@@ -243,7 +245,7 @@ class Sportiduino(object):
         params += Sportiduino._to_str(t, 4)
         params += page6[:5]
         params += page7[:5]
-        self._send_command(Sportiduino.CMD_INIT_CARD, params, wait_response=False)
+        self._send_command(Sportiduino.CMD_INIT_CARD, params, wait_response=True)
 
 
     def init_backupreader(self):
@@ -353,7 +355,36 @@ class Sportiduino(object):
     def disable_continuous_read(self):
         """Disable continuous card read."""
         self._set_mode(b'\x00')
-
+        
+    def card_type_to_str(self, card_type):
+        if(card_type ==  0) :
+            return "Unknown"
+        elif(card_type == 1) :
+            return "Compliant with ISO/IEC 14443-4"
+        elif(card_type == 2) :
+            return "Compliant with ISO/IEC 18092 (NFC)"
+        elif(card_type == 3) :
+            return "MIFARE Classic Mini"
+        elif(card_type == 4) :
+            return "MIFARE Classic 1K"
+        elif(card_type == 5) :
+            return "MIFARE Classic 4K"
+        elif(card_type == 6) :
+            return "MIFARE Ultralight"
+        elif(card_type == 7) :
+            return "MIFARE Plus"
+        elif(card_type == 8) :
+            return "MIFARE DESFire"
+        elif(card_type == 9) :
+            return "TNP3XXX"
+        elif(card_type == 0xFF) :
+            return "Not detected"
+        elif(card_type == 0x12) :
+            return "NTAG_213"
+        elif(card_type == 0x3E) :
+            return "NTAG_215"
+        elif(card_type == 0x6D) :
+            return "NTAG_216"
 
     def _set_mode(self, mode):
         """Set master station read mode."""
@@ -376,10 +407,9 @@ class Sportiduino(object):
 
         self.port = port
         self.baudrate = self._serial.baudrate
-        version = self.read_version()
-        if version is not None:
-            self._log_info("Master station %s on port '%s' connected" % (version, port))
-
+        self.version = self.read_version()
+        if self.version is not None:
+            self._log_info("Master station %s on port '%s' is connected" % (self.version, port))
 
     def _send_command(self, code, parameters=None, wait_response=True, timeout=None):
         if parameters is None:
@@ -489,16 +519,24 @@ class Sportiduino(object):
     @staticmethod
     def _preprocess_response(code, data, log_debug):
         if code == Sportiduino.RESP_ERROR:
+            
+            card_type = self.card_type_to_str(data[1])
+            
             if data == Sportiduino.ERR_COM:
                 raise SportiduinoException("COM error")
             elif data == Sportiduino.ERR_WRITE_CARD:
-                raise SportiduinoException("Card write error")
+                raise SportiduinoException("Card (" + card_type + ") writting error")
             elif data == Sportiduino.ERR_READ_CARD:
-                raise SportiduinoException("Card read error")
+                raise SportiduinoException("Card (" + card_type + ") reading error")
             elif data == Sportiduino.ERR_READ_EEPROM:
-                raise SportiduinoException("EEPROM read error")
+                raise SportiduinoException("EEPROM reading error")
+            elif data == Sportiduino.ERR_CARD_NOT_FOUND :
+                if data[1] == 0xFF :
+                    raise SportiduinoException("Card is not found")
+                else :
+                    raise SportiduinoException("Unsupported card type (" + card_type + ")")
             else:
-                raise SportiduinoException("Error with code %s" % hex(byte2int(code)))
+                raise SportiduinoException("Error code %s" % hex(byte2int(code)))
         elif code == Sportiduino.RESP_OK:
             log_debug("Ok received")
         return code, data
