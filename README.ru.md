@@ -1,6 +1,6 @@
 ﻿# sportiduinoPQ
 
-### версия 0.6.1
+### версия 0.7.0
 
 В [последнем релизе](https://github.com/alexandervolikov/SportiduinoPQ/releases) можно скачать программу с exe файлом для Windows систем, установка не требуется 
 
@@ -23,4 +23,4 @@ pyinstaller --onefile --noconsole SportiduinoPQ.py
 
 Инструкция находится в руководстве пользователя https://github.com/alexandervolikov/sportiduino
 
-![](https://raw.githubusercontent.com/alexandervolikov/SportiduinoPQ/master/image/main1.JPG)
+![](/images/main1.JPG)

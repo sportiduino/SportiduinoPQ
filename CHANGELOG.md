@@ -1,3 +1,8 @@
+## [0.7.0] - 2019-07-23
+- Added russian localization
+- Redesigned UI
+- Added UI to work with a base station using UART
+- Fixed bugs
 ## [0.6.1] - 2018-10-23
 ### del some functions for version 1.4.2 sportiduino
 

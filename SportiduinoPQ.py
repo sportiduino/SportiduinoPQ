@@ -28,6 +28,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
+        self.setWindowTitle("SportiduinoPQ v0.7.0")
+        
         self.log =''
         self.readData = []
         self.dumpData = []
@@ -68,7 +70,6 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
         self.btnClearText.clicked.connect(self.ClearText_clicked)
 
-        
     def Connec_clicked(self):
 
         self.addText("")
