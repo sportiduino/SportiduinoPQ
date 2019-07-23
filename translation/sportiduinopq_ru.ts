@@ -4,564 +4,619 @@
 <context>
     <name>MainWindow</name>
     <message>
-        <location filename="../design.py" line="482"/>
+        <location filename="../design.py" line="501"/>
         <source>SportiduinoPQ</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="637"/>
+        <location filename="../design.py" line="656"/>
         <source>Connect</source>
-        <translation type="unfinished">Подключить</translation>
+        <translation type="unfinished">Связь</translation>
     </message>
     <message>
-        <location filename="../design.py" line="619"/>
+        <location filename="../design.py" line="638"/>
         <source>Com Port</source>
         <translation type="unfinished">COM порт</translation>
     </message>
     <message>
-        <location filename="../design.py" line="485"/>
+        <location filename="../design.py" line="504"/>
         <source>auto</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="587"/>
+        <location filename="../design.py" line="606"/>
         <source>0</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="588"/>
+        <location filename="../design.py" line="607"/>
         <source>1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="589"/>
+        <location filename="../design.py" line="608"/>
         <source>2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="590"/>
+        <location filename="../design.py" line="609"/>
         <source>3</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="591"/>
+        <location filename="../design.py" line="610"/>
         <source>4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="592"/>
+        <location filename="../design.py" line="611"/>
         <source>5</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="593"/>
+        <location filename="../design.py" line="612"/>
         <source>6</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="594"/>
+        <location filename="../design.py" line="613"/>
         <source>7</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="595"/>
+        <location filename="../design.py" line="614"/>
         <source>8</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="596"/>
+        <location filename="../design.py" line="615"/>
         <source>9</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="597"/>
+        <location filename="../design.py" line="616"/>
         <source>10</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="598"/>
+        <location filename="../design.py" line="617"/>
         <source>11</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="599"/>
+        <location filename="../design.py" line="618"/>
         <source>12</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="600"/>
+        <location filename="../design.py" line="619"/>
         <source>13</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="601"/>
+        <location filename="../design.py" line="620"/>
         <source>14</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="602"/>
+        <location filename="../design.py" line="621"/>
         <source>15</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="603"/>
+        <location filename="../design.py" line="622"/>
         <source>16</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="604"/>
+        <location filename="../design.py" line="623"/>
         <source>17</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="605"/>
+        <location filename="../design.py" line="624"/>
         <source>18</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="606"/>
+        <location filename="../design.py" line="625"/>
         <source>19</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="607"/>
+        <location filename="../design.py" line="626"/>
         <source>20</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="608"/>
+        <location filename="../design.py" line="627"/>
         <source>21</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="609"/>
+        <location filename="../design.py" line="628"/>
         <source>22</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="610"/>
+        <location filename="../design.py" line="629"/>
         <source>23</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="611"/>
+        <location filename="../design.py" line="630"/>
         <source>24</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="612"/>
+        <location filename="../design.py" line="631"/>
         <source>25</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="613"/>
+        <location filename="../design.py" line="632"/>
         <source>26</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="614"/>
+        <location filename="../design.py" line="633"/>
         <source>27</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="615"/>
+        <location filename="../design.py" line="634"/>
         <source>28</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="616"/>
+        <location filename="../design.py" line="635"/>
         <source>29</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="617"/>
+        <location filename="../design.py" line="636"/>
         <source>30</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="618"/>
+        <location filename="../design.py" line="637"/>
         <source>31</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="526"/>
+        <location filename="../design.py" line="545"/>
         <source>Main</source>
         <translation type="unfinished">Основное</translation>
     </message>
     <message>
-        <location filename="../design.py" line="518"/>
+        <location filename="../design.py" line="537"/>
         <source>Print</source>
         <translation type="unfinished">Печатать</translation>
     </message>
     <message>
-        <location filename="../design.py" line="519"/>
+        <location filename="../design.py" line="538"/>
         <source>Select Printer</source>
         <translation type="unfinished">Выбрать</translation>
     </message>
     <message>
-        <location filename="../design.py" line="520"/>
+        <location filename="../design.py" line="539"/>
         <source>Reads a participant card</source>
         <translation type="unfinished">Прочитать чип участника</translation>
     </message>
     <message>
-        <location filename="../design.py" line="521"/>
+        <location filename="../design.py" line="540"/>
         <source>Read Card</source>
         <translation type="unfinished">Прочитать чип</translation>
     </message>
     <message>
-        <location filename="../design.py" line="522"/>
+        <location filename="../design.py" line="541"/>
         <source>AutoPrint</source>
         <translation type="unfinished">Авто-печать</translation>
     </message>
     <message>
-        <location filename="../design.py" line="523"/>
+        <location filename="../design.py" line="542"/>
         <source>Inits a participant card</source>
         <translation type="unfinished">Подготовить чип участника к старту</translation>
     </message>
     <message>
-        <location filename="../design.py" line="524"/>
+        <location filename="../design.py" line="543"/>
         <source>Init Card</source>
         <translation type="unfinished">Подготовить чип</translation>
     </message>
     <message>
-        <location filename="../design.py" line="525"/>
+        <location filename="../design.py" line="544"/>
         <source>AutoIncriment</source>
         <translation type="unfinished">Авто-увеличение</translation>
     </message>
     <message>
-        <location filename="../design.py" line="560"/>
+        <location filename="../design.py" line="579"/>
         <source>Settings#1</source>
         <translation type="unfinished">Настройки#1</translation>
     </message>
     <message>
-        <location filename="../design.py" line="527"/>
+        <location filename="../design.py" line="546"/>
         <source>Sleep Card</source>
         <translation type="unfinished">Мастер-чип &quot;Сон&quot;</translation>
     </message>
     <message>
         <location filename="../design.py" line="528"/>
         <source>Creates a config card to force a base station to sleep and to wake-up at competion date</source>
-        <translation type="unfinished">Создать мастер-чип для перевода базовой станции в режим сна</translation>
+        <translation type="obsolete">Создать мастер-чип для перевода базовой станции в режим сна</translation>
     </message>
     <message>
-        <location filename="../design.py" line="553"/>
+        <location filename="../design.py" line="572"/>
         <source>Create</source>
         <translation type="unfinished">Создать</translation>
     </message>
     <message>
-        <location filename="../design.py" line="530"/>
+        <location filename="../design.py" line="549"/>
         <source>dd.MM.yyyy HH:mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="531"/>
+        <location filename="../design.py" line="550"/>
         <source>Competion Date/Time</source>
         <translation type="unfinished">Начало соревнований</translation>
     </message>
     <message>
-        <location filename="../design.py" line="532"/>
+        <location filename="../design.py" line="551"/>
         <source>Dump Card</source>
-        <translation type="unfinished">Мастер-чип &quot;Лог отм.&quot;</translation>
+        <translation type="unfinished">Мастер-чип &quot;Лог Отм.&quot;</translation>
     </message>
     <message>
         <location filename="../design.py" line="533"/>
         <source>Reads a config card consists dump info</source>
-        <translation type="unfinished">Прочитать чип содержащий журнал отметок базовой станции</translation>
+        <translation type="obsolete">Прочитать чип содержащий журнал отметок базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.py" line="622"/>
+        <location filename="../design.py" line="641"/>
         <source>Read</source>
         <translation type="unfinished">Читать</translation>
     </message>
     <message>
         <location filename="../design.py" line="535"/>
         <source>Creates a config card to read dump from a base station</source>
-        <translation type="unfinished">Создать мастер-чип для получения журнала отметок базовой станции</translation>
+        <translation type="obsolete">Создать мастер-чип для получения журнала отметок базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.py" line="537"/>
+        <location filename="../design.py" line="556"/>
         <source>StationNum Card</source>
         <translation type="unfinished">Мастер-чип &quot;Номер&quot;</translation>
     </message>
     <message>
         <location filename="../design.py" line="538"/>
         <source>Creates a config card to set a number for a base station</source>
-        <translation type="unfinished">Создать мастер-чип для установки номера базовой станции</translation>
+        <translation type="obsolete">Создать мастер-чип для установки номера базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.py" line="539"/>
+        <location filename="../design.py" line="558"/>
         <source>Set Num</source>
         <translation type="unfinished">Создать</translation>
     </message>
     <message>
         <location filename="../design.py" line="540"/>
         <source>Creates a config card to make a base station as a start station</source>
-        <translation type="unfinished">Создать мастре-чип для установки базовой станции как станция &quot;Старт&quot;</translation>
+        <translation type="obsolete">Создать мастре-чип для установки базовой станции как станция &quot;Старт&quot;</translation>
     </message>
     <message>
-        <location filename="../design.py" line="541"/>
+        <location filename="../design.py" line="560"/>
         <source>Set Start</source>
         <translation type="unfinished">Старт</translation>
     </message>
     <message>
         <location filename="../design.py" line="542"/>
         <source>Creates a config card to make a base station as a finish station</source>
-        <translation type="unfinished">Создать мастер-чип для установки базовой станции как станция &quot;Финиш&quot;</translation>
+        <translation type="obsolete">Создать мастер-чип для установки базовой станции как станция &quot;Финиш&quot;</translation>
     </message>
     <message>
-        <location filename="../design.py" line="543"/>
+        <location filename="../design.py" line="562"/>
         <source>Set Finish</source>
         <translation type="unfinished">Финиш</translation>
     </message>
     <message>
         <location filename="../design.py" line="544"/>
         <source>Creates a config card to make a base station as a check station</source>
-        <translation type="unfinished">Создать мастер-чип для установки базовой станции как станция &quot;Проверка&quot;</translation>
+        <translation type="obsolete">Создать мастер-чип для установки базовой станции как станция &quot;Проверка&quot;</translation>
     </message>
     <message>
-        <location filename="../design.py" line="545"/>
+        <location filename="../design.py" line="564"/>
         <source>Check St</source>
         <translation type="unfinished">Проверка</translation>
     </message>
     <message>
         <location filename="../design.py" line="546"/>
         <source>Creates a config card to make a base station as a clear station</source>
-        <translation type="unfinished">Создать мастер-чип для установки базовой станции как станция &quot;Очистка&quot;</translation>
+        <translation type="obsolete">Создать мастер-чип для установки базовой станции как станция &quot;Очистка&quot;</translation>
     </message>
     <message>
-        <location filename="../design.py" line="547"/>
+        <location filename="../design.py" line="566"/>
         <source>Clear St</source>
         <translation type="unfinished">Очистка</translation>
     </message>
     <message>
-        <location filename="../design.py" line="548"/>
+        <location filename="../design.py" line="567"/>
         <source>Date/Time Card</source>
         <translation type="unfinished">Мастер-чип &quot;Часы&quot;</translation>
     </message>
     <message>
         <location filename="../design.py" line="549"/>
         <source>Creates a config card to set date/time for a base station</source>
-        <translation type="unfinished">Создать мастер-чип для установки часов базовой станции</translation>
-    </message>
-    <message>
-        <location filename="../design.py" line="551"/>
-        <source>GetInfo Card</source>
-        <translation type="unfinished">Мастер-чип &quot;Состояние&quot;</translation>
+        <translation type="obsolete">Создать мастер-чип для установки часов базовой станции</translation>
     </message>
     <message>
         <location filename="../design.py" line="554"/>
-        <source>Creates a config card to get info about a base station</source>
-        <translation type="unfinished">Создать мастер-чип для получения информации о состоянии базовой станции</translation>
+        <source>Creates the master card to read punches log of a base station</source>
+        <translation type="unfinished">Создать мастер-чип для получения журнала отметок базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.py" line="556"/>
+        <location filename="../design.py" line="575"/>
         <source>Current password of a base station</source>
         <translation type="unfinished">Текущий пароль базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.py" line="557"/>
+        <location filename="../design.py" line="576"/>
         <source>Password</source>
         <translation type="unfinished">Пароль</translation>
     </message>
     <message>
         <location filename="../design.py" line="558"/>
         <source>Applies current password for all next config cards</source>
-        <translation type="unfinished">Применить текущий пароль для всех мастер-чипов</translation>
+        <translation type="obsolete">Применить текущий пароль для всех мастер-чипов</translation>
     </message>
     <message>
-        <location filename="../design.py" line="559"/>
+        <location filename="../design.py" line="578"/>
         <source>Apply</source>
         <translation type="unfinished">OK</translation>
     </message>
     <message>
-        <location filename="../design.py" line="635"/>
+        <location filename="../design.py" line="654"/>
         <source>Settings#2</source>
         <translation type="unfinished">Настройки#2</translation>
     </message>
     <message>
-        <location filename="../design.py" line="561"/>
+        <location filename="../design.py" line="580"/>
         <source>6 hour</source>
         <translation type="unfinished">6 часов</translation>
     </message>
     <message>
-        <location filename="../design.py" line="562"/>
+        <location filename="../design.py" line="581"/>
         <source>24 hour</source>
         <translation type="unfinished">24 часа</translation>
     </message>
     <message>
-        <location filename="../design.py" line="563"/>
+        <location filename="../design.py" line="582"/>
         <source>not work</source>
         <translation type="unfinished">никогда</translation>
     </message>
     <message>
-        <location filename="../design.py" line="564"/>
+        <location filename="../design.py" line="583"/>
         <source>all time</source>
         <translation type="unfinished">всегда</translation>
     </message>
     <message>
-        <location filename="../design.py" line="565"/>
+        <location filename="../design.py" line="584"/>
         <source>Work Time</source>
         <translation type="unfinished">Актив. Время</translation>
     </message>
     <message>
-        <location filename="../design.py" line="566"/>
+        <location filename="../design.py" line="585"/>
         <source>Start / Finish</source>
         <translation type="unfinished">Старт/Финиш</translation>
     </message>
     <message>
-        <location filename="../design.py" line="626"/>
+        <location filename="../design.py" line="645"/>
         <source>off</source>
         <translation type="unfinished">нет</translation>
     </message>
     <message>
-        <location filename="../design.py" line="627"/>
+        <location filename="../design.py" line="646"/>
         <source>on</source>
         <translation type="unfinished">да</translation>
     </message>
     <message>
-        <location filename="../design.py" line="569"/>
+        <location filename="../design.py" line="588"/>
         <source>Check InitTime</source>
         <translation type="unfinished">Пров. Вр. Чипа</translation>
     </message>
     <message>
-        <location filename="../design.py" line="572"/>
+        <location filename="../design.py" line="591"/>
         <source>AutoDel Set</source>
         <translation type="unfinished">Сброс Настр.</translation>
     </message>
     <message>
-        <location filename="../design.py" line="575"/>
-        <source>Creates a config card to change password and settings for a base station</source>
-        <translation type="unfinished">Создать мастер-чип для установки нового пароля и настроек базовой станции</translation>
-    </message>
-    <message>
-        <location filename="../design.py" line="576"/>
+        <location filename="../design.py" line="595"/>
         <source> Create Pwd Card</source>
         <translation type="unfinished"> Создать чип настроек</translation>
     </message>
     <message>
-        <location filename="../design.py" line="577"/>
+        <location filename="../design.py" line="596"/>
         <source>Stores settings to a file</source>
         <translation type="unfinished">Сохранить текущие настройки в файл</translation>
     </message>
     <message>
-        <location filename="../design.py" line="578"/>
+        <location filename="../design.py" line="597"/>
         <source>Save Set</source>
         <translation type="unfinished">Сохр. наст.</translation>
     </message>
     <message>
-        <location filename="../design.py" line="579"/>
+        <location filename="../design.py" line="598"/>
         <source>Loads settings from a file</source>
         <translation type="unfinished">Загрузить настройки из файла</translation>
     </message>
     <message>
-        <location filename="../design.py" line="580"/>
+        <location filename="../design.py" line="599"/>
         <source>Load Set</source>
         <translation type="unfinished">Загр. наст.</translation>
     </message>
     <message>
-        <location filename="../design.py" line="581"/>
+        <location filename="../design.py" line="600"/>
         <source>New password for a base station</source>
         <translation type="unfinished">Новый пароль для базовых станций</translation>
     </message>
     <message>
-        <location filename="../design.py" line="582"/>
+        <location filename="../design.py" line="601"/>
         <source>New Password</source>
         <translation type="unfinished">Новый пароль</translation>
     </message>
     <message>
-        <location filename="../design.py" line="583"/>
+        <location filename="../design.py" line="602"/>
         <source>Old password of a base station</source>
         <translation type="unfinished">Старый пароль базовых станций</translation>
     </message>
     <message>
-        <location filename="../design.py" line="584"/>
+        <location filename="../design.py" line="603"/>
         <source>Old Password</source>
         <translation type="unfinished">Старый пароль</translation>
     </message>
     <message>
-        <location filename="../design.py" line="585"/>
+        <location filename="../design.py" line="604"/>
         <source>Config by UART</source>
         <translation type="unfinished">Настройка по UART</translation>
     </message>
     <message>
-        <location filename="../design.py" line="620"/>
+        <location filename="../design.py" line="639"/>
         <source>Station Num</source>
         <translation type="unfinished">Номер станции</translation>
     </message>
     <message>
-        <location filename="../design.py" line="621"/>
+        <location filename="../design.py" line="640"/>
         <source>Reads settings of a base station by UART</source>
         <translation type="unfinished">Прочитать настройки базовой станции по UART</translation>
     </message>
     <message>
-        <location filename="../design.py" line="623"/>
+        <location filename="../design.py" line="642"/>
         <source>Writes settings to a base station by UART</source>
         <translation type="unfinished">Записать настройки базовой станции по UART</translation>
     </message>
     <message>
-        <location filename="../design.py" line="624"/>
+        <location filename="../design.py" line="643"/>
         <source>Write</source>
         <translation type="unfinished">Записать</translation>
     </message>
     <message>
-        <location filename="../design.py" line="625"/>
+        <location filename="../design.py" line="644"/>
         <source>Fast Mark</source>
         <translation type="unfinished">Быст. Отметка</translation>
     </message>
     <message>
-        <location filename="../design.py" line="628"/>
+        <location filename="../design.py" line="647"/>
         <source>18 dB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="629"/>
+        <location filename="../design.py" line="648"/>
         <source>23 dB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="630"/>
+        <location filename="../design.py" line="649"/>
         <source>33 dB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="631"/>
+        <location filename="../design.py" line="650"/>
         <source>38 dB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="632"/>
+        <location filename="../design.py" line="651"/>
         <source>43 dB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="633"/>
+        <location filename="../design.py" line="652"/>
         <source>48 dB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../design.py" line="634"/>
+        <location filename="../design.py" line="653"/>
         <source>Antenna Gain</source>
         <translation type="unfinished">Усил. Антенны</translation>
     </message>
     <message>
-        <location filename="../design.py" line="636"/>
+        <location filename="../design.py" line="655"/>
         <source>Clear</source>
         <translation type="unfinished">Очистить</translation>
     </message>
     <message>
-        <location filename="../design.py" line="638"/>
+        <location filename="../design.py" line="657"/>
         <source>Chose COM-port</source>
         <translation type="unfinished">Выбрать COM-порт</translation>
     </message>
     <message>
-        <location filename="../design.py" line="639"/>
+        <location filename="../design.py" line="658"/>
         <source>Save log</source>
         <translation type="unfinished">Сохранить лог</translation>
     </message>
     <message>
-        <location filename="../design.py" line="640"/>
+        <location filename="../design.py" line="659"/>
         <source>Open help.txt</source>
         <translation type="unfinished">Открыть help.txt</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="547"/>
+        <source>Creates the master card to force a base station to sleep and to wake-up at competion date</source>
+        <translation type="unfinished">Создать мастер-чип для перевода базовой станции в режим сна</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="552"/>
+        <source>Reads the card contained punches log of a base station</source>
+        <translation type="unfinished">Прочитать чип с журналом отметок базовой станции</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="557"/>
+        <source>Creates the master card to set number of a base station</source>
+        <translation type="unfinished">Создать мастер-чип для установки номера базовой станции</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="559"/>
+        <source>Creates the master card to make a base station as a start station</source>
+        <translation type="unfinished">Создать мастер-чип для установки базовой станции как станции &quot;Старт&quot;</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="561"/>
+        <source>Creates the master card to make a base station as a finish station</source>
+        <translation type="unfinished">Создать мастер-чип для установки базовой станции как станции &quot;Финиш&quot;</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="563"/>
+        <source>Creates the master card to make a base station as a check station</source>
+        <translation type="unfinished">Создать мастер-чип для установки базовой станции как станции &quot;Проверка&quot;</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="565"/>
+        <source>Creates the master card to make a base station as a clear station</source>
+        <translation type="unfinished">Создать мастер-чип для установки базовой станции как станции &quot;Очистка&quot;</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="568"/>
+        <source>Creates the master card to set clock of a base station</source>
+        <translation type="unfinished">Создать мастер-чип для установки часов базовой станции</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="570"/>
+        <source>Status Card</source>
+        <translation type="unfinished">Мастер-чип &quot;Состояние&quot;</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="571"/>
+        <source>Creates the master card to get info about a base station</source>
+        <translation type="unfinished">Создать мастер-чип для получения информации о состоянии базовой станции</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="573"/>
+        <source>Reads the card contained info about a base station</source>
+        <translation type="unfinished">Прочитать чип с информацией о состоянии базовой станции</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="577"/>
+        <source>Applies this password for all master cards</source>
+        <translation type="unfinished">Применить текущий пароль для всех мастер-чипов</translation>
+    </message>
+    <message>
+        <location filename="../design.py" line="594"/>
+        <source>Creates the master card to write password and settings to a base station</source>
+        <translation type="unfinished">Создать мастре-чип для записи пароля и настроек в базовую станцию</translation>
     </message>
 </context>
 <context>

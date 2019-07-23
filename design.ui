@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
+    <width>530</width>
     <height>703</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SportiduinoPQ</string>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -21,6 +24,18 @@
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QPushButton" name="Connec">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>75</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -233,6 +248,24 @@
       </item>
       <item>
        <widget class="QTabWidget" name="Log">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -311,9 +344,15 @@
            <rect>
             <x>10</x>
             <y>140</y>
-            <width>191</width>
+            <width>111</width>
             <height>31</height>
            </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
           <property name="text">
            <string/>
@@ -414,7 +453,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to force a base station to sleep and to wake-up at competion date</string>
+            <string>Creates the master card to force a base station to sleep and to wake-up at competion date</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -496,7 +535,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>Reads a config card consists dump info</string>
+            <string>Reads the card contained punches log of a base station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -515,7 +554,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to read dump from a base station</string>
+            <string>Creates the master card to read punches log of a base station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -550,7 +589,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to set a number for a base station</string>
+            <string>Creates the master card to set number of a base station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -569,7 +608,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to make a base station as a start station</string>
+            <string>Creates the master card to make a base station as a start station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -588,7 +627,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to make a base station as a finish station</string>
+            <string>Creates the master card to make a base station as a finish station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -612,7 +651,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to make a base station as a check station</string>
+            <string>Creates the master card to make a base station as a check station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -636,7 +675,7 @@
             </font>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to make a base station as a clear station</string>
+            <string>Creates the master card to make a base station as a clear station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -693,7 +732,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to set date/time for a base station</string>
+            <string>Creates the master card to set clock of a base station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -716,7 +755,7 @@
            <locale language="English" country="UnitedStates"/>
           </property>
           <property name="title">
-           <string>GetInfo Card</string>
+           <string>Status Card</string>
           </property>
           <widget class="QPushButton" name="btnCreateInfoCard">
            <property name="geometry">
@@ -728,7 +767,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to get info about a base station</string>
+            <string>Creates the master card to get info about a base station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -747,7 +786,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>Creates a config card to get info about a base station</string>
+            <string>Reads the card contained info about a base station</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -785,7 +824,7 @@
             </rect>
            </property>
            <property name="toolTip">
-            <string>Applies current password for all next config cards</string>
+            <string>Applies this password for all master cards</string>
            </property>
            <property name="text">
             <string>Apply</string>
@@ -1018,7 +1057,7 @@
            </rect>
           </property>
           <property name="toolTip">
-           <string>Creates a config card to change password and settings for a base station</string>
+           <string>Creates the master card to write password and settings to a base station</string>
           </property>
           <property name="text">
            <string> Create Pwd Card</string>
