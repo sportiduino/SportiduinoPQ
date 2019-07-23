@@ -18,6 +18,10 @@ from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtWidgets import QApplication, QFileDialog
 from PyQt5.QtCore import QTranslator
 from PyQt5.QtCore import QLocale
+from PyQt5.QtCore import QCoreApplication
+from six import int2byte, byte2int, iterbytes, print_, PY3
+
+_translate = QCoreApplication.translate
 
 class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def __init__(self):
@@ -29,7 +33,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.dumpData = []
         self.connected = False
         self.CardNum = '0'
-        self.printerName.setText(QPrinter().printerName())
+        self.printer = QPrinter()
+        self.printerName.setText(self.printer.printerName())
         
         self.initTime = datetime.now()
         self.addText('{:%Y-%m-%d %H:%M:%S}'.format(self.initTime))
@@ -66,6 +71,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
     def Connec_clicked(self):
 
+        self.addText("")
+        
         if (self.connected == False):
             COM = 'COM' + self.choiseCom.currentText()
             try:
@@ -84,256 +91,344 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 
                 self.sportiduino.beep_ok()
                 self.connected = True
-                text = self.tr("\nMaster station {0} on port {1} is connected").format(self.sportiduino.version, self.sportiduino.port)
+                text = _translate("sportiduinopq","Master station {} on port {} is connected").format(self.sportiduino.version, self.sportiduino.port)
                 self.addText(text)
                 
             except BaseException as err:
-                self.addText(self.tr('\nError {0}').format(err))
+                self._process_error(err)
                 self.connected = False
-                
-
         else:
             self.sportiduino.disconnect()
-            self.addText(self.tr('\nMaster station is disconnected'))
+            text = _translate("sportiduinopq","Master station is disconnected")
+            self.addText(text)
             self.connected = False
-            
 
     def ReadCard_clicked(self):
-        
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
             return
 
         try:
-            data = self.sportiduino.read_card(timeout = 0.5)
+            self.addText(_translate("sportiduinopq","Read a card"))
             
-            self.readDataFormat(data)
-            self.saveDataJson(data)
+            raw_data = self.sportiduino.read_card_raw()
+            card_type = self.sportiduino.read_card_type()
             
-        except:
-            self.addText('\nError')
+            data = Sportiduino.raw_data_to_card_data(raw_data)
+            
+            self.showCardData(data, card_type)
+            self.saveCardDataJson(data)
+            
+        except BaseException as err:
+            self._process_error(err)
 
-        
-            
     def InitCard_clicked(self):
-
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
             return
         
-        text = self.cardLine.text()
-        if(text.isdigit()):
-            self.CardNum = text
-        else:
-            self.CardNum = '0'
-
-        num = int(self.CardNum)
-        if (num > 0 and num < 65000):
+        try:
             
-            try:
-                code, data = self.sportiduino.init_card(num)
-                self.addText ('\n\nInit card number {}'.format(num))
-                if (self.AutoIncriment.checkState() != 0):
-                    self.AutoIn = True
-                    self.CardNum = str(num + 1)
-                    self.cardLine.setText(self.CardNum)
-                if code == Sportiduino.RESP_OK :
-                    self.addText("The card (" + self.sportiduino.card_type_to_str(data[1]) + ") has been initialized succefully")
-            except SportiduinoException as err:
-                self.addText("\n" + err)
-            except:
-                self.addText('\nUnknown error')
-               
-        else:
-            self.addText("\nError: not correct card number")
+            self.addText(_translate("sportiduinopq","Initialize the participant card"))
+        
+            text = self.cardLine.text()
+        
+            if(text.isdigit()):
+                self.CardNum = text
+            else:
+                self.CardNum = '0'
+
+            num = int(self.CardNum)
+        
+            if (num < Sportiduino.MIN_CARD_NUM or num > Sportiduino.MAX_CARD_NUM):
+                raise BaseException(_translate("sportiduinopq","Not correct card number"))
+            
+            code, data = self.sportiduino.init_card(num)
+            
+            if (self.AutoIncriment.checkState() != 0):
+                self.AutoIn = True
+                self.CardNum = str(num + 1)
+                self.cardLine.setText(self.CardNum)
+            
+            if code == Sportiduino.RESP_OK :
+                self.addText(_translate("sportiduinopq","The participant card N{} ({}) has been initialized successfully").format(num, Sportiduino.card_name(data[0])))
+            
+        except BaseException as err:
+            self._process_error(err)
             
     def SetNum_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
             return
-            
-        num = self.sbStationNum.value()
         
-        if (num > 0 and num <= 255):
+        try:
             
-            try:
-                self.sportiduino.init_cp_number_card(num)
-                self.addText ('\nset CP number {}'.format(num))
-            except:
-                self.addText('\nError')
-              
-        else:
-            self.addText("\nnot correct value")
+            self.addText(_translate("sportiduinopq","Write the master card to set number of a base station"))
+            num = self.sbStationNum.value()
+        
+            if num == 0 or num > 255:
+                raise BaseException(_translate("sportiduinopq","Not correct station number"))
+            
+            self.sportiduino.init_cp_number_card(num)
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
                             
     def SetTime_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False :
             return
 
         try:
+            
+            self.addText(_translate("sportiduinopq","Write the master card to set clock of a base station. Put the card on a base station after second signal"))
             self.sportiduino.init_time_card(datetime.utcnow() + timedelta(seconds=3))
-            self.addText ('\nset time')
-        except:
-            self.addText('\nError')
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
 
     def SetStart_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False :
             return
         
         try:
-            self.sportiduino.init_cp_number_card(240)
-            self.sbStationNum.setValue(240)
-            self.addText ('\nset start statnion')
-        except:
-            self.addText('\nError')
+            
+            self.addText(_translate("sportiduinopq","Write the master card to set a base station as the start station"))
+            self.sportiduino.init_cp_number_card(Sportiduino.START_STATION)
+            self.sbStationNum.setValue(Sportiduino.START_STATION)
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
 
     def SetFinish_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
             return
         
         try:
-            self.sportiduino.init_cp_number_card(245)
-            self.sbStationNum.setValue(245)
-            self.addText ('\nset finish statnion')
-        except:
-            self.addText('\nError')
-
+            
+            self.addText(_translate("sportiduinopq","Write the master card to set a base station as the finish station"))
+            self.sportiduino.init_cp_number_card(Sportiduino.FINISH_STATION)
+            self.sbStationNum.setValue(Sportiduino.FINISH_STATION)
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
 
     def CheckSt_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
             return
         
         try:
-            self.sportiduino.init_cp_number_card(248)
-            self.sbStationNum.setValue(248)
-            self.addText ('\nset check statnion')
-        except:
-            self.addText('\nError')
+            
+            self.addText(_translate("sportiduinopq","Write the master card to set a base station as the check station"))
+            self.sportiduino.init_cp_number_card(Sportiduino.CHECK_STATION)
+            self.sbStationNum.setValue(Sportiduino.CHECK_STATION)
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
 
     def ClearSt_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
             return
         
         try:
-            self.sportiduino.init_cp_number_card(249)
-            self.sbStationNum.setValue(249)
-            self.addText ('\nset clear statnion')
-        except:
-            self.addText('\nError')
+            
+            self.addText(_translate("sportiduinopq","Write the master card to set a base station as the clear station"))
+            self.sportiduino.init_cp_number_card(Sportiduino.CLEAR_STATION)
+            self.sbStationNum.setValue(Sportiduino.CLEAR_STATION)
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
 
     def LogCard_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
             return
         
         try:
+        
+            self.addText(_translate("sportiduinopq","Write the master card to get log of a base station"))
             self.sportiduino.init_backupreader()
-            self.addText ('\nset dump card')
-        except:
-            self.addText('\nError')
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
                 
     def ReadLog_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
             return
 
-        readBuffer = ''
+        text = ""
+        
         try:
+            self.addText(_translate("sportiduinopq","Read the card contained log of a base station"))
+            
             data = self.sportiduino.read_backup()
-            try:
-                readBuffer += '\nread dump from CP: {}'.format(data['cp'])
-            except:
-                pass
-            try:
-                cards = data['cards']
-                readBuffer += '\ntotal punches: {}\n'.format(len(cards))
-                for i in range(0,len(cards),1):
-                    readBuffer += '{},'.format(cards[i])
-            except:
-                pass
+            
+            if data['cp'] == 0:
+                raise BaseException(_translate("sportiduinopq","No log data available"))
+            
+            text = _translate("sportiduinopq","Station N: {} ").format(data['cp']) + "\n"
 
+            cards = data['cards']
+            
+            text += _translate("sportiduinopq","Total punches {}").format(len(cards)) + "\n"
+                        
+            for i in range(0, len(cards), 1):
+                if i > 0:
+                    text += ","
+                text += "{}".format(cards[i])
+                
+            self.addText(text)
+                
             self.dumpData.append(data)
             dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
             json.dump(self.dumpData, dumpFile)
             dumpFile.close()
-            self.addText(readBuffer)
-        except:
-            self.addText('\nError')
+
+        except BaseException as err:
+            self._process_error(err)
 
     def SleepCard_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
             return
         
         try:
+            
+            self.addText(_translate("sportiduinopq","Write the master card to sleep a base station"))
             self.sportiduino.init_sleepcard(self.dtCompetion.dateTime().toUTC())
-            self.addText ('\nset sleep card')
-        except Exception:
-            traceback.print_exc()
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
 
     def PassCard_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
+        if self._check_connection() == False:
+            return
+        
+        try:
+
+            self.addText(_translate("sportiduinopq","Write the master card to write new password and settings to a base station"))
+            setSt = self.getSettingsFromUI()
+
+            oldPass = self.sbOldPwd1.value()<<16 | self.sbOldPwd2.value()<<8 | self.sbOldPwd3.value()
+            newPass = self.sbNewPwd1.value()<<16 | self.sbNewPwd2.value()<<8 | self.sbNewPwd3.value()
+            
+            gain = (self.cbAntennaGain.currentIndex() + 2) << 4
+        
+            self.sportiduino.init_passwd_card(oldPass,newPass,setSt,gain)
+                
+            self.sbCurPwd3.setValue(self.sbNewPwd3.value())
+            self.sbCurPwd2.setValue(self.sbNewPwd2.value())
+            self.sbCurPwd1.setValue(self.sbNewPwd1.value())
+            
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
+            
+    def ApplyPwd_clicked(self):
+        if self._check_connection() == False:
             return
 
-        setSt = self.getSettingsFromUI()
-
-        oldPass = self.sbOldPwd1.value()<<16 | self.sbOldPwd2.value()<<8 | self.sbOldPwd3.value()
-        if (oldPass <0 or oldPass > 0xffffff):
-            self.addText('\nnot correct old pass value')
-            oldPass = -1
-
-        newPass = self.sbNewPwd1.value()<<16 | self.sbNewPwd2.value()<<8 | self.sbNewPwd3.value()
-        if (newPass <0 or newPass > 0xffffff):
-            self.addText('\nnot correct new pass value')
-            newPass = -1
-            
-        gain = (self.cbAntennaGain.currentIndex() + 2) << 4
+        curPass = self.sbCurPwd1.value()<<16 | self.sbCurPwd2.value()<<8 | self.sbCurPwd3.value()
         
-        if (newPass!= -1 and oldPass!= -1):
-            try:
-                self.sportiduino.init_passwd_card(oldPass,newPass,setSt,gain)
-                self.addText ('\nset password - settings card')
-                
-                self.sbCurPwd3.setValue(self.sbNewPwd3.value())
-                self.sbCurPwd2.setValue(self.sbNewPwd2.value())
-                self.sbCurPwd1.setValue(self.sbNewPwd1.value())
-            except:
-                self.addText('\nError')
+        try:
+            self.addText(_translate("sportiduinopq","Apply the current password"))
+            
+            self.sportiduino.apply_pwd(curPass)
+            self.addText(_translate("sportiduinopq","The password has been applied successfully"))
+
+        except BaseException as err:
+            self._process_error(err)
+            
+    def CreateInfo_clicked(self):
+        if self._check_connection() == False:
+            return
+        
+        try:
+           
+            self.addText(_translate("sportiduinopq","Write the master card to get info about a base station"))
+            self.sportiduino.init_info_card()
+            self._master_card_ok()
+            
+        except BaseException as err:
+            self._process_error(err)
+        
+    def ReadInfo_clicked(self):
+        if self._check_connection() == False:
+            return
+        
+        try:
+            
+            self.addText(_translate("sportiduinopq","Read the card contained info about a base station"))
+            bs = self.sportiduino.read_info_card()
+            self.showBaseStationInfo(bs)
+            
+        except BaseException as err:
+            self._process_error(err)
             
     def LoadSet_clicked(self):
         
-        try:
-            sets = open(os.path.join('data','settings.txt'))
-            self.WorkTime.setCurrentText(sets.readline().rstrip())
-            self.StartFinish.setCurrentText(sets.readline().rstrip())
-            self.CheckInitTime.setCurrentText(sets.readline().rstrip())
-            self.CardCap.setCurrentText(sets.readline().rstrip())
-            self.AutoDel.setCurrentText(sets.readline().rstrip())
-            self.NewPass.setText(sets.readline().rstrip())
-            self.OldPass.setText(sets.readline().rstrip())
-            self.addText('\nload settings')
-        except:
-            self.addText('\nsettings are missing')
+        self.addText("\n" + _translate("sportiduinopq","Load settings from file /data/settings.json"))
+        
+        try:  
+            
+            file = open(os.path.join('data','settings.json'),'r')
+            
+            obj = json.load(file);
+            
+            file.close()
+            
+            settings = obj['settings']
+            gain = obj['gain']
+            pwd1 = obj['pwd1'] 
+            pwd2 = obj['pwd2']
+            pwd3 = obj['pwd3']
+            
+            self.showSettings(settings)
+            
+            self.cbAntennaGain.setCurrentIndex(gain)
+            
+            self.sbCurPwd1.setValue(pwd1)
+            self.sbCurPwd2.setValue(pwd2)
+            self.sbCurPwd3.setValue(pwd3)
+            self.sbOldPwd1.setValue(pwd1)
+            self.sbOldPwd2.setValue(pwd2)
+            self.sbOldPwd3.setValue(pwd3)
+            
+            self.addText(_translate("sportiduinopq","Settings has been loaded successfully"))
+            self.addText(_translate("sportiduinopq","Click 'Apply Pwd' on #Settings1 tab"))
+        
+        except BaseException as err:
+            self._process_error(err)
 
-    def SaveSet_clicked(self):
-                
-        sets = open(os.path.join('data','settings.txt'),'w')
-        sets.write(self.WorkTime.currentText()+'\n')
-        sets.write(self.StartFinish.currentText()+'\n')
-        sets.write(self.CheckInitTime.currentText()+'\n')
-        sets.write(self.CardCap.currentText()+'\n')
-        sets.write(self.AutoDel.currentText()+'\n')
-        sets.write(self.NewPass.text()+'\n')
-        sets.write(self.OldPass.text())
-        self.addText('\nsave settings')
+    def SaveSet_clicked(self):    
+        self.addText("\n" + _translate("sportiduinopq","Save settings to file /data/settings.json"))  
+        
+        try:  
+            
+            settings = self.getSettingsFromUI()
+            gain = self.cbAntennaGain.currentIndex()
+            
+            obj = {}
+            obj['settings'] = settings
+            obj['gain'] = gain
+            obj['pwd1'] = self.sbCurPwd1.value() 
+            obj['pwd2'] = self.sbCurPwd2.value()
+            obj['pwd3'] = self.sbCurPwd3.value()
+            
+            file = open(os.path.join('data','settings.json'),'w')
+            json.dump(obj, file)
+            file.close()
+            
+            self.addText(_translate("sportiduinopq","Settings has been saved successfully"))
+        
+        except BaseException as err:
+            self._process_error(err)
 
     def addText(self,text):
-
+        text += '\n'
         logFile = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(self.initTime)),'a')
         print(text)
         browserText = self.textBrowser.toPlainText()
@@ -343,78 +438,45 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         logFile.close()
 
     def SelectPrinter_clicked(self):
-        dialog = QtPrintSupport.QPrintDialog()
+        dialog = QtPrintSupport.QPrintDialog(self.printer)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
-            printer = dialog.printer()
-            self.printerName.setText(QPrinter().printerName())
+            self.printer = dialog.printer()
+            self.printerName.setText(self.printer.printerName())
             
     def Print_clicked(self):
-        self.printer = QPrinter()
-        
-        self.printer.setFullPage(True)
-        self.printer.setPageMargins(3,3,3,3,QPrinter.Millimeter)
-        page_size = QSizeF()
-        page_size.setHeight(self.printer.height())
-        page_size.setWidth(self.printer.width())
-        self.textBrowser.document().setPageSize(page_size)
-        self.textBrowser.document().setDocumentMargin(0.0)
-        self.textBrowser.document().print_(self.printer)
-        
-    def ApplyPwd_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
-            return
-
-        curPass = self.sbCurPwd1.value()<<16 | self.sbCurPwd2.value()<<8 | self.sbCurPwd3.value()
-        
         try:
-            self.sportiduino.apply_pwd(curPass)
-            self.addText ('\npassword has been applied')
-
-        except:
-            self.addText('\nError')
-            
-    def CreateInfo_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
-            return
+            self.printer.setFullPage(True)
+            self.printer.setPageMargins(3,3,3,3,QPrinter.Millimeter)
+            page_size = QSizeF()
+            page_size.setHeight(self.printer.height())
+            page_size.setWidth(self.printer.width())
+            self.textBrowser.document().setPageSize(page_size)
+            self.textBrowser.document().setDocumentMargin(0.0)
+            self.textBrowser.document().print_(self.printer)
+        except BaseException as err:
+            self._process_error(err)
         
-        try:
-            self.sportiduino.init_info_card()
-            self.addText ('\n\nGetInfo Card has been created')
-        except:
-            self.addText('\nError')
-        
-    def ReadInfo_clicked(self):
-        if (self.connected == False):
-            self.addText('\nmaster station is not connected')
-            return
-        
-        try:
-            self.addText('\n\nReads Info Card')
-            bs = self.sportiduino.read_info_card()
-            self.showBaseStationInfo(bs)
-        except:
-            self.addText('\nError')
-    
     def SerialRead_clicked(self):
         try:
-            self.addText('\n\nReads info about a base station by UART')
+        
+            self.addText(_translate("sportiduinopq", "Reads info about a base station by UART"))
+            
             port = 'COM' + self.cbUartPort.currentText()
             
             bs = BaseStation()
             bs.readInfoBySerial(port, self.sbCurPwd1.value(), self.sbCurPwd2.value(), self.sbCurPwd3.value())
 
             self.showBaseStationInfo(bs)
-        except:
-            traceback.print_exc()
-            self.addText('\nError')
+        
+        except BaseException as err:
+            self._process_error(err)
         
 
     def SerialWrite_clicked(self):
         
         try:
-            self.addText('\n\nWrites settings to a base station by UART')
+            
+            self.addText(_translate("sportiduinopq","Writes settings to a base station by UART"))
             port = 'COM' + self.cbUartPort.currentText()
             
             oldPwd1 = self.sbOldPwd1.value()
@@ -433,37 +495,87 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             bs = BaseStation()
             bs.writeSettingsBySerial(port, oldPwd1, oldPwd2, oldPwd3, 
                                      newPwd1, newPwd2, newPwd3, num, sets, wakeup, gain)
-        except:
-            traceback.print_exc()
-            self.addText('\nError')
+        
+        except BaseException as err:
+            self._process_error(err)
             
     def ClearText_clicked(self):
         self.textBrowser.setPlainText('')
-
-    def readDataFormat(self,data):
-        data = copy.deepcopy(data)
-
-        readBuffer ='\nCard: {}'.format(data['card_number'])
-        print(data)
-
-        if('start' in data):
-            readBuffer +='\nStart: {}'.format(data['start'])
+    
+    def showCardData(self,data,card_type):
+        if (self.AutoPrint.checkState() != 0):
+            self.ClearText_clicked()
+                
+        card_name = Sportiduino.card_name(card_type)
+        text = card_name + "\n" 
+        
+        if data['master_card_flag'] == 0xFF:
+            # show master card info
+            master_type = int2byte(data['master_card_type'])
             
-        if ('punches' in data):
+            if master_type == Sportiduino.MASTER_CARD_GET_INFO:
+                text += _translate("sportiduinopq","Master card to get info about a base station")
+            elif master_type == Sportiduino.MASTER_CARD_SET_TIME:
+                text += _translate("sportiduinopq","Master card to set time of a base station")
+            elif master_type == Sportiduino.MASTER_CARD_SET_NUMBER:
+                text += _translate("sportiduinopq","Master card to set number of a base station")
+            elif master_type == Sportiduino.MASTER_CARD_SLEEP:
+                text += _translate("sportiduinopq","Master card to sleep a base station")
+            elif master_type == Sportiduino.MASTER_CARD_READ_DUMP:
+                text += _translate("sportiduinopq","Master card to get punches log of a base station")
+            elif master_type == Sportiduino.MASTER_CARD_SET_PASS:
+                text += _translate("sportiduinopq","Master card to write password and settings to a base station")
+            else:
+                text += _translate("sportiduinopq","Uninitialized card")
+            
+        else:
+            # show participant card info
+            card_number = data['card_number']
+            init_time = datetime.fromtimestamp(data['init_timestamp'])
             punches = data['punches']
-
-            readBuffer +='\nCP - time'
-            for punch in range(0, len(punches), 1):
-                readBuffer += '\n{} - {:%H:%M:%S}'.format(punches[punch][0],punches[punch][1])
+            
+            if card_number >= Sportiduino.MIN_CARD_NUM and card_number <= Sportiduino.MAX_CARD_NUM:
+                punches_count = 0
+        
+                text += _translate("sportiduinopq","Participant card N{}").format(card_number) + "\n"
+                text += _translate("sportiduinopq","Init time {}").format(init_time) + "\n"
+                text += _translate("sportiduinopq","Punches (Check point - Time):") + "\n"
+            
+                for punch in punches:
+                    punches_count += 1
                     
-        if('finish' in data):
-            readBuffer +='\nFinish:  {}'.format(data['finish'])
+                    cp = punch[0]
+                    cp_time = punch[1]
+                            
+                    if cp == Sportiduino.START_STATION:
+                        cp = _translate("sportiduinopq","Start")
+                    if cp == Sportiduino.FINISH_STATION:
+                        cp = _translate("sportiduinopq","Finish")
+                        
+                    text += "{} - {}\n".format(cp, cp_time)
+                        
+                if punches_count == 0:
+                    text += _translate("sportiduinopq", "No punches") 
+                else:
+                    text += _translate("sportiduinopq", "Total punches {}").format(punches_count)
+            else:
+               text += _translate("sportiduinopq","Uninitialized card")
    
-        self.addText(readBuffer)
-        if (self.AutoPrint.checkState()!= 0):
+        self.addText(text)
+        
+        if (self.AutoPrint.checkState() != 0):
             self.Print_clicked()
             
-    def saveDataJson(self,data):
+    def saveCardDataJson(self,data):
+        
+        if data['master_card_flag'] == 255:
+            return
+        
+        card_number = data['card_number']
+        
+        if card_number < Sportiduino.MIN_CARD_NUM or card_number > Sportiduino.MAX_CARD_NUM:
+            return
+        
         if('start' in data):
             data['start'] = int(data['start'].timestamp())
             
@@ -478,6 +590,9 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
                 bufferPunch.append(kort)
             data['punches']=bufferPunch
             
+        del data['master_card_flag']
+        del data['master_card_type']
+        del data['init_timestamp']
         del data['page6']
         del data['page7']
 
@@ -485,7 +600,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
         dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
         json.dump(self.readData, dataFile)
-        dataFile.close()     
+        dataFile.close()
         
     def showSettings(self, settings):
         set1 = settings & 0x3
@@ -504,39 +619,39 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.cbFastMark.setCurrentIndex(set5)
         
     def getSettingsFromUI(self):
-        workTime = self.WorkTime.currentText()
-        stFi = self.StartFinish.currentText()
-        checkIT = self.CheckInitTime.currentText()
-        autoDel = self.AutoDel.currentText()
-        fastMark = self.cbFastMark.currentText()
+        workTime = self.WorkTime.currentIndex()
+        stFi = self.StartFinish.currentIndex()
+        checkIT = self.CheckInitTime.currentIndex()
+        autoDel = self.AutoDel.currentIndex()
+        fastMark = self.cbFastMark.currentIndex()
 
-        if (workTime == '6 hour'):
+        if (workTime == 0):
             a = 0b00
-        elif (workTime == '24 hour'):
+        elif (workTime == 1):
             a = 0b01
-        elif (workTime == 'not work'):
+        elif (workTime == 2):
             a = 0b10
-        elif (workTime == 'all time'):
+        elif (workTime == 3):
             a = 0b11
 
-        if (stFi == "off"):
+        if (stFi == 0):
             b = 0b0
-        elif (stFi == 'on'):
+        elif (stFi == 1):
             b = 0b1
 
-        if (checkIT == 'off'):
+        if (checkIT == 0):
             c = 0b0
-        elif (checkIT == 'on'):
+        elif (checkIT == 1):
             c = 0b1
 
-        if (autoDel == 'off'):
+        if (autoDel == 0):
             d = 0b0
-        elif (autoDel == 'on'):
+        elif (autoDel == 1):
             d = 0b1
             
-        if (fastMark == 'off'):
+        if (fastMark == 0):
             e = 0b0
-        elif (fastMark == 'on'):
+        elif (fastMark == 1):
             e = 0b1
 
         setSt = a + ( b<<2) + (c<<3) + (d<<4) + (e<<5)
@@ -544,44 +659,65 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         return setSt
     
     def showBaseStationInfo(self, bs):
-        self.addText('\nVersion: ' + str(bs.version))
-        self.addText('\nStation Num: ' + str(bs.num))
+        self.addText(_translate("sportiduinopq","Version: {}.{}.{}").format(bs.hwVers(), bs.fwMajorVers(), bs.fwMinorVers()))
         
+        text = _translate("sportiduinopq","Station N: {} ").format(bs.num)
+
         if(bs.num == BaseStation.START_STATION_NUM):
-            self.addText('(Start)')
+            text += _translate("sportiduinopq","(Start)")
         elif (bs.num == BaseStation.FINISH_STATION_NUM):
-            self.addText('(Finish)')
+            text += _translate("sportiduinopq","(Finish)")
         elif (bs.num == BaseStation.CHECK_STATION_NUM):
-            self.addText('(Check)')
+            text += _translate("sportiduinopq","(Check)")
         elif (bs.num == BaseStation.CLEAR_STATION_NUM):
-            self.addText('(Clear)')
+            text += _translate("sportiduinopq","(Clear)")
             
-        self.sbStationNum.setValue(bs.num)
-        self.sbStationNumByUart.setValue(bs.num)
-            
-        self.showSettings(bs.settings)
-        self.addText('\nSettings: ' + bin(bs.settings).lstrip('-0b').zfill(8))
+        self.addText(text)
+        
+        text = _translate("sportiduinopq","Settings: {}").format(bin(bs.settings).lstrip('-0b').zfill(8))
+        self.addText(text)
         
         if(bs.batteryOk):
-            self.addText('\nBattery: Ok')
+            self.addText(_translate("sportiduinopq","Battery: OK"))
         else:
-            self.addText('\nBattery: Low')
+            self.addText(_translate("sportiduinopq","Battery: Low"))
             
         if(bs.mode == BaseStation.MODE_ACTIVE):
-            self.addText('\nMode: Active')
+            self.addText(_translate("sportiduinopq","Mode: Active"))
         elif(bs.mode == BaseStation.MODE_WAIT):
-            self.addText('\nMode: Wait')
+            self.addText(_translate("sportiduinopq","Mode: Wait"))
         elif(bs.mode == BaseStation.MODE_SLEEP):
-            self.addText('\nMode: Sleep')
+            self.addText(_translate("sportiduinopq","Mode: Sleep"))
             
-        self.addText('\nDate&Time: ' + datetime.fromtimestamp(bs.timestamp).strftime("%d-%m-%Y %H:%M:%S"))
-        self.addText('\nWake Up: ' + datetime.fromtimestamp(bs.wakeup).strftime("%d-%m-%Y %H:%M:%S"))
-        
-        self.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))
-        
+        text = _translate("sportiduinopq", "Clock: {}").format(datetime.fromtimestamp(bs.timestamp))
+        self.addText(text)
+        text = _translate("sportiduinopq", "Alarm: {}").format(datetime.fromtimestamp(bs.wakeup))
+        self.addText(text)
+
         idx = (bs.antennaGain >> 4) - 2;
         self.cbAntennaGain.setCurrentIndex(idx)
-        self.addText('\nAntenna Gain: ' + self.cbAntennaGain.currentText())
+        self.addText(_translate("sportiduinopq","Antenna Gain: {}").format(self.cbAntennaGain.currentText()))
+        
+        # apply settings to ui    
+        self.sbStationNum.setValue(bs.num)
+        self.sbStationNumByUart.setValue(bs.num)
+        self.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))            
+        self.showSettings(bs.settings)
+        
+        self.addText(_translate("sportiduinopq","Settings displayed by UI has been chaged to the base station settings"))
+    
+    def _process_error(self, err):
+        self.addText(_translate("sportiduinopq","Error: {}").format(err))
+        
+    def _check_connection(self):
+        self.addText("")
+        if self.connected == False:
+            self.addText(_translate("sportiduinopq","Master station is not connected"))
+            return False
+        return True
+    
+    def _master_card_ok(self):
+        self.addText(_translate("sportiduinopq","The master card has been written successfully"))
         
 if __name__ == '__main__':
     
