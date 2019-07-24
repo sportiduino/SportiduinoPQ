@@ -680,7 +680,7 @@ class Sportiduino(object):
         
         ret['cp'] = Sportiduino._to_int(data[0:1])
         
-        for i in range(2, len(data), 2):
+        for i in range(1, len(data), 2):
             ret['cards'].append(Sportiduino._to_int(data[i:i + 2]))
         
         return ret
@@ -710,6 +710,15 @@ class BaseStation(object):
 
     SERIAL_FUNC_READ_INFO = 0xF0
     SERIAL_FUNC_WRITE_SETTINGS = 0xF1
+    
+    SERIAL_RESP_STATUS = 0x1
+    SERIAL_RESP_INFO   = 0x2
+    
+    SERIAL_OK          = 0x0
+    SERIAL_ERROR_CRC   = 0x1
+    SERIAL_ERROR_FUNC  = 0x2
+    SERIAL_ERROR_SIZE  = 0x3
+    SERIAL_ERROR_PWD   = 0x4
     
     def __init__(self):
         self.version = 0
@@ -760,11 +769,13 @@ class BaseStation(object):
         bmsg = bytes(msg)
         
         ser.write(bmsg)
-        msg.clear()    
-        msg = ser.read(32)
+        msg = self._readResponse(ser)
         ser.close()
         
-        pos = 2;
+        if len(msg) < 19:
+            raise SportiduinoException(_translate("sportiduino", "Invalid size of the response"))
+        
+        pos = 3;
         self.version = msg[pos]
         pos += 1
         
@@ -837,10 +848,7 @@ class BaseStation(object):
         # усиление антенны
         msg.append(gain)
         
-        crc8 = 0
-        
-        for x in msg:
-            crc8 ^= x
+        crc8 = self._serialCrc(msg, 0, len(msg))
         
         msg.append(crc8)
         
@@ -857,5 +865,60 @@ class BaseStation(object):
         bmsg = bytes(msg)
         
         ser.write(bmsg)
+        
+        self._readResponse(ser)
+        
         ser.close()
+        
+    def _serialCrc(self, data, start, end):
+        crc = 0
+        
+        for i in range(start, end, 1):
+            crc ^= data[i]
+            
+        return crc
+        
+    def _readResponse(self, ser):
+        
+        ret = []
+        
+        oldByte = 0
+        curByte = 0
+        
+        while True:
+            curByte = ser.read()
+            
+            if curByte == b'':
+                break;
+            
+            curByte = byte2int(curByte)
+            
+            ret.append(curByte)
+            
+            if oldByte == BaseStation.SERIAL_MSG_END1 and curByte == BaseStation.SERIAL_MSG_END2:
+                break;
+            
+            oldByte = curByte
+            
+        msgLen = len(ret)
+            
+        if msgLen < 5:
+            raise SportiduinoException(_translate("sportiduino", "No response from the base station"))
+        
+        crc = self._serialCrc(ret, 2, msgLen - 3)
+        
+        if ret[msgLen - 3] != crc:
+            raise SportiduinoException(_translate("sportiduino", "Checksum mismatch in the response"))
+        
+        if ret[2] == BaseStation.SERIAL_RESP_STATUS:
+            if ret[3] == BaseStation.SERIAL_ERROR_FUNC:
+                raise SportiduinoException(_translate("sportiduino", "Invalid function code"))
+            elif ret[3] == BaseStation.SERIAL_ERROR_CRC:
+                raise SportiduinoException(_translate("sportiduino", "Checksum mismatch in the request"))
+            elif ret[3] == BaseStation.SERIAL_ERROR_SIZE:
+                raise SportiduinoException(_translate("sportiduino", "Invalid size of the request"))
+            elif ret[3] == BaseStation.SERIAL_ERROR_PWD:
+                raise SportiduinoException(_translate("sportiduino", "Invalid password"))
+        
+        return ret
     

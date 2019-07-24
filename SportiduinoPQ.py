@@ -274,10 +274,12 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             cards = data['cards']
             
             text += _translate("sportiduinopq","Total punches {}").format(len(cards)) + "\n"
+            
+            text += _translate("sportiduinopq","Cards:") + " "
                         
             for i in range(0, len(cards), 1):
                 if i > 0:
-                    text += ","
+                    text += ", "
                 text += "{}".format(cards[i])
                 
             self.addText(text)
@@ -460,7 +462,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
     def SerialRead_clicked(self):
         try:
         
-            self.addText(_translate("sportiduinopq", "Reads info about a base station by UART"))
+            self.addText("\n" + _translate("sportiduinopq", "Reads info about a base station by UART"))
             
             port = 'COM' + self.cbUartPort.currentText()
             
@@ -477,7 +479,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
         try:
             
-            self.addText(_translate("sportiduinopq","Writes settings to a base station by UART"))
+            self.addText("\n" + _translate("sportiduinopq","Writes settings ans password to a base station by UART"))
             port = 'COM' + self.cbUartPort.currentText()
             
             oldPwd1 = self.sbOldPwd1.value()
@@ -496,6 +498,8 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             bs = BaseStation()
             bs.writeSettingsBySerial(port, oldPwd1, oldPwd2, oldPwd3, 
                                      newPwd1, newPwd2, newPwd3, num, sets, wakeup, gain)
+            
+            self.addText(_translate("sportiduinopq","Settings and password has been written successfully"))
         
         except BaseException as err:
             self._process_error(err)

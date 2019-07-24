@@ -721,26 +721,66 @@
         <source>The card contained info about a base station is not found</source>
         <translation type="unfinished">Чип с информацией о базовой станции не обнаружен</translation>
     </message>
+    <message>
+        <location filename="../sportiduino.py" line="778"/>
+        <source>The base station is not replied by UART. Perhaps the current password is invalid</source>
+        <translation type="obsolete">Базовая станция не отвечает! Возможно установлен не верный пароль</translation>
+    </message>
+    <message>
+        <location filename="../sportiduino.py" line="786"/>
+        <source>Invalid size of the response</source>
+        <translation type="unfinished">Не верный размер ответа</translation>
+    </message>
+    <message>
+        <location filename="../sportiduino.py" line="916"/>
+        <source>No response from the base station</source>
+        <translation type="unfinished">Нет ответа от базовой станции</translation>
+    </message>
+    <message>
+        <location filename="../sportiduino.py" line="921"/>
+        <source>Checksum mismatch in the response</source>
+        <translation type="unfinished">Не совпадает контрольная сумма в ответе</translation>
+    </message>
+    <message>
+        <location filename="../sportiduino.py" line="925"/>
+        <source>Invalid function code</source>
+        <translation type="unfinished">Не верный код функции</translation>
+    </message>
+    <message>
+        <location filename="../sportiduino.py" line="927"/>
+        <source>Checksum mismatch in the request</source>
+        <translation type="unfinished">Не совпадает контрольная сумма в запросе</translation>
+    </message>
+    <message>
+        <location filename="../sportiduino.py" line="929"/>
+        <source>Invalid size of the request</source>
+        <translation type="unfinished">Не верный размер запроса</translation>
+    </message>
+    <message>
+        <location filename="../sportiduino.py" line="931"/>
+        <source>Invalid password</source>
+        <translation type="unfinished">Не верный пароль</translation>
+    </message>
 </context>
 <context>
     <name>sportiduinopq</name>
     <message>
-        <location filename="../sportiduinopq.py" line="95"/>
+        <location filename="../sportiduinopq.py" line="96"/>
         <source>Master station {} on port {} is connected</source>
         <translation type="unfinished">Подключена станция сопряжения {} на порту {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="712"/>
+        <location filename="../sportiduinopq.py" line="717"/>
         <source>Error: {}</source>
         <translation type="unfinished">Ошибка: {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="103"/>
+        <location filename="../sportiduinopq.py" line="104"/>
         <source>Master station is disconnected</source>
         <translation type="unfinished">Станция сопряжения отключена</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="717"/>
+        <location filename="../sportiduinopq.py" line="722"/>
         <source>Master station is not connected</source>
         <translation type="unfinished">Станция сопряжения не подключена</translation>
     </message>
@@ -770,7 +810,7 @@
         <translation type="obsolete">Старт: {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="544"/>
+        <location filename="../sportiduinopq.py" line="549"/>
         <source>Punches (Check point - Time):</source>
         <translation type="unfinished">Отметки (КП - Время):</translation>
     </message>
@@ -780,12 +820,12 @@
         <translation type="obsolete">Финиш: {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="560"/>
+        <location filename="../sportiduinopq.py" line="565"/>
         <source>No punches</source>
         <translation type="unfinished">Нет отметок</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="112"/>
+        <location filename="../sportiduinopq.py" line="113"/>
         <source>Read a card</source>
         <translation type="unfinished">Начинаю читать чип</translation>
     </message>
@@ -800,62 +840,62 @@
         <translation type="obsolete">Чип ({})</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="519"/>
+        <location filename="../sportiduinopq.py" line="524"/>
         <source>Master card to get info about a base station</source>
         <translation type="unfinished">Прочитан мастер-чип для получения информации о базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="521"/>
+        <location filename="../sportiduinopq.py" line="526"/>
         <source>Master card to set time of a base station</source>
         <translation type="unfinished">Прочитан мастер-чип для установки времени базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="523"/>
+        <location filename="../sportiduinopq.py" line="528"/>
         <source>Master card to set number of a base station</source>
         <translation type="unfinished">Прочитан мастер-чип для установки номера базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="525"/>
+        <location filename="../sportiduinopq.py" line="530"/>
         <source>Master card to sleep a base station</source>
         <translation type="unfinished">Прочитан мастер-чип для перевода базовой станции в режим сна</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="527"/>
+        <location filename="../sportiduinopq.py" line="532"/>
         <source>Master card to get punches log of a base station</source>
         <translation type="unfinished">Прочитан мастер-чип для чтения лога базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="529"/>
+        <location filename="../sportiduinopq.py" line="534"/>
         <source>Master card to write password and settings to a base station</source>
         <translation type="unfinished">Прочитан мастер-чип для записи пароля и настроек базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="564"/>
+        <location filename="../sportiduinopq.py" line="569"/>
         <source>Uninitialized card</source>
         <translation type="unfinished">Чип не инициализирован</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="542"/>
+        <location filename="../sportiduinopq.py" line="547"/>
         <source>Participant card N{}</source>
         <translation type="unfinished">Чип участника N{}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="543"/>
+        <location filename="../sportiduinopq.py" line="548"/>
         <source>Init time {}</source>
         <translation type="unfinished">Время инициализации {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="553"/>
+        <location filename="../sportiduinopq.py" line="558"/>
         <source>Start</source>
         <translation type="unfinished">Старт</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="562"/>
+        <location filename="../sportiduinopq.py" line="567"/>
         <source>Total punches {}</source>
         <translation type="unfinished">Всего отметок {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="555"/>
+        <location filename="../sportiduinopq.py" line="560"/>
         <source>Finish</source>
         <translation type="unfinished">Финиш</translation>
     </message>
@@ -865,12 +905,12 @@
         <translation type="obsolete">Подключаю станцию сопряжения</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="153"/>
+        <location filename="../sportiduinopq.py" line="154"/>
         <source>The participant card N{} ({}) has been initialized successfully</source>
         <translation type="unfinished">Чип участника N{} ({}) успешно подготовлен к старту</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="143"/>
+        <location filename="../sportiduinopq.py" line="144"/>
         <source>Not correct card number</source>
         <translation type="unfinished">Недопустимый номер чипа</translation>
     </message>
@@ -880,7 +920,7 @@
         <translation type="obsolete">Устанавливаю текущий пароль</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="375"/>
+        <location filename="../sportiduinopq.py" line="378"/>
         <source>Load settings from file /data/settings.json</source>
         <translation type="unfinished">Загружаю настройки из файла /data/settings.json</translation>
     </message>
@@ -895,72 +935,72 @@
         <translation type="obsolete">Мастер-чип успешно подготовлен</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="664"/>
+        <location filename="../sportiduinopq.py" line="669"/>
         <source>Version: {}.{}.{}</source>
         <translation type="unfinished">Версия: {}.{}.{}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="666"/>
+        <location filename="../sportiduinopq.py" line="671"/>
         <source>Station N: {} </source>
         <translation type="unfinished">Станция N: {} </translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="669"/>
+        <location filename="../sportiduinopq.py" line="674"/>
         <source>(Start)</source>
         <translation type="unfinished">(Старт)</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="671"/>
+        <location filename="../sportiduinopq.py" line="676"/>
         <source>(Finish)</source>
         <translation type="unfinished">(Финиш)</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="673"/>
+        <location filename="../sportiduinopq.py" line="678"/>
         <source>(Check)</source>
         <translation type="unfinished">(Проверка)</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="679"/>
+        <location filename="../sportiduinopq.py" line="684"/>
         <source>Settings: {}</source>
         <translation type="unfinished">Настройки: {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="683"/>
+        <location filename="../sportiduinopq.py" line="688"/>
         <source>Battery: OK</source>
         <translation type="unfinished">Батарейки: в норме</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="685"/>
+        <location filename="../sportiduinopq.py" line="690"/>
         <source>Battery: Low</source>
         <translation type="unfinished">Батарейки: низкий заряд, необходимо заменить</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="688"/>
+        <location filename="../sportiduinopq.py" line="693"/>
         <source>Mode: Active</source>
         <translation type="unfinished">Режим: Активный</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="692"/>
+        <location filename="../sportiduinopq.py" line="697"/>
         <source>Mode: Sleep</source>
         <translation type="unfinished">Режим: Сон</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="694"/>
+        <location filename="../sportiduinopq.py" line="699"/>
         <source>Clock: {}</source>
         <translation type="unfinished">Часы: {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="696"/>
+        <location filename="../sportiduinopq.py" line="701"/>
         <source>Alarm: {}</source>
         <translation type="unfinished">Будильник: {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="701"/>
+        <location filename="../sportiduinopq.py" line="706"/>
         <source>Antenna Gain: {}</source>
         <translation type="unfinished">Усиление антенны: {}</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="709"/>
+        <location filename="../sportiduinopq.py" line="714"/>
         <source>Settings displayed by UI has been chaged to the base station settings</source>
         <translation type="unfinished">Настройки в окне приложения изменены в соответствии с настройками базовой станции</translation>
     </message>
@@ -970,134 +1010,144 @@
         <translation type="obsolete">Читаю чип с информацией о базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="675"/>
+        <location filename="../sportiduinopq.py" line="680"/>
         <source>(Clear)</source>
         <translation type="unfinished">(Очистка)</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="690"/>
+        <location filename="../sportiduinopq.py" line="695"/>
         <source>Mode: Wait</source>
         <translation type="unfinished">Режим: Ожидание</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="131"/>
+        <location filename="../sportiduinopq.py" line="132"/>
         <source>Initialize the participant card</source>
         <translation type="unfinished">Начинаю подготовку чипа участника</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="164"/>
+        <location filename="../sportiduinopq.py" line="165"/>
         <source>Write the master card to set number of a base station</source>
         <translation type="unfinished">Записывая мастер-чип для установки номера базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="168"/>
+        <location filename="../sportiduinopq.py" line="169"/>
         <source>Not correct station number</source>
         <translation type="unfinished">Недопустимый номер базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="195"/>
+        <location filename="../sportiduinopq.py" line="196"/>
         <source>Write the master card to set a base station as the start station</source>
         <translation type="unfinished">Записываю мастер-чип для установки базовой станции как стартовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="209"/>
+        <location filename="../sportiduinopq.py" line="210"/>
         <source>Write the master card to set a base station as the finish station</source>
         <translation type="unfinished">Записываю мастер-чип для установки базовой станции как финишной станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="223"/>
+        <location filename="../sportiduinopq.py" line="224"/>
         <source>Write the master card to set a base station as the check station</source>
         <translation type="unfinished">Записываю мастер-чип для установки базовой станции как станции проверки</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="237"/>
+        <location filename="../sportiduinopq.py" line="238"/>
         <source>Write the master card to set a base station as the clear station</source>
         <translation type="unfinished">Записываю мастер-чип для установки базовой станции как станции очистки</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="251"/>
+        <location filename="../sportiduinopq.py" line="252"/>
         <source>Write the master card to get log of a base station</source>
         <translation type="unfinished">Записываю мастер-чип для получения журнала отметок на  базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="266"/>
+        <location filename="../sportiduinopq.py" line="267"/>
         <source>Read the card contained log of a base station</source>
         <translation type="unfinished">Читаю чип с журналом отметок на базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="271"/>
+        <location filename="../sportiduinopq.py" line="272"/>
         <source>No log data available</source>
         <translation type="unfinished">Чип с логом базовой станции не обнаружен</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="300"/>
+        <location filename="../sportiduinopq.py" line="303"/>
         <source>Write the master card to sleep a base station</source>
         <translation type="unfinished">Записываю мастер-чип для перевода базовой станции в режим сна</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="339"/>
+        <location filename="../sportiduinopq.py" line="342"/>
         <source>Apply the current password</source>
         <translation type="unfinished">Устанавливаю текущий пароль</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="342"/>
+        <location filename="../sportiduinopq.py" line="345"/>
         <source>The password has been applied successfully</source>
         <translation type="unfinished">Текущий пароль успешно установлен</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="353"/>
+        <location filename="../sportiduinopq.py" line="356"/>
         <source>Write the master card to get info about a base station</source>
         <translation type="unfinished">Записываю мастер-чип для получения информации о состоянии базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="366"/>
+        <location filename="../sportiduinopq.py" line="369"/>
         <source>Read the card contained info about a base station</source>
         <translation type="unfinished">Читаю мастер-чип с информацией о состоянии базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="464"/>
+        <location filename="../sportiduinopq.py" line="467"/>
         <source>Reads info about a base station by UART</source>
         <translation type="unfinished">Читаю информацию о состоянии базовой станции по UART</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="481"/>
-        <source>Writes settings to a base station by UART</source>
+        <location filename="../sportiduinopq.py" line="484"/>
+        <source>Writes settings ans password to a base station by UART</source>
         <translation type="unfinished">Записываю новый пароль и настройки в базовую станцию по UART</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="722"/>
+        <location filename="../sportiduinopq.py" line="727"/>
         <source>The master card has been written successfully</source>
         <translation type="unfinished">Мастер-чип успешно записан</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="182"/>
+        <location filename="../sportiduinopq.py" line="183"/>
         <source>Write the master card to set clock of a base station. Put the card on a base station after second signal</source>
         <translation type="unfinished">Записываю мастер-чип для установки часов базовой станции. Приложите данный чип к базовой станции после второго сигнала</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="313"/>
+        <location filename="../sportiduinopq.py" line="316"/>
         <source>Write the master card to write new password and settings to a base station</source>
         <translation type="unfinished">Записываю мастер-чип для установки нового пароля и настроек базовой станции</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="402"/>
+        <location filename="../sportiduinopq.py" line="405"/>
         <source>Settings has been loaded successfully</source>
         <translation type="unfinished">Настройки успешно загружены</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="403"/>
+        <location filename="../sportiduinopq.py" line="406"/>
         <source>Click &apos;Apply Pwd&apos; on #Settings1 tab</source>
         <translation type="unfinished">Нажмите на &quot;Применить&quot; пароль в закладке Настройки#1</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="409"/>
+        <location filename="../sportiduinopq.py" line="412"/>
         <source>Save settings to file /data/settings.json</source>
         <translation type="unfinished">Сохраняю настройки в файл /data/settings.json</translation>
     </message>
     <message>
-        <location filename="../sportiduinopq.py" line="427"/>
+        <location filename="../sportiduinopq.py" line="430"/>
         <source>Settings has been saved successfully</source>
         <translation type="unfinished">Настройки успешно сохранены</translation>
+    </message>
+    <message>
+        <location filename="../sportiduinopq.py" line="504"/>
+        <source>Settings and password has been written successfully</source>
+        <translation type="unfinished">Настройки и пароль были успешно записаны</translation>
+    </message>
+    <message>
+        <location filename="../sportiduinopq.py" line="280"/>
+        <source>Cards:</source>
+        <translation type="unfinished">Чипы:</translation>
     </message>
 </context>
 </TS>
