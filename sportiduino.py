@@ -27,6 +27,9 @@ import time
 import os
 import platform
 import re
+from PyQt5.QtCore import QCoreApplication
+
+_translate = QCoreApplication.translate
 
 if PY3:
     def byte2int(x):
@@ -48,6 +51,8 @@ class Sportiduino(object):
 
     START_STATION  = 240
     FINISH_STATION = 245
+    CHECK_STATION  = 248
+    CLEAR_STATION  = 249 
 
     # Protocol commands
     CMD_INIT_TIMECARD     = b'\x41'
@@ -62,6 +67,9 @@ class Sportiduino(object):
     CMD_READ_CARD         = b'\x4b'
     CMD_READ_RAW          = b'\x4c'
     CMD_INIT_SLEEPCARD    = b'\x4e'
+    CMD_APPLY_PWD         = b'\x4f'
+    CMD_INIT_INFOCARD     = b'\x50'
+    CMD_READ_CARD_TYPE    = b'\x51'
     CMD_BEEP_ERROR        = b'\x58'
     CMD_BEEP_OK           = b'\x59'
 
@@ -71,6 +79,7 @@ class Sportiduino(object):
     RESP_CARD_RAW       = b'\x65'
     RESP_VERS           = b'\x66'
     RESP_MODE           = b'\x69'
+    RESP_CARD_TYPE      = b'\x70'
     RESP_ERROR          = b'\x78'
     RESP_OK             = b'\x79'
 
@@ -79,22 +88,34 @@ class Sportiduino(object):
     ERR_WRITE_CARD      = b'\x02'
     ERR_READ_CARD       = b'\x03'
     ERR_READ_EEPROM     = b'\x04'
+    ERR_CARD_NOT_FOUND  = b'\x05'
+    
+    MASTER_CARD_GET_INFO     = b'\xF9'
+    MASTER_CARD_SET_TIME     = b'\xFA'
+    MASTER_CARD_SET_NUMBER   = b'\xFB'
+    MASTER_CARD_SLEEP        = b'\xFC'
+    MASTER_CARD_READ_DUMP    = b'\xFD'
+    MASTER_CARD_SET_PASS     = b'\xFE'
+    
+    MIN_CARD_NUM = 1
+    MAX_CARD_NUM = 65000
 
     class Version(object):
-        """Sportiduino firmware version."""
+        """Sportiduino version."""
         def __init__(self, value):
             """Initializes version by byte from master station.
             @param value: Byte from master station.
             """
             self.value = value
-            self.major = value // 100
-            self.minor = value % 100
+            self.hw = (value >> 6) + 1
+            self.major = ((value >> 2) & 0x0F) + 1
+            self.minor = value & 0x03
 
         def __str__(self):
             """Override __str__ method.
             @return: User friendly version string.
             """
-            return 'v%d.%d.x' % (self.major, self.minor)
+            return 'v%d.%d.%d' % (self.hw, self.major, self.minor)
 
     def __init__(self, port=None, debug=False, logger=None):
         """Initializes communication with master station at port.
@@ -138,7 +159,7 @@ class Sportiduino(object):
                 except SportiduinoException as msg:
                     errors += 'port %s: %s\n' % (port, msg)
 
-        raise SportiduinoException('No Sportiduino master station found. Possible reasons: %s' % errors)
+        raise SportiduinoException(_translate("sportiduino","No Sportiduino master station found. Possible reasons: {}").format(errors))
 
     def beep_ok(self):
         """One long beep and blink master station."""
@@ -167,9 +188,18 @@ class Sportiduino(object):
         """
         code, data = self._send_command(Sportiduino.CMD_READ_VERS)
         if code == Sportiduino.RESP_VERS:
-            return Sportiduino.Version(byte2int(data))
+            self.version = byte2int(data[0])
+            self.password = byte2int(data[1])<<16 | byte2int(data[2])<<8 | byte2int(data[3])
+            self.settings = byte2int(data[4])
+            self.antennaGain = byte2int(data[5])
+            return Sportiduino.Version(byte2int(data[0]))
         return None
 
+    def read_card_type(self):
+        code, data = self._send_command(Sportiduino.CMD_READ_CARD_TYPE)
+        if code == Sportiduino.RESP_CARD_TYPE :
+            return data[0]
+        return 0xFF
 
     def read_card(self, timeout=None):
         """Reads out the card currently inserted into the station.
@@ -180,7 +210,7 @@ class Sportiduino(object):
         if code == Sportiduino.RESP_CARD_DATA:
             return self._parse_card_data(data)
         else:
-            raise SportiduinoException("Read card failed.")
+            raise SportiduinoException(_translate("sportiduino","Unknown error during card reading"))
 
 
     def poll_card(self):
@@ -188,7 +218,7 @@ class Sportiduino(object):
         If card readed update self.card_data and return True.
         @return: Read card status."""
         try:
-            self.card_data = self.read_card(timeout=0.5)
+            self.card_data = self.read_card()
             return True
         except SportiduinoTimeout:
             pass
@@ -205,7 +235,7 @@ class Sportiduino(object):
         if code == Sportiduino.RESP_CARD_RAW:
             return self._parse_card_raw_data(data)
         else:
-            raise SportiduinoException("Read raw data failed.")
+            raise SportiduinoException("Read raw data failed")
 
 
     def read_backup(self):
@@ -216,7 +246,7 @@ class Sportiduino(object):
         if code == Sportiduino.RESP_BACKUP:
             return self._parse_backup(data)
         else:
-            raise SportiduinoException("Read backup failed.")
+            raise SportiduinoException("Read backup failed")
 
 
     def init_card(self, card_number, page6=None, page7=None):
@@ -237,25 +267,31 @@ class Sportiduino(object):
         params += Sportiduino._to_str(t, 4)
         params += page6[:5]
         params += page7[:5]
-        self._send_command(Sportiduino.CMD_INIT_CARD, params, wait_response=False)
+        return self._send_command(Sportiduino.CMD_INIT_CARD, params, wait_response=True)
 
 
     def init_backupreader(self):
         """Initialize backupreader card."""
-        self._send_command(Sportiduino.CMD_INIT_BACKUPREADER, wait_response=False)
+        self._send_command(Sportiduino.CMD_INIT_BACKUPREADER, wait_response=True)
 
 
-    def init_sleepcard(self):
+    def init_sleepcard(self, wakeup):
         """Initialize sleep card."""
-        self._send_command(Sportiduino.CMD_INIT_SLEEPCARD, wait_response=False)
-
+        params = b''
+        params += int2byte(wakeup.date().year() - 2000)
+        params += int2byte(wakeup.date().month())
+        params += int2byte(wakeup.date().day())
+        params += int2byte(wakeup.time().hour())
+        params += int2byte(wakeup.time().minute())
+        params += int2byte(wakeup.time().second())
+        self._send_command(Sportiduino.CMD_INIT_SLEEPCARD, params, wait_response=True)
 
     def init_cp_number_card(self, cp_number):
         """Initialize card for writing check point number to base station.
         @param cp_number: Check point number.
         """
         params = int2byte(cp_number)
-        self._send_command(Sportiduino.CMD_INIT_CP_NUM_CARD, params, wait_response=False)
+        self._send_command(Sportiduino.CMD_INIT_CP_NUM_CARD, params, wait_response=True)
 
 
     def init_time_card(self, time=datetime.today()):
@@ -269,10 +305,10 @@ class Sportiduino(object):
         params += int2byte(time.hour)
         params += int2byte(time.minute)
         params += int2byte(time.second)
-        self._send_command(Sportiduino.CMD_INIT_TIMECARD, params, wait_response=False)
+        self._send_command(Sportiduino.CMD_INIT_TIMECARD, params, wait_response=True)
 
 
-    def init_passwd_card(self, old_passwd=0, new_passwd=0, flags=0):
+    def init_passwd_card(self, old_passwd, new_passwd, settings, antennaGain):
         """Initialize card for writing new password to base station.
         @param old_passwd: Old password (default 0x000000).
         @param new_passwd: New password (default 0x000000).
@@ -281,9 +317,51 @@ class Sportiduino(object):
         params = b''
         params += Sportiduino._to_str(new_passwd, 3)
         params += Sportiduino._to_str(old_passwd, 3)
-        params += Sportiduino._to_str(flags, 1)
-        self._send_command(Sportiduino.CMD_INIT_PASSWDCARD, params, wait_response=False)
+        params += Sportiduino._to_str(settings, 1)
+        params += Sportiduino._to_str(antennaGain, 1)
+        self.password = new_passwd
+        self.settings = settings
+        self._send_command(Sportiduino.CMD_INIT_PASSWDCARD, params, wait_response=True)
+        
+    def init_info_card(self):
+        """Initialize card for writing check point number to base station.
+        @param cp_number: Check point number.
+        """
+        params = b''
+        self._send_command(Sportiduino.CMD_INIT_INFOCARD, params, wait_response=True)
 
+    def read_info_card(self):
+        bs = BaseStation()
+        pageData = self.read_card_raw()
+        
+        if pageData[4][2] != 255 or pageData[4][1] != byte2int(Sportiduino.MASTER_CARD_GET_INFO):
+            raise SportiduinoException(_translate("sportiduino","The card contained info about a base station is not found"))
+            
+        bs.version = pageData[8][0]
+        bs.antennaGain = pageData[8][3]
+        bs.num = pageData[9][0]
+        bs.settings = pageData[9][1]
+        bs.batteryOk = pageData[9][2]
+        bs.mode = pageData[9][3]
+        bs.timestamp = pageData[10][0] << 24
+        bs.timestamp |= pageData[10][1] << 16
+        bs.timestamp |= pageData[10][2] << 8
+        bs.timestamp |= pageData[10][3]
+ 
+        bs.wakeup = pageData[11][0] << 24
+        bs.wakeup |= pageData[11][1] << 16
+        bs.wakeup |= pageData[11][2] << 8
+        bs.wakeup |= pageData[11][3]
+
+        return bs
+
+    def apply_pwd(self, pwd=0, flags=0):
+        
+        params = b''
+        params += Sportiduino._to_str(pwd, 3)
+        params += Sportiduino._to_str(flags, 1)
+        self.password = pwd
+        self._send_command(Sportiduino.CMD_APPLY_PWD, params, wait_response=True)
 
     def write_pages6_7(self, page6, page7):
         """Write additional pages."""
@@ -301,7 +379,39 @@ class Sportiduino(object):
     def disable_continuous_read(self):
         """Disable continuous card read."""
         self._set_mode(b'\x00')
-
+        
+    @staticmethod
+    def card_name(card_type):
+        if(card_type ==  0) :
+            return _translate("sportiduino","Unknown type")
+        elif(card_type == 1) :
+            return _translate("sportiduino","Compliant with ISO/IEC 14443-4")
+        elif(card_type == 2) :
+            return _translate("sportiduino","Compliant with ISO/IEC 18092 (NFC)")
+        elif(card_type == 3) :
+            return "MIFARE Classic Mini"
+        elif(card_type == 4) :
+            return "MIFARE Classic 1K"
+        elif(card_type == 5) :
+            return "MIFARE Classic 4K"
+        elif(card_type == 6) :
+            return "MIFARE Ultralight"
+        elif(card_type == 7) :
+            return "MIFARE Plus"
+        elif(card_type == 8) :
+            return "MIFARE DESFire"
+        elif(card_type == 9) :
+            return "TNP3XXX"
+        elif(card_type == 0xFF) :
+            return _translate("sportiduino","Not detected")
+        elif(card_type == 0x12) :
+            return "NTAG_213"
+        elif(card_type == 0x3E) :
+            return "NTAG_215"
+        elif(card_type == 0x6D) :
+            return "NTAG_216"
+        
+        return _translate("sportiduino","Unknown type")
 
     def _set_mode(self, mode):
         """Set master station read mode."""
@@ -315,19 +425,18 @@ class Sportiduino(object):
             # Wait little time for it startup
             time.sleep(2)
         except (SerialException, OSError):
-            raise SportiduinoException("Could not open port '%s'" % port)
+            raise SportiduinoException(_translate("sportiduino","Could not open port {}").format(port))
 
         try:
             self._serial.reset_input_buffer()
         except (SerialException, OSError):
-            raise SportiduinoException("Could not flush port '%s'" % port)
+            raise SportiduinoException(_translate("sportiduino","Could not flush port {}").format(port))
 
         self.port = port
         self.baudrate = self._serial.baudrate
-        version = self.read_version()
-        if version is not None:
-            self._log_info("Master station %s on port '%s' connected" % (version, port))
-
+        self.version = self.read_version()
+        if self.version is not None:
+            self._log_info("Master station %s on port '%s' is connected" % (self.version, port))
 
     def _send_command(self, code, parameters=None, wait_response=True, timeout=None):
         if parameters is None:
@@ -362,7 +471,7 @@ class Sportiduino(object):
             while True:
                 byte = self._serial.read()
                 if byte == b'':
-                    raise SportiduinoTimeout('No response')
+                    raise SportiduinoTimeout(_translate("sportiduino","No response"))
                 elif byte == Sportiduino.START_BYTE:
                     break
 
@@ -390,10 +499,10 @@ class Sportiduino(object):
                                                                      ))
 
             if not Sportiduino._cs_check(code + length_byte + data, checksum):
-                raise SportiduinoException('Checksum mismatch')
+                raise SportiduinoException(_translate("sportiduino","Checksum mismatch"))
 
         except (SerialException, OSError) as msg:
-            raise SportiduinoException('Error reading response: %s' % msg)
+            raise SportiduinoException(_translate("sportiduino","Error reading response: {}").format(msg))
 
         if more_fragments:
             next_code, next_data = self._read_response(timeout, fragment_num + 1)
@@ -435,21 +544,32 @@ class Sportiduino(object):
 
 
     @staticmethod
-    def _preprocess_response(code, data, log_debug):
-        if code == Sportiduino.RESP_ERROR:
-            if data == Sportiduino.ERR_COM:
-                raise SportiduinoException("COM error")
-            elif data == Sportiduino.ERR_WRITE_CARD:
-                raise SportiduinoException("Card write error")
-            elif data == Sportiduino.ERR_READ_CARD:
-                raise SportiduinoException("Card read error")
-            elif data == Sportiduino.ERR_READ_EEPROM:
-                raise SportiduinoException("EEPROM read error")
+    def _preprocess_response(func, data, log_debug):
+        err_code = int2byte(data[0])
+        if func == Sportiduino.RESP_ERROR:
+            
+            card_type = data[1]
+            card = Sportiduino.card_name(data[1])
+            
+            if err_code == Sportiduino.ERR_COM:
+                raise SportiduinoException(_translate("sportiduino","COM error"))
+            elif err_code == Sportiduino.ERR_WRITE_CARD:
+                raise SportiduinoException(_translate("sportiduino","Can't write the card ({})").format(card))
+            elif err_code == Sportiduino.ERR_READ_CARD:
+                raise SportiduinoException(_translate("sportiduino","Can't read the card ({})").format(card))
+            elif err_code == Sportiduino.ERR_READ_EEPROM:
+                raise SportiduinoException(_translate("sportiduino","Can't read EEPROM"))
+            elif err_code == Sportiduino.ERR_CARD_NOT_FOUND :
+                if card_type == 0xFF :
+                    raise SportiduinoException(_translate("sportiduino","Card is not found"))
+                else :
+                    raise SportiduinoException(_translate("sportiduino","Unsupported card type = {}").format(card_type))
             else:
-                raise SportiduinoException("Error with code %s" % hex(byte2int(code)))
-        elif code == Sportiduino.RESP_OK:
+                raise SportiduinoException(_translate("sportiduino","Error code {}").format(hex(byte2int(err_code))))
+        elif func == Sportiduino.RESP_OK:
             log_debug("Ok received")
-        return code, data
+            
+        return func, data
 
 
     @staticmethod
@@ -473,6 +593,9 @@ class Sportiduino(object):
     def _parse_card_data(data):
         # TODO check data length
         ret = {}
+        ret['master_card_flag'] = 0
+        ret['master_card_type'] = 0
+        ret['init_timestamp'] = 0
         ret['card_number'] = Sportiduino._to_int(data[0:2])
         ret['page6'] = data[2:6]
         ret['page7'] = data[6:10]
@@ -486,6 +609,51 @@ class Sportiduino(object):
                 ret['finish'] = time
             else:
                 ret['punches'].append((cp, time))
+
+        return ret
+    
+    @staticmethod
+    def raw_data_to_card_data(data):
+        ret = {}
+        ret['master_card_flag'] = data[4][2]
+        ret['master_card_type'] = data[4][1]
+        ret['card_number'] = Sportiduino._to_int(data[4][0:2])
+        ret['init_timestamp'] = Sportiduino._to_int(data[5][0:4])
+        ret['page6'] = data[6][0:4]
+        ret['page7'] = data[7][0:4]
+        ret['punches'] = []
+        
+        if ret['master_card_flag'] == 255:
+            return ret
+        
+        init_time_low = Sportiduino._to_int(data[5][1:4])
+        init_time_high = data[5][0]
+        
+        for page in data:
+            if page < 8:
+                continue
+            
+            cp = data[page][0]
+            
+            if cp == 0 :
+                continue
+            
+            cp_timestamp = 0
+            cp_time_low = Sportiduino._to_int(data[page][1:4])
+            
+            if cp_time_low < init_time_low:
+                cp_timestamp = ((init_time_high + 1) << 24) | cp_time_low
+            else:
+                cp_timestamp = (init_time_high << 24) | cp_time_low
+            
+            time = datetime.fromtimestamp(cp_timestamp)
+            
+            if cp == Sportiduino.START_STATION:
+                ret['start'] = time
+            elif cp == Sportiduino.FINISH_STATION:
+                ret['finish'] = time
+            
+            ret['punches'].append((cp, time))
 
         return ret
 
@@ -504,15 +672,18 @@ class Sportiduino(object):
     def _parse_backup(data):
         
         ret = {}
-        cp = Sportiduino._to_int(data[0:2])
-        ret['cp'] = cp
+        ret['cp'] = 0
         ret['cards'] = []
-        for i in range(2, len(data), 2):
+        
+        if len(data) < 1 :
+            return ret
+        
+        ret['cp'] = Sportiduino._to_int(data[0:1])
+        
+        for i in range(1, len(data), 2):
             ret['cards'].append(Sportiduino._to_int(data[i:i + 2]))
         
         return ret
-
-
 
 class SportiduinoException(Exception):
     pass
@@ -521,3 +692,233 @@ class SportiduinoException(Exception):
 class SportiduinoTimeout(SportiduinoException):
     pass
 
+class BaseStation(object):
+    MODE_ACTIVE = 0
+    MODE_WAIT = 1
+    MODE_SLEEP = 2
+    
+    START_STATION_NUM = 240
+    FINISH_STATION_NUM = 245
+    CHECK_STATION_NUM = 248
+    CLEAR_STATION_NUM = 249
+    
+    # UART
+    SERIAL_MSG_START1 = 0xFE
+    SERIAL_MSG_START2 = 0xEF
+    SERIAL_MSG_END1 = 0xFD
+    SERIAL_MSG_END2 = 0xDF
+
+    SERIAL_FUNC_READ_INFO = 0xF0
+    SERIAL_FUNC_WRITE_SETTINGS = 0xF1
+    
+    SERIAL_RESP_STATUS = 0x1
+    SERIAL_RESP_INFO   = 0x2
+    
+    SERIAL_OK          = 0x0
+    SERIAL_ERROR_CRC   = 0x1
+    SERIAL_ERROR_FUNC  = 0x2
+    SERIAL_ERROR_SIZE  = 0x3
+    SERIAL_ERROR_PWD   = 0x4
+    
+    def __init__(self):
+        self.version = 0
+        self.mode = BaseStation.MODE_ACTIVE
+        self.settings = 0
+        self.num = 0
+        self.timestamp = 0
+        self.wakeup = 0
+        self.batteryOk = 0
+        self.antennaGain = 7<<4
+        
+    def hwVers(self):
+        return ((self.version >> 6) & 0x03) + 1
+    
+    def fwMajorVers(self):
+        return ((self.version >> 2) & 0x0F) + 1
+    
+    def fwMinorVers(self):
+        return self.version & 0x03
+    
+    def readInfoBySerial(self, port, pwd1, pwd2, pwd3):
+        ser = Serial(port, baudrate=9600, timeout=10)
+        
+        msg = []
+
+        msg.append(BaseStation.SERIAL_FUNC_READ_INFO)
+        msg.append(pwd1)
+        msg.append(pwd2)
+        msg.append(pwd3)
+    
+        crc8 = 0
+        
+        for x in msg:
+            crc8 ^= x
+        
+        msg.append(crc8)
+        
+        msg.insert(0,BaseStation.SERIAL_MSG_START2)
+        msg.insert(0,BaseStation.SERIAL_MSG_START1)
+        # Обязательно в начале сообщения дублируем первый байт
+        # Потому что после получения первого байта процессор только просыпается
+        # и UART не успевает синхронизироваться, поэтому первый байт не принимается
+        # и его нужно продублировать
+        msg.insert(0,BaseStation.SERIAL_MSG_START1)
+        msg.append(BaseStation.SERIAL_MSG_END1)
+        msg.append(BaseStation.SERIAL_MSG_END2)
+        
+        bmsg = bytes(msg)
+        
+        ser.write(bmsg)
+        msg = self._readResponse(ser)
+        ser.close()
+        
+        if len(msg) < 19:
+            raise SportiduinoException(_translate("sportiduino", "Invalid size of the response"))
+        
+        pos = 3;
+        self.version = msg[pos]
+        pos += 1
+        
+        self.num = msg[pos]
+        pos += 1;
+        
+        self.settings = msg[pos]
+        pos += 1    
+           
+        self.batteryOk = msg[pos]
+        pos += 1
+        
+        self.mode = msg[pos]
+        pos += 1
+        
+        self.timestamp = msg[pos] << 24
+        pos += 1
+        self.timestamp |= msg[pos] << 16
+        pos += 1
+        self.timestamp |= msg[pos] << 8
+        pos += 1
+        self.timestamp |= msg[pos]
+        pos += 1
+        
+        self.wakeup = msg[pos] << 24
+        pos += 1
+        self.wakeup |= msg[pos] << 16
+        pos += 1
+        self.wakeup |= msg[pos] << 8
+        pos += 1
+        self.wakeup |= msg[pos]
+        pos += 1
+        
+        self.antennaGain = msg[pos]
+        
+    def writeSettingsBySerial(self, port, oldPwd1, oldPwd2, oldPwd3, newPwd1, newPwd2, newPwd3, num, settings, wakeup, gain):
+        ser = Serial(port, baudrate=9600, timeout=1)
+        
+        msg = []
+
+        msg.append(BaseStation.SERIAL_FUNC_WRITE_SETTINGS)
+        
+        # старый пароль
+        msg.append(oldPwd1)
+        msg.append(oldPwd2)
+        msg.append(oldPwd3)
+        # текущее время
+        utc = datetime.utcnow();
+        msg.append(utc.year - 2000)
+        msg.append(utc.month)
+        msg.append(utc.day)
+        msg.append(utc.hour)
+        msg.append(utc.minute)
+        msg.append(utc.second)
+        # новый пароль
+        msg.append(newPwd1)
+        msg.append(newPwd2)
+        msg.append(newPwd3)
+        # номер станции
+        msg.append(num)
+        # настройки
+        msg.append(settings)
+        # время пробуждения
+        msg.append(wakeup.year - 2000)
+        msg.append(wakeup.month)
+        msg.append(wakeup.day)
+        msg.append(wakeup.hour)
+        msg.append(wakeup.minute)
+        msg.append(wakeup.second)
+        # усиление антенны
+        msg.append(gain)
+        
+        crc8 = self._serialCrc(msg, 0, len(msg))
+        
+        msg.append(crc8)
+        
+        msg.insert(0,BaseStation.SERIAL_MSG_START2)
+        msg.insert(0,BaseStation.SERIAL_MSG_START1)
+        # Обязательно в начале сообщения дублируем первый байт
+        # Потому что после получения первого байта процессор только просыпается
+        # и UART не успевает синхронизироваться, поэтому первый байт не принимается
+        # и его нужно продублировать
+        msg.insert(0,BaseStation.SERIAL_MSG_START1)
+        msg.append(BaseStation.SERIAL_MSG_END1)
+        msg.append(BaseStation.SERIAL_MSG_END2)
+        
+        bmsg = bytes(msg)
+        
+        ser.write(bmsg)
+        
+        self._readResponse(ser)
+        
+        ser.close()
+        
+    def _serialCrc(self, data, start, end):
+        crc = 0
+        
+        for i in range(start, end, 1):
+            crc ^= data[i]
+            
+        return crc
+        
+    def _readResponse(self, ser):
+        
+        ret = []
+        
+        oldByte = 0
+        curByte = 0
+        
+        while True:
+            curByte = ser.read()
+            
+            if curByte == b'':
+                break;
+            
+            curByte = byte2int(curByte)
+            
+            ret.append(curByte)
+            
+            if oldByte == BaseStation.SERIAL_MSG_END1 and curByte == BaseStation.SERIAL_MSG_END2:
+                break;
+            
+            oldByte = curByte
+            
+        msgLen = len(ret)
+            
+        if msgLen < 5:
+            raise SportiduinoException(_translate("sportiduino", "No response from the base station"))
+        
+        crc = self._serialCrc(ret, 2, msgLen - 3)
+        
+        if ret[msgLen - 3] != crc:
+            raise SportiduinoException(_translate("sportiduino", "Checksum mismatch in the response"))
+        
+        if ret[2] == BaseStation.SERIAL_RESP_STATUS:
+            if ret[3] == BaseStation.SERIAL_ERROR_FUNC:
+                raise SportiduinoException(_translate("sportiduino", "Invalid function code"))
+            elif ret[3] == BaseStation.SERIAL_ERROR_CRC:
+                raise SportiduinoException(_translate("sportiduino", "Checksum mismatch in the request"))
+            elif ret[3] == BaseStation.SERIAL_ERROR_SIZE:
+                raise SportiduinoException(_translate("sportiduino", "Invalid size of the request"))
+            elif ret[3] == BaseStation.SERIAL_ERROR_PWD:
+                raise SportiduinoException(_translate("sportiduino", "Invalid password"))
+        
+        return ret
+    
