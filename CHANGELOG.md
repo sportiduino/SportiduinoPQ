@@ -1,3 +1,6 @@
+## [0.7.1] - 2019-08-28
+- Added user interface scrolling on small displays
+
 ## [0.7.0] - 2019-07-23
 - Added russian localization
 - Redesigned UI

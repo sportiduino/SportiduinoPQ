@@ -28,7 +28,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
-        self.setWindowTitle("SportiduinoPQ v0.7.0")
+        self.setWindowTitle("SportiduinoPQ v0.7.1")
         
         self.log =''
         self.readData = []
