@@ -1,6 +1,10 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 import sys
 sys.path.append('..')
 import os.path
+import platform
+import re
 import time
 import datetime
 import serial
@@ -23,10 +27,11 @@ from six import int2byte, byte2int, iterbytes, print_, PY3
 
 _translate = QCoreApplication.translate
 
-class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
+class App(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
+        self.ui = design.Ui_MainWindow()
+        self.ui.setupUi(self)
 
         self.setWindowTitle("SportiduinoPQ v0.7.1")
         
@@ -36,7 +41,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.connected = False
         self.CardNum = '0'
         self.printer = QPrinter()
-        self.printerName.setText(self.printer.printerName())
+        self.ui.printerName.setText(self.printer.printerName())
         
         self.initTime = datetime.now()
         self.addText('{:%Y-%m-%d %H:%M:%S}'.format(self.initTime))
@@ -44,51 +49,61 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         dt = QDateTime.currentDateTime()
         tm = QTime(dt.time().hour(), dt.time().minute(), 0)
         dt.setTime(tm)
-        self.dtCompetion.setDateTime(dt)
+        self.ui.dtCompetion.setDateTime(dt)
 
-        self.Connec.clicked.connect(self.Connec_clicked)
-        self.ReadCard.clicked.connect(self.ReadCard_clicked)
-        self.InitCard.clicked.connect(self.InitCard_clicked)
-        self.SetTime.clicked.connect(self.SetTime_clicked)
-        self.SetNum.clicked.connect(self.SetNum_clicked)
-        self.SetStart.clicked.connect(self.SetStart_clicked)
-        self.SetFinish.clicked.connect(self.SetFinish_clicked)
-        self.CheckSt.clicked.connect(self.CheckSt_clicked)
-        self.ClearSt.clicked.connect(self.ClearSt_clicked)
-        self.LogCard.clicked.connect(self.LogCard_clicked)
-        self.ReadLog.clicked.connect(self.ReadLog_clicked)
-        self.SleepCard.clicked.connect(self.SleepCard_clicked)
-        self.PassCard.clicked.connect(self.PassCard_clicked)
-        self.SaveSet.clicked.connect(self.SaveSet_clicked)
-        self.LoadSet.clicked.connect(self.LoadSet_clicked)
-        self.SelectPrinter.clicked.connect(self.SelectPrinter_clicked)
-        self.Print.clicked.connect(self.Print_clicked)
-        self.btnApplyPwd.clicked.connect(self.ApplyPwd_clicked)
-        self.btnCreateInfoCard.clicked.connect(self.CreateInfo_clicked)
-        self.btnReadInfo.clicked.connect(self.ReadInfo_clicked)
-        self.btnUartRead.clicked.connect(self.SerialRead_clicked)
-        self.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
-        self.btnClearText.clicked.connect(self.ClearText_clicked)
+        availablePorts = []
+        if platform.system() == 'Linux':
+            availablePorts = [os.path.join('/dev', f) for f in os.listdir('/dev') if
+                              re.match('ttyUSB.+', f)]
+        elif platform.system() == 'Windows':
+            availablePorts = ['COM' + str(i) for i in range(32)]
+        self.ui.choiseCom.addItems(availablePorts)
+        self.ui.cbUartPort.addItems(availablePorts)
+
+        self.ui.Connec.clicked.connect(self.Connec_clicked)
+        self.ui.ReadCard.clicked.connect(self.ReadCard_clicked)
+        self.ui.InitCard.clicked.connect(self.InitCard_clicked)
+        self.ui.SetTime.clicked.connect(self.SetTime_clicked)
+        self.ui.SetNum.clicked.connect(self.SetNum_clicked)
+        self.ui.SetStart.clicked.connect(self.SetStart_clicked)
+        self.ui.SetFinish.clicked.connect(self.SetFinish_clicked)
+        self.ui.CheckSt.clicked.connect(self.CheckSt_clicked)
+        self.ui.ClearSt.clicked.connect(self.ClearSt_clicked)
+        self.ui.LogCard.clicked.connect(self.LogCard_clicked)
+        self.ui.ReadLog.clicked.connect(self.ReadLog_clicked)
+        self.ui.SleepCard.clicked.connect(self.SleepCard_clicked)
+        self.ui.PassCard.clicked.connect(self.PassCard_clicked)
+        self.ui.SaveSet.clicked.connect(self.SaveSet_clicked)
+        self.ui.LoadSet.clicked.connect(self.LoadSet_clicked)
+        self.ui.SelectPrinter.clicked.connect(self.SelectPrinter_clicked)
+        self.ui.Print.clicked.connect(self.Print_clicked)
+        self.ui.btnApplyPwd.clicked.connect(self.ApplyPwd_clicked)
+        self.ui.btnCreateInfoCard.clicked.connect(self.CreateInfo_clicked)
+        self.ui.btnReadInfo.clicked.connect(self.ReadInfo_clicked)
+        self.ui.btnUartRead.clicked.connect(self.SerialRead_clicked)
+        self.ui.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
+        self.ui.btnClearText.clicked.connect(self.ClearText_clicked)
 
     def Connec_clicked(self):
 
         self.addText("")
         
         if (self.connected == False):
-            COM = 'COM' + self.choiseCom.currentText()
+
+            port = self.ui.choiseCom.currentText()
             try:
-                if (COM == 'COMauto'):
+                if (port == _translate("MainWindow", "auto")):
                     self.sportiduino = Sportiduino(debug=True)
                 else:
-                    self.sportiduino = Sportiduino(COM,debug=True)
+                    self.sportiduino = Sportiduino(port,debug=True)
 
-                self.sbCurPwd1.setValue((self.sportiduino.password & 0xFF0000) >> 16)
-                self.sbCurPwd2.setValue((self.sportiduino.password & 0x00FF00) >> 8) 
-                self.sbCurPwd3.setValue(self.sportiduino.password & 0x0000FF)
+                self.ui.sbCurPwd1.setValue((self.sportiduino.password & 0xFF0000) >> 16)
+                self.ui.sbCurPwd2.setValue((self.sportiduino.password & 0x00FF00) >> 8) 
+                self.ui.sbCurPwd3.setValue(self.sportiduino.password & 0x0000FF)
                 
                 self.showSettings(self.sportiduino.settings)
                 idx = (self.sportiduino.antennaGain >> 4) - 2
-                self.cbAntennaGain.setCurrentIndex(idx)
+                self.ui.cbAntennaGain.setCurrentIndex(idx)
                 
                 self.sportiduino.beep_ok()
                 self.connected = True
@@ -130,7 +145,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             self.addText(_translate("sportiduinopq","Initialize the participant card"))
         
-            text = self.cardLine.text()
+            text = self.ui.cardLine.text()
         
             if(text.isdigit()):
                 self.CardNum = text
@@ -144,10 +159,10 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             code, data = self.sportiduino.init_card(num)
             
-            if (self.AutoIncriment.checkState() != 0):
+            if (self.ui.AutoIncriment.checkState() != 0):
                 self.AutoIn = True
                 self.CardNum = str(num + 1)
-                self.cardLine.setText(self.CardNum)
+                self.ui.cardLine.setText(self.CardNum)
             
             if code == Sportiduino.RESP_OK :
                 self.addText(_translate("sportiduinopq","The participant card N{} ({}) has been initialized successfully").format(num, Sportiduino.card_name(data[0])))
@@ -162,7 +177,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         try:
             
             self.addText(_translate("sportiduinopq","Write the master card to set number of a base station"))
-            num = self.sbStationNum.value()
+            num = self.ui.sbStationNum.value()
         
             if num == 0 or num > 255:
                 raise BaseException(_translate("sportiduinopq","Not correct station number"))
@@ -194,7 +209,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             self.addText(_translate("sportiduinopq","Write the master card to set a base station as the start station"))
             self.sportiduino.init_cp_number_card(Sportiduino.START_STATION)
-            self.sbStationNum.setValue(Sportiduino.START_STATION)
+            self.ui.sbStationNum.setValue(Sportiduino.START_STATION)
             self._master_card_ok()
             
         except BaseException as err:
@@ -208,7 +223,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             self.addText(_translate("sportiduinopq","Write the master card to set a base station as the finish station"))
             self.sportiduino.init_cp_number_card(Sportiduino.FINISH_STATION)
-            self.sbStationNum.setValue(Sportiduino.FINISH_STATION)
+            self.ui.sbStationNum.setValue(Sportiduino.FINISH_STATION)
             self._master_card_ok()
             
         except BaseException as err:
@@ -222,7 +237,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             self.addText(_translate("sportiduinopq","Write the master card to set a base station as the check station"))
             self.sportiduino.init_cp_number_card(Sportiduino.CHECK_STATION)
-            self.sbStationNum.setValue(Sportiduino.CHECK_STATION)
+            self.ui.sbStationNum.setValue(Sportiduino.CHECK_STATION)
             self._master_card_ok()
             
         except BaseException as err:
@@ -236,7 +251,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             self.addText(_translate("sportiduinopq","Write the master card to set a base station as the clear station"))
             self.sportiduino.init_cp_number_card(Sportiduino.CLEAR_STATION)
-            self.sbStationNum.setValue(Sportiduino.CLEAR_STATION)
+            self.ui.sbStationNum.setValue(Sportiduino.CLEAR_STATION)
             self._master_card_ok()
             
         except BaseException as err:
@@ -299,7 +314,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         try:
             
             self.addText(_translate("sportiduinopq","Write the master card to sleep a base station"))
-            self.sportiduino.init_sleepcard(self.dtCompetion.dateTime().toUTC())
+            self.sportiduino.init_sleepcard(self.ui.dtCompetion.dateTime().toUTC())
             self._master_card_ok()
             
         except BaseException as err:
@@ -314,16 +329,16 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self.addText(_translate("sportiduinopq","Write the master card to write new password and settings to a base station"))
             setSt = self.getSettingsFromUI()
 
-            oldPass = self.sbOldPwd1.value()<<16 | self.sbOldPwd2.value()<<8 | self.sbOldPwd3.value()
-            newPass = self.sbNewPwd1.value()<<16 | self.sbNewPwd2.value()<<8 | self.sbNewPwd3.value()
+            oldPass = self.ui.sbOldPwd1.value()<<16 | self.ui.sbOldPwd2.value()<<8 | self.ui.sbOldPwd3.value()
+            newPass = self.ui.sbNewPwd1.value()<<16 | self.ui.sbNewPwd2.value()<<8 | self.ui.sbNewPwd3.value()
             
-            gain = (self.cbAntennaGain.currentIndex() + 2) << 4
+            gain = (self.ui.cbAntennaGain.currentIndex() + 2) << 4
         
             self.sportiduino.init_passwd_card(oldPass,newPass,setSt,gain)
                 
-            self.sbCurPwd3.setValue(self.sbNewPwd3.value())
-            self.sbCurPwd2.setValue(self.sbNewPwd2.value())
-            self.sbCurPwd1.setValue(self.sbNewPwd1.value())
+            self.ui.sbCurPwd3.setValue(self.ui.sbNewPwd3.value())
+            self.ui.sbCurPwd2.setValue(self.ui.sbNewPwd2.value())
+            self.ui.sbCurPwd1.setValue(self.ui.sbNewPwd1.value())
             
             self._master_card_ok()
             
@@ -334,7 +349,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         if self._check_connection() == False:
             return
 
-        curPass = self.sbCurPwd1.value()<<16 | self.sbCurPwd2.value()<<8 | self.sbCurPwd3.value()
+        curPass = self.ui.sbCurPwd1.value()<<16 | self.ui.sbCurPwd2.value()<<8 | self.ui.sbCurPwd3.value()
         
         try:
             self.addText(_translate("sportiduinopq","Apply the current password"))
@@ -391,14 +406,14 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             
             self.showSettings(settings)
             
-            self.cbAntennaGain.setCurrentIndex(gain)
+            self.ui.cbAntennaGain.setCurrentIndex(gain)
             
-            self.sbCurPwd1.setValue(pwd1)
-            self.sbCurPwd2.setValue(pwd2)
-            self.sbCurPwd3.setValue(pwd3)
-            self.sbOldPwd1.setValue(pwd1)
-            self.sbOldPwd2.setValue(pwd2)
-            self.sbOldPwd3.setValue(pwd3)
+            self.ui.sbCurPwd1.setValue(pwd1)
+            self.ui.sbCurPwd2.setValue(pwd2)
+            self.ui.sbCurPwd3.setValue(pwd3)
+            self.ui.sbOldPwd1.setValue(pwd1)
+            self.ui.sbOldPwd2.setValue(pwd2)
+            self.ui.sbOldPwd3.setValue(pwd3)
             
             self.addText(_translate("sportiduinopq","Settings has been loaded successfully"))
             self.addText(_translate("sportiduinopq","Click 'Apply Pwd' on #Settings1 tab"))
@@ -412,14 +427,14 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         try:  
             
             settings = self.getSettingsFromUI()
-            gain = self.cbAntennaGain.currentIndex()
+            gain = self.ui.cbAntennaGain.currentIndex()
             
             obj = {}
             obj['settings'] = settings
             obj['gain'] = gain
-            obj['pwd1'] = self.sbCurPwd1.value() 
-            obj['pwd2'] = self.sbCurPwd2.value()
-            obj['pwd3'] = self.sbCurPwd3.value()
+            obj['pwd1'] = self.ui.sbCurPwd1.value() 
+            obj['pwd2'] = self.ui.sbCurPwd2.value()
+            obj['pwd3'] = self.ui.sbCurPwd3.value()
             
             file = open(os.path.join('data','settings.json'),'w')
             json.dump(obj, file)
@@ -434,9 +449,9 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         text += '\n'
         logFile = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(self.initTime)),'a')
         print(text)
-        browserText = self.textBrowser.toPlainText()
+        browserText = self.ui.textBrowser.toPlainText()
         browserText = browserText + text
-        self.textBrowser.setPlainText(browserText)
+        self.ui.textBrowser.setPlainText(browserText)
         logFile.write(text)
         logFile.close()
 
@@ -444,7 +459,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         dialog = QtPrintSupport.QPrintDialog(self.printer)
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.printer = dialog.printer()
-            self.printerName.setText(self.printer.printerName())
+            self.ui.printerName.setText(self.printer.printerName())
             
     def Print_clicked(self):
         try:
@@ -453,9 +468,9 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             page_size = QSizeF()
             page_size.setHeight(self.printer.height())
             page_size.setWidth(self.printer.width())
-            self.textBrowser.document().setPageSize(page_size)
-            self.textBrowser.document().setDocumentMargin(0.0)
-            self.textBrowser.document().print_(self.printer)
+            self.ui.textBrowser.document().setPageSize(page_size)
+            self.ui.textBrowser.document().setDocumentMargin(0.0)
+            self.ui.textBrowser.document().print_(self.printer)
         except BaseException as err:
             self._process_error(err)
         
@@ -464,10 +479,10 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
             self.addText("\n" + _translate("sportiduinopq", "Reads info about a base station by UART"))
             
-            port = 'COM' + self.cbUartPort.currentText()
+            port = self.ui.cbUartPort.currentText()
             
             bs = BaseStation()
-            bs.readInfoBySerial(port, self.sbCurPwd1.value(), self.sbCurPwd2.value(), self.sbCurPwd3.value())
+            bs.readInfoBySerial(port, self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
 
             self.showBaseStationInfo(bs)
         
@@ -480,20 +495,20 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         try:
             
             self.addText("\n" + _translate("sportiduinopq","Writes settings ans password to a base station by UART"))
-            port = 'COM' + self.cbUartPort.currentText()
+            port = self.ui.cbUartPort.currentText()
             
-            oldPwd1 = self.sbOldPwd1.value()
-            oldPwd2 = self.sbOldPwd2.value()
-            oldPwd3 = self.sbOldPwd3.value()
+            oldPwd1 = self.ui.sbOldPwd1.value()
+            oldPwd2 = self.ui.sbOldPwd2.value()
+            oldPwd3 = self.ui.sbOldPwd3.value()
             
-            newPwd1 = self.sbNewPwd1.value()
-            newPwd2 = self.sbNewPwd2.value()
-            newPwd3 = self.sbNewPwd3.value()
+            newPwd1 = self.ui.sbNewPwd1.value()
+            newPwd2 = self.ui.sbNewPwd2.value()
+            newPwd3 = self.ui.sbNewPwd3.value()
             
-            num = self.sbStationNumByUart.value()
+            num = self.ui.sbStationNumByUart.value()
             sets = self.getSettingsFromUI()
-            wakeup = self.dtCompetion.dateTime().toUTC().toPyDateTime()
-            gain = (self.cbAntennaGain.currentIndex() + 2) << 4
+            wakeup = self.ui.dtCompetion.dateTime().toUTC().toPyDateTime()
+            gain = (self.ui.cbAntennaGain.currentIndex() + 2) << 4
             
             bs = BaseStation()
             bs.writeSettingsBySerial(port, oldPwd1, oldPwd2, oldPwd3, 
@@ -505,10 +520,10 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
             self._process_error(err)
             
     def ClearText_clicked(self):
-        self.textBrowser.setPlainText('')
+        self.ui.textBrowser.setPlainText('')
     
     def showCardData(self,data,card_type):
-        if (self.AutoPrint.checkState() != 0):
+        if (self.ui.AutoPrint.checkState() != 0):
             self.ClearText_clicked()
                 
         card_name = Sportiduino.card_name(card_type)
@@ -568,7 +583,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
    
         self.addText(text)
         
-        if (self.AutoPrint.checkState() != 0):
+        if (self.ui.AutoPrint.checkState() != 0):
             self.Print_clicked()
             
     def saveCardDataJson(self,data):
@@ -609,26 +624,26 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
     def showSettings(self, settings):
         set1 = settings & 0x3
-        self.WorkTime.setCurrentIndex(set1)
+        self.ui.WorkTime.setCurrentIndex(set1)
         
         set2 = (settings & 0x4) >> 0x2
-        self.StartFinish.setCurrentIndex(set2)
+        self.ui.StartFinish.setCurrentIndex(set2)
         
         set3 = (settings & 0x8) >> 0x3
-        self.CheckInitTime.setCurrentIndex(set3)
+        self.ui.CheckInitTime.setCurrentIndex(set3)
         
         set4 = (settings & 0x10) >> 0x4
-        self.AutoDel.setCurrentIndex(set4)
+        self.ui.AutoDel.setCurrentIndex(set4)
         
         set5 = (settings & 0x20) >> 0x5
-        self.cbFastMark.setCurrentIndex(set5)
+        self.ui.cbFastMark.setCurrentIndex(set5)
         
     def getSettingsFromUI(self):
-        workTime = self.WorkTime.currentIndex()
-        stFi = self.StartFinish.currentIndex()
-        checkIT = self.CheckInitTime.currentIndex()
-        autoDel = self.AutoDel.currentIndex()
-        fastMark = self.cbFastMark.currentIndex()
+        workTime = self.ui.WorkTime.currentIndex()
+        stFi = self.ui.StartFinish.currentIndex()
+        checkIT = self.ui.CheckInitTime.currentIndex()
+        autoDel = self.ui.AutoDel.currentIndex()
+        fastMark = self.ui.cbFastMark.currentIndex()
 
         if (workTime == 0):
             a = 0b00
@@ -700,13 +715,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.addText(text)
 
         idx = (bs.antennaGain >> 4) - 2;
-        self.cbAntennaGain.setCurrentIndex(idx)
-        self.addText(_translate("sportiduinopq","Antenna Gain: {}").format(self.cbAntennaGain.currentText()))
+        self.ui.cbAntennaGain.setCurrentIndex(idx)
+        self.addText(_translate("sportiduinopq","Antenna Gain: {}").format(self.ui.cbAntennaGain.currentText()))
         
         # apply settings to ui    
-        self.sbStationNum.setValue(bs.num)
-        self.sbStationNumByUart.setValue(bs.num)
-        self.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))            
+        self.ui.sbStationNum.setValue(bs.num)
+        self.ui.sbStationNumByUart.setValue(bs.num)
+        self.ui.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))            
         self.showSettings(bs.settings)
         
         self.addText(_translate("sportiduinopq","Settings displayed by UI has been chaged to the base station settings"))

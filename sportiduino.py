@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 #    Copyright 2018 Semyon Yakimov <ya-kimov@mail.ru>
 #
@@ -921,4 +922,4 @@ class BaseStation(object):
                 raise SportiduinoException(_translate("sportiduino", "Invalid password"))
         
         return ret
-    
+
