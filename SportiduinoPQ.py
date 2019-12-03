@@ -3,6 +3,8 @@
 import sys
 sys.path.append('..')
 import os.path
+import platform
+import re
 import time
 import datetime
 import serial
@@ -48,6 +50,15 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         dt.setTime(tm)
         self.dtCompetion.setDateTime(dt)
 
+        availablePorts = []
+        if platform.system() == 'Linux':
+            availablePorts = [os.path.join('/dev', f) for f in os.listdir('/dev') if
+                              re.match('ttyUSB.+', f)]
+        elif platform.system() == 'Windows':
+            availablePorts = ['COM' + str(i) for i in range(32)]
+        self.choiseCom.addItems(availablePorts)
+        self.cbUartPort.addItems(availablePorts)
+
         self.Connec.clicked.connect(self.Connec_clicked)
         self.ReadCard.clicked.connect(self.ReadCard_clicked)
         self.InitCard.clicked.connect(self.InitCard_clicked)
@@ -77,12 +88,13 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         self.addText("")
         
         if (self.connected == False):
-            COM = 'COM' + self.choiseCom.currentText()
+
+            port = self.choiseCom.currentText()
             try:
-                if (COM == 'COMauto'):
+                if (port == _translate("MainWindow", "auto")):
                     self.sportiduino = Sportiduino(debug=True)
                 else:
-                    self.sportiduino = Sportiduino(COM,debug=True)
+                    self.sportiduino = Sportiduino(port,debug=True)
 
                 self.sbCurPwd1.setValue((self.sportiduino.password & 0xFF0000) >> 16)
                 self.sbCurPwd2.setValue((self.sportiduino.password & 0x00FF00) >> 8) 
@@ -466,7 +478,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         
             self.addText("\n" + _translate("sportiduinopq", "Reads info about a base station by UART"))
             
-            port = 'COM' + self.cbUartPort.currentText()
+            port = self.cbUartPort.currentText()
             
             bs = BaseStation()
             bs.readInfoBySerial(port, self.sbCurPwd1.value(), self.sbCurPwd2.value(), self.sbCurPwd3.value())
@@ -482,7 +494,7 @@ class App(QtWidgets.QMainWindow, design.Ui_MainWindow):
         try:
             
             self.addText("\n" + _translate("sportiduinopq","Writes settings ans password to a base station by UART"))
-            port = 'COM' + self.cbUartPort.currentText()
+            port = self.cbUartPort.currentText()
             
             oldPwd1 = self.sbOldPwd1.value()
             oldPwd2 = self.sbOldPwd2.value()
