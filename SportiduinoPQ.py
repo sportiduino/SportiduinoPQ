@@ -452,6 +452,8 @@ class App(QtWidgets.QMainWindow):
         browserText = self.ui.textBrowser.toPlainText()
         browserText = browserText + text
         self.ui.textBrowser.setPlainText(browserText)
+        # Scroll down
+        self.ui.textBrowser.verticalScrollBar().setValue(self.ui.textBrowser.verticalScrollBar().maximum())
         logFile.write(text)
         logFile.close()
 
