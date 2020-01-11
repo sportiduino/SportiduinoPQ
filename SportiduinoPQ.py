@@ -60,7 +60,7 @@ class App(QtWidgets.QMainWindow):
         self.ui.choiseCom.addItems(availablePorts)
         self.ui.cbUartPort.addItems(availablePorts)
 
-        self.ui.Connec.clicked.connect(self.Connec_clicked)
+        self.ui.Connect.clicked.connect(self.Connect_clicked)
         self.ui.ReadCard.clicked.connect(self.ReadCard_clicked)
         self.ui.InitCard.clicked.connect(self.InitCard_clicked)
         self.ui.SetTime.clicked.connect(self.SetTime_clicked)
@@ -84,12 +84,17 @@ class App(QtWidgets.QMainWindow):
         self.ui.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
         self.ui.btnClearText.clicked.connect(self.ClearText_clicked)
 
-    def Connec_clicked(self):
+    def Connect_clicked(self):
 
         self.addText("")
         
-        if (self.connected == False):
-
+        if self.connected:
+            self.sportiduino.disconnect()
+            text = _translate("sportiduinopq","Master station is disconnected")
+            self.addText(text)
+            self.connected = False
+            self.ui.Connect.setText(_translate("MainWindow", "Connect"))
+        else:
             port = self.ui.choiseCom.currentText()
             try:
                 if (port == _translate("MainWindow", "auto")):
@@ -109,15 +114,11 @@ class App(QtWidgets.QMainWindow):
                 self.connected = True
                 text = _translate("sportiduinopq","Master station {} on port {} is connected").format(self.sportiduino.version, self.sportiduino.port)
                 self.addText(text)
+                self.ui.Connect.setText(_translate("MainWindow", "Disconn."))
                 
             except BaseException as err:
                 self._process_error(err)
                 self.connected = False
-        else:
-            self.sportiduino.disconnect()
-            text = _translate("sportiduinopq","Master station is disconnected")
-            self.addText(text)
-            self.connected = False
 
     def ReadCard_clicked(self):
         if self._check_connection() == False:
@@ -496,7 +497,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText("\n" + _translate("sportiduinopq","Writes settings ans password to a base station by UART"))
+            self.addText("\n" + _translate("sportiduinopq","Writes settings and password to a base station by UART"))
             port = self.ui.cbUartPort.currentText()
             
             oldPwd1 = self.ui.sbOldPwd1.value()
@@ -733,7 +734,7 @@ class App(QtWidgets.QMainWindow):
         
     def _check_connection(self):
         self.addText("")
-        if self.connected == False:
+        if not self.connected:
             self.addText(_translate("sportiduinopq","Master station is not connected"))
             return False
         return True
@@ -752,7 +753,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     
     translator = QTranslator()
-    translator.load("sportiduinopq_" + QLocale.system().name(), "./translation")
+    #translator.load("sportiduinopq_" + QLocale.system().name(), "./translation")
     if not app.installTranslator(translator):
         print("Can not install translation!")
 
