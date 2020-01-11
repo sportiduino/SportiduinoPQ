@@ -753,7 +753,7 @@ if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     
     translator = QTranslator()
-    #translator.load("sportiduinopq_" + QLocale.system().name(), "./translation")
+    translator.load("sportiduinopq_" + QLocale.system().name(), "./translation")
     if not app.installTranslator(translator):
         print("Can not install translation!")
 
