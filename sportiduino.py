@@ -383,34 +383,35 @@ class Sportiduino(object):
         
     @staticmethod
     def card_name(card_type):
-        if(card_type ==  0) :
-            return _translate("sportiduino","Unknown type")
-        elif(card_type == 1) :
+        if card_type == 1:
             return _translate("sportiduino","Compliant with ISO/IEC 14443-4")
-        elif(card_type == 2) :
+        elif card_type == 2:
             return _translate("sportiduino","Compliant with ISO/IEC 18092 (NFC)")
-        elif(card_type == 3) :
+        elif card_type == 3:
             return "MIFARE Classic Mini"
-        elif(card_type == 4) :
+        elif card_type == 4:
             return "MIFARE Classic 1K"
-        elif(card_type == 5) :
+        elif card_type == 5:
             return "MIFARE Classic 4K"
-        elif(card_type == 6) :
+        elif card_type == 6:
             return "MIFARE Ultralight"
-        elif(card_type == 7) :
+        elif card_type == 7:
             return "MIFARE Plus"
-        elif(card_type == 8) :
+        elif card_type == 8:
             return "MIFARE DESFire"
-        elif(card_type == 9) :
+        elif card_type == 9:
             return "TNP3XXX"
-        elif(card_type == 0xFF) :
+        elif card_type == 0x12:
+            return "NTAG213"
+        elif card_type == 0x3E:
+            return "NTAG215"
+        elif card_type == 0x6D:
+            return "NTAG216"
+        elif card_type == 0xFF:
             return _translate("sportiduino","Not detected")
-        elif(card_type == 0x12) :
-            return "NTAG_213"
-        elif(card_type == 0x3E) :
-            return "NTAG_215"
-        elif(card_type == 0x6D) :
-            return "NTAG_216"
+        else:
+            return _translate("sportiduino","Unknown card type: {}").format(card_type)
+
         
         return _translate("sportiduino","Unknown type")
 

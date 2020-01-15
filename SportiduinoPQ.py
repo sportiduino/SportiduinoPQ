@@ -127,8 +127,8 @@ class App(QtWidgets.QMainWindow):
         try:
             self.addText(_translate("sportiduinopq","Read a card"))
             
-            raw_data = self.sportiduino.read_card_raw()
             card_type = self.sportiduino.read_card_type()
+            raw_data = self.sportiduino.read_card_raw()
             
             data = Sportiduino.raw_data_to_card_data(raw_data)
             
@@ -529,27 +529,28 @@ class App(QtWidgets.QMainWindow):
         if (self.ui.AutoPrint.checkState() != 0):
             self.ClearText_clicked()
                 
+        text = []
         card_name = Sportiduino.card_name(card_type)
-        text = card_name + "\n" 
+        text.append(card_name)
         
         if data['master_card_flag'] == 0xFF:
             # show master card info
             master_type = int2byte(data['master_card_type'])
             
             if master_type == Sportiduino.MASTER_CARD_GET_INFO:
-                text += _translate("sportiduinopq","Master card to get info about a base station")
+                text.append(_translate("sportiduinopq","Master card to get info about a base station"))
             elif master_type == Sportiduino.MASTER_CARD_SET_TIME:
-                text += _translate("sportiduinopq","Master card to set time of a base station")
+                text.append(_translate("sportiduinopq","Master card to set time of a base station"))
             elif master_type == Sportiduino.MASTER_CARD_SET_NUMBER:
-                text += _translate("sportiduinopq","Master card to set number of a base station")
+                text.append(_translate("sportiduinopq","Master card to set number of a base station"))
             elif master_type == Sportiduino.MASTER_CARD_SLEEP:
-                text += _translate("sportiduinopq","Master card to sleep a base station")
+                text.append(_translate("sportiduinopq","Master card to sleep a base station"))
             elif master_type == Sportiduino.MASTER_CARD_READ_DUMP:
-                text += _translate("sportiduinopq","Master card to get punches log of a base station")
+                text.append(_translate("sportiduinopq","Master card to get punches log of a base station"))
             elif master_type == Sportiduino.MASTER_CARD_SET_PASS:
-                text += _translate("sportiduinopq","Master card to write password and settings to a base station")
+                text.append(_translate("sportiduinopq","Master card to write password and settings to a base station"))
             else:
-                text += _translate("sportiduinopq","Uninitialized card")
+                text.append(_translate("sportiduinopq","Uninitialized card"))
             
         else:
             # show participant card info
@@ -557,12 +558,12 @@ class App(QtWidgets.QMainWindow):
             init_time = datetime.fromtimestamp(data['init_timestamp'])
             punches = data['punches']
             
-            if card_number >= Sportiduino.MIN_CARD_NUM and card_number <= Sportiduino.MAX_CARD_NUM:
+            if data['init_timestamp'] != 0 and card_number >= Sportiduino.MIN_CARD_NUM and card_number <= Sportiduino.MAX_CARD_NUM:
                 punches_count = 0
         
-                text += _translate("sportiduinopq","Participant card N{}").format(card_number) + "\n"
-                text += _translate("sportiduinopq","Init time {}").format(init_time) + "\n"
-                text += _translate("sportiduinopq","Punches (Check point - Time):") + "\n"
+                text.append(_translate("sportiduinopq","Participant card N{}").format(card_number))
+                text.append(_translate("sportiduinopq","Init time {}").format(init_time))
+                text.append(_translate("sportiduinopq","Punches (Check point - Time):"))
             
                 for punch in punches:
                     punches_count += 1
@@ -575,16 +576,16 @@ class App(QtWidgets.QMainWindow):
                     if cp == Sportiduino.FINISH_STATION:
                         cp = _translate("sportiduinopq","Finish")
                         
-                    text += "{} - {}\n".format(cp, cp_time)
+                    text.append("{} - {}".format(cp, cp_time))
                         
                 if punches_count == 0:
-                    text += _translate("sportiduinopq", "No punches") 
+                    text.append(_translate("sportiduinopq", "No punches"))
                 else:
-                    text += _translate("sportiduinopq", "Total punches {}").format(punches_count)
+                    text.append(_translate("sportiduinopq", "Total punches {}").format(punches_count))
             else:
-               text += _translate("sportiduinopq","Uninitialized card")
+               text.append(_translate("sportiduinopq","Uninitialized card"))
    
-        self.addText(text)
+        self.addText('\n'.join(text))
         
         if (self.ui.AutoPrint.checkState() != 0):
             self.Print_clicked()
