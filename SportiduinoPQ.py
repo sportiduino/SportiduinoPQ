@@ -166,7 +166,8 @@ class App(QtWidgets.QMainWindow):
                 self.ui.cardLine.setText(self.CardNum)
             
             if code == Sportiduino.RESP_OK :
-                self.addText(_translate("sportiduinopq","The participant card N{} ({}) has been initialized successfully").format(num, Sportiduino.card_name(data[0])))
+                self.addText(_translate("sportiduinopq","The participant card N{} ({}) has been initialized successfully")
+                    .format(num, Sportiduino.card_name(data[0])))
             
         except BaseException as err:
             self._process_error(err)
@@ -525,7 +526,7 @@ class App(QtWidgets.QMainWindow):
     def ClearText_clicked(self):
         self.ui.textBrowser.setPlainText('')
     
-    def showCardData(self,data,card_type):
+    def showCardData(self, data, card_type):
         if (self.ui.AutoPrint.checkState() != 0):
             self.ClearText_clicked()
                 

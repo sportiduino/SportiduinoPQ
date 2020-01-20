@@ -194,7 +194,6 @@ class Sportiduino(object):
         """
         code, data = self._send_command(Sportiduino.CMD_READ_VERS)
         if code == Sportiduino.RESP_VERS:
-            self.version = byte2int(data[0])
             self.password = byte2int(data[1])<<16 | byte2int(data[2])<<8 | byte2int(data[3])
             self.settings = byte2int(data[4])
             self.antennaGain = byte2int(data[5])
@@ -203,9 +202,9 @@ class Sportiduino(object):
 
     def read_card_type(self):
         code, data = self._send_command(Sportiduino.CMD_READ_CARD_TYPE)
-        if code == Sportiduino.RESP_CARD_TYPE :
+        if code == Sportiduino.RESP_CARD_TYPE:
             return data[0]
-        return 0xFF
+        return None
 
     def read_card(self, timeout=None):
         """Reads out the card currently inserted into the station.
@@ -403,16 +402,14 @@ class Sportiduino(object):
         elif card_type == 7:
             return "MIFARE Plus"
         elif card_type == 8:
-            return "MIFARE DESFire"
-        elif card_type == 9:
             return "TNP3XXX"
-        elif card_type == 0x12:
+        elif card_type == 9:
             return "NTAG213"
-        elif card_type == 0x3E:
+        elif card_type == 10:
             return "NTAG215"
-        elif card_type == 0x6D:
+        elif card_type == 11:
             return "NTAG216"
-        elif card_type == 0xFF:
+        elif card_type is None or card_type == 0 or card_type == 0xFF:
             return _translate("sportiduino","Not detected")
         else:
             return _translate("sportiduino","Unknown card type: {}").format(card_type)
@@ -566,8 +563,8 @@ class Sportiduino(object):
                 raise SportiduinoException(_translate("sportiduino","Can't read the card ({})").format(card))
             elif err_code == Sportiduino.ERR_READ_EEPROM:
                 raise SportiduinoException(_translate("sportiduino","Can't read EEPROM"))
-            elif err_code == Sportiduino.ERR_CARD_NOT_FOUND :
-                if card_type == 0xFF :
+            elif err_code == Sportiduino.ERR_CARD_NOT_FOUND:
+                if card_type == 0 or card_type == 0xff:
                     raise SportiduinoException(_translate("sportiduino","Card is not found"))
                 else :
                     raise SportiduinoException(_translate("sportiduino","Unsupported card type = {}").format(card_type))
