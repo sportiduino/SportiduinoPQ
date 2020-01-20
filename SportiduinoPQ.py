@@ -102,13 +102,14 @@ class App(QtWidgets.QMainWindow):
                 else:
                     self.sportiduino = Sportiduino(port,debug=True)
 
-                self.ui.sbCurPwd1.setValue((self.sportiduino.password & 0xFF0000) >> 16)
-                self.ui.sbCurPwd2.setValue((self.sportiduino.password & 0x00FF00) >> 8) 
-                self.ui.sbCurPwd3.setValue(self.sportiduino.password & 0x0000FF)
-                
-                self.showSettings(self.sportiduino.settings)
-                idx = (self.sportiduino.antennaGain >> 4) - 2
-                self.ui.cbAntennaGain.setCurrentIndex(idx)
+                #settings = self.sportiduino.read_settings()
+                #self.ui.sbCurPwd1.setValue(settings['password'][0])
+                #self.ui.sbCurPwd2.setValue(settings['password'][1]) 
+                #self.ui.sbCurPwd3.setValue(settings['password'][2])
+                #
+                #self.showSettings(settings['bits'])
+                #idx = (settings['antennaGain'] >> 4) - 2
+                #self.ui.cbAntennaGain.setCurrentIndex(idx)
                 
                 self.sportiduino.beep_ok()
                 self.connected = True

@@ -67,6 +67,7 @@ class Sportiduino(object):
     CMD_SET_READ_MODE     = b'\x49'
     CMD_READ_CARD         = b'\x4b'
     CMD_READ_RAW          = b'\x4c'
+    CMD_READ_SETTINGS     = b'\x4d'
     CMD_INIT_SLEEPCARD    = b'\x4e'
     CMD_APPLY_PWD         = b'\x4f'
     CMD_INIT_INFOCARD     = b'\x50'
@@ -79,6 +80,7 @@ class Sportiduino(object):
     RESP_CARD_DATA      = b'\x63'
     RESP_CARD_RAW       = b'\x65'
     RESP_VERS           = b'\x66'
+    RESP_SETTINGS       = b'\x67'
     RESP_MODE           = b'\x69'
     RESP_CARD_TYPE      = b'\x70'
     RESP_ERROR          = b'\x78'
@@ -103,25 +105,32 @@ class Sportiduino(object):
 
     class Version(object):
         """Sportiduino version."""
-        def __init__(self, value):
-            """Initializes version by byte from master station.
-            @param value: Byte from master station.
+        def __init__(self, major, minor=None, patch=None):
+            """Initializes version by bytes from master station.
+            @param major, minor, patch: Bytes from master station.
             """
-            self.value = value
-            if value >= 100 and value <= 104: # old firmwares
-                self.major = value//100
-                self.minor = value%100
-                self.patch = 0
-            else:
-                self.major = (value >> 6) + 1
-                self.minor = ((value >> 2) & 0x0F) + 1
-                self.patch = value & 0x03
+            if minor is None and patch is None: # old firmwares
+                value = major
+                if value >= 100 and value <= 104: # v1.0 - v1.4
+                    self.major = value//100
+                    self.minor = value%100
+                    self.patch = None
+                else:
+                    self.major = (value >> 6) + 1
+                    self.minor = ((value >> 2) & 0x0F) + 1
+                    self.patch = value & 0x03
+                return
+
+            self.major = major
+            self.minor = minor
+            self.patch = patch
+
 
         def __str__(self):
             """Override __str__ method.
             @return: User friendly version string.
             """
-            return 'v%d.%d.%d' % (self.major, self.minor, self.patch)
+            return 'v%d.%d.%s' % (self.major, self.minor, int(self.patch) if self.patch is not None else 'x')
 
     def __init__(self, port=None, debug=False, logger=None):
         """Initializes communication with master station at port.
@@ -194,11 +203,24 @@ class Sportiduino(object):
         """
         code, data = self._send_command(Sportiduino.CMD_READ_VERS)
         if code == Sportiduino.RESP_VERS:
-            self.password = byte2int(data[1])<<16 | byte2int(data[2])<<8 | byte2int(data[3])
-            self.settings = byte2int(data[4])
-            self.antennaGain = byte2int(data[5])
-            return Sportiduino.Version(byte2int(data[0]))
+            data_len = len(data)
+            if data_len == 3:
+                return Sportiduino.Version(byte2int(b) for b in data[0:2])
+            else: # old firmwares
+                return Sportiduino.Version(byte2int(data[0]))
         return None
+
+    def read_settings(self):
+        """Read master station settings.
+        """
+        code, data = self._send_command(Sportiduino.CMD_READ_SETTINGS)
+        if code == Sportiduino.RESP_SETTINGS:
+            return {
+                password: [byte2int(data[0]), byte2int(data[1]), byte2int(data[2])],
+                bits: byte2int(data[3]),
+                antennaGain: byte2int(data[4])
+            }
+
 
     def read_card_type(self):
         code, data = self._send_command(Sportiduino.CMD_READ_CARD_TYPE)
