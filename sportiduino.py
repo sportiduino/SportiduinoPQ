@@ -108,15 +108,20 @@ class Sportiduino(object):
             @param value: Byte from master station.
             """
             self.value = value
-            self.hw = (value >> 6) + 1
-            self.major = ((value >> 2) & 0x0F) + 1
-            self.minor = value & 0x03
+            if value >= 100 and value <= 104: # old firmwares
+                self.major = value//100
+                self.minor = value%100
+                self.patch = 0
+            else:
+                self.major = (value >> 6) + 1
+                self.minor = ((value >> 2) & 0x0F) + 1
+                self.patch = value & 0x03
 
         def __str__(self):
             """Override __str__ method.
             @return: User friendly version string.
             """
-            return 'v%d.%d.%d' % (self.hw, self.major, self.minor)
+            return 'v%d.%d.%d' % (self.major, self.minor, self.patch)
 
     def __init__(self, port=None, debug=False, logger=None):
         """Initializes communication with master station at port.
