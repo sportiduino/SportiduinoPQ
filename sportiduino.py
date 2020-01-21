@@ -205,7 +205,8 @@ class Sportiduino(object):
         if code == Sportiduino.RESP_VERS:
             data_len = len(data)
             if data_len == 3:
-                return Sportiduino.Version(byte2int(b) for b in data[0:2])
+                data = [byte2int(b) for b in data[0:3]]
+                return Sportiduino.Version(data[0], data[1], data[2])
             else: # old firmwares
                 return Sportiduino.Version(byte2int(data[0]))
         return None
