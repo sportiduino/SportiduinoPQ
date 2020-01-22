@@ -685,7 +685,7 @@ class App(QtWidgets.QMainWindow):
         return setSt
     
     def showBaseStationInfo(self, bs):
-        self.addText(_translate("sportiduinopq","Version: {}.{}.{}").format(bs.hwVers(), bs.fwMajorVers(), bs.fwMinorVers()))
+        self.addText(_translate("sportiduinopq","Version: {}.{}.{}").format(bs.version.major, bs.version.minor, bs.version.patch))
         
         text = _translate("sportiduinopq","Station N: {} ").format(bs.num)
 

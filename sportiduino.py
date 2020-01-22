@@ -64,7 +64,7 @@ class Sportiduino(object):
     CMD_READ_VERS         = b'\x46'
     CMD_INIT_BACKUPREADER = b'\x47'
     CMD_READ_BACKUPREADER = b'\x48'
-    CMD_SET_READ_MODE     = b'\x49'
+    CMD_SET_READ_MODE     = b'\x49' # deprecated
     CMD_READ_CARD         = b'\x4b'
     CMD_READ_RAW          = b'\x4c'
     CMD_READ_SETTINGS     = b'\x4d'
@@ -109,7 +109,7 @@ class Sportiduino(object):
             """Initializes version by bytes from master station.
             @param major, minor, patch: Bytes from master station.
             """
-            if minor is None and patch is None: # old firmwares
+            if (minor is None and patch is None) or minor == 0 and patch == 0: # old firmwares
                 value = major
                 if value >= 100 and value <= 104: # v1.0 - v1.4
                     self.major = value//100
@@ -205,10 +205,9 @@ class Sportiduino(object):
         if code == Sportiduino.RESP_VERS:
             data_len = len(data)
             if data_len == 3:
-                data = [byte2int(b) for b in data[0:3]]
-                return Sportiduino.Version(data[0], data[1], data[2])
+                return Sportiduino.Version(*data[0:3])
             else: # old firmwares
-                return Sportiduino.Version(byte2int(data[0]))
+                return Sportiduino.Version(data[0])
         return None
 
     def read_settings(self):
@@ -365,21 +364,15 @@ class Sportiduino(object):
         if pageData[4][2] != 255 or pageData[4][1] != byte2int(Sportiduino.MASTER_CARD_GET_INFO):
             raise SportiduinoException(_translate("sportiduino","The card contained info about a base station is not found"))
             
-        bs.version = pageData[8][0]
+        bs.version = Sportiduino.Version(*pageData[8][0:3])
         bs.antennaGain = pageData[8][3]
         bs.num = pageData[9][0]
         bs.settings = pageData[9][1]
         bs.batteryOk = pageData[9][2]
         bs.mode = pageData[9][3]
-        bs.timestamp = pageData[10][0] << 24
-        bs.timestamp |= pageData[10][1] << 16
-        bs.timestamp |= pageData[10][2] << 8
-        bs.timestamp |= pageData[10][3]
+        bs.timestamp = Sportiduino._to_int(pageData[10][0:4])
  
-        bs.wakeup = pageData[11][0] << 24
-        bs.wakeup |= pageData[11][1] << 16
-        bs.wakeup |= pageData[11][2] << 8
-        bs.wakeup |= pageData[11][3]
+        bs.wakeup = Sportiduino._to_int(pageData[11][0:4])
 
         return bs
 
@@ -400,12 +393,12 @@ class Sportiduino(object):
 
 
     def enable_continuous_read(self):
-        """Enable continuous card read."""
+        """Enable continuous card read. Deprecated."""
         self._set_mode(b'\x01')
 
 
     def disable_continuous_read(self):
-        """Disable continuous card read."""
+        """Disable continuous card read. Deprecated"""
         self._set_mode(b'\x00')
         
     @staticmethod
@@ -441,7 +434,7 @@ class Sportiduino(object):
         return _translate("sportiduino","Unknown type")
 
     def _set_mode(self, mode):
-        """Set master station read mode."""
+        """Set master station read mode. Deprecated."""
         self._send_command(Sportiduino.CMD_SET_READ_MODE, mode, wait_response=False)
 
 
@@ -541,12 +534,13 @@ class Sportiduino(object):
 
     def __del__(self):
         if self._serial is not None:
+            self._log_info("Disconnect master station")
             self._serial.close()
 
 
     @staticmethod
     def _to_int(s):
-        """Compute the integer value of a raw byte string (big endianes)."""
+        """Compute the integer value of a raw byte string (big endianness)."""
         value = 0
         for offset, c in enumerate(iterbytes(s[::-1])):
             value += c << offset*8
@@ -752,7 +746,7 @@ class BaseStation(object):
     SERIAL_ERROR_PWD   = 0x4
     
     def __init__(self):
-        self.version = 0
+        self.version = Sportiduino.Version(0)
         self.mode = BaseStation.MODE_ACTIVE
         self.settings = 0
         self.num = 0
@@ -761,15 +755,6 @@ class BaseStation(object):
         self.batteryOk = 0
         self.antennaGain = 7<<4
         
-    def hwVers(self):
-        return ((self.version >> 6) & 0x03) + 1
-    
-    def fwMajorVers(self):
-        return ((self.version >> 2) & 0x0F) + 1
-    
-    def fwMinorVers(self):
-        return self.version & 0x03
-    
     def readInfoBySerial(self, port, pwd1, pwd2, pwd3):
         ser = Serial(port, baudrate=9600, timeout=10)
         
