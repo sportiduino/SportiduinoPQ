@@ -261,7 +261,7 @@ class Sportiduino(object):
         """
         code, data = self._send_command(Sportiduino.CMD_READ_RAW)
         if code == Sportiduino.RESP_CARD_RAW:
-            return self._parse_card_raw_data(data)
+            return self._parse_card_raw_data(data, self._log_debug)
         else:
             raise SportiduinoException("Read raw data failed")
 
@@ -476,7 +476,7 @@ class Sportiduino(object):
         cs = self._checsum(cmd_string)
         cmd = Sportiduino.START_BYTE + cmd_string + cs
 
-        self._log_debug("=> %s" % ' '.join(hex(byte2int(c)) for c in cmd))
+        self._log_debug("=> 0x %s" % ' '.join(('%02x' % byte2int(c)) for c in cmd))
 
         self._serial.flushInput()
         self._serial.write(cmd)
@@ -519,10 +519,10 @@ class Sportiduino(object):
                 length = Sportiduino.MAX_DATA_LEN
             data = self._serial.read(length)
             checksum = self._serial.read()
-            self._log_debug("<= code '%s', len %i, data %s, cs %s" % (hex(byte2int(code)),
+            self._log_debug("<= code '%#02x', len %02i, data 0x %s, cs %#02x" % (byte2int(code),
                                                                       length,
-                                                                      ' '.join(hex(byte2int(c)) for c in data),
-                                                                      hex(byte2int(checksum))
+                                                                      ' '.join(('%02x' % byte2int(c)) for c in data),
+                                                                      byte2int(checksum)
                                                                      ))
 
             if not Sportiduino._cs_check(code + length_byte + data, checksum):
@@ -686,11 +686,15 @@ class Sportiduino(object):
 
 
     @staticmethod
-    def _parse_card_raw_data(data):
+    def _parse_card_raw_data(data, log_debug):
         ret = {}
         for i in range(0, len(data), 5):
             page_num = byte2int(data[i])
             ret[page_num] = data[i + 1:i + 5]
+
+        log_debug('Card raw data:')
+        for p in ret:
+            log_debug('\tpage %02i: 0x %s' % (p, ' '.join('%02x' % byte2int(c) for c in ret[p])))
 
         return ret
 
