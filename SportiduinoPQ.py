@@ -284,28 +284,28 @@ class App(QtWidgets.QMainWindow):
             
             data = self.sportiduino.read_backup()
             
-            if data['cp'] == 0:
+            if data is None:
                 raise BaseException(_translate("sportiduinopq","No log data available"))
             
             text = _translate("sportiduinopq","Station N: {} ").format(data['cp']) + "\n"
 
             cards = data['cards']
             
-            text += _translate("sportiduinopq","Total punches {}").format(len(cards)) + "\n"
-            
-            text += _translate("sportiduinopq","Cards:") + " "
-                        
-            for i in range(0, len(cards), 1):
-                if i > 0:
-                    text += ", "
-                text += "{}".format(cards[i])
+            if len(cards) > 0:
+                text += _translate("sportiduinopq","Total punches {}").format(len(cards)) + "\n"
+                text += _translate("sportiduinopq","Cards:") + "\n"
+                if isinstance(cards[0], list):
+                    for pair in cards:
+                        text += "{} {}".format(*pair) + "\n"
+                else:
+                    text += ', '.join(cards)
                 
             self.addText(text)
                 
-            self.dumpData.append(data)
-            dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
-            json.dump(self.dumpData, dumpFile)
-            dumpFile.close()
+            #self.dumpData.append(data)
+            #dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
+            #json.dump(self.dumpData, dumpFile)
+            #dumpFile.close()
 
         except BaseException as err:
             self._process_error(err)

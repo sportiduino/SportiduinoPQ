@@ -695,19 +695,22 @@ class Sportiduino(object):
 
     @staticmethod
     def _parse_backup(data):
-        
-        ret = {}
-        ret['cp'] = 0
-        ret['cards'] = []
-        
         if len(data) < 1 :
-            return ret
-        
-        ret['cp'] = Sportiduino._to_int(data[0:1])
-        
-        for i in range(1, len(data), 2):
-            ret['cards'].append(Sportiduino._to_int(data[i:i + 2]))
-        
+            return None
+
+        ret = {}
+        ret['cp'] = byte2int(data[0])
+        ret['cards'] = []
+
+        if data[3] == 0: # without timestamps
+            for i in range(1, len(data), 2):
+                ret['cards'].append(Sportiduino._to_int(data[i:i + 2]))
+        else:
+            for i in range(4, len(data), 6):
+                card_number = Sportiduino._to_int(data[i:i + 2])
+                time = datetime.fromtimestamp(Sportiduino._to_int(data[i + 2:i + 6]))
+                ret['cards'].append((card_number, time))
+
         return ret
 
 class SportiduinoException(Exception):
