@@ -1387,6 +1387,11 @@
       </property>
       <item>
        <widget class="QTextBrowser" name="textBrowser">
+        <property name="font">
+         <font>
+          <family>Monospace</family>
+         </font>
+        </property>
         <property name="locale">
          <locale language="English" country="UnitedStates"/>
         </property>

@@ -294,11 +294,12 @@ class App(QtWidgets.QMainWindow):
             if len(cards) > 0:
                 text += _translate("sportiduinopq","Total punches {}").format(len(cards)) + "\n"
                 text += _translate("sportiduinopq","Cards:") + "\n"
-                if isinstance(cards[0], list):
-                    for pair in cards:
-                        text += "{} {}".format(*pair) + "\n"
-                else:
+                if isinstance(cards[0], int):
                     text += ', '.join(cards)
+                else:
+                    for pair in cards:
+                        text += "{:>4} {}".format(*pair) + "\n"
+
                 
             self.addText(text)
                 
