@@ -704,10 +704,10 @@ class App(QtWidgets.QMainWindow):
         text = _translate("sportiduinopq","Settings: {}").format(bin(bs.settings).lstrip('-0b').zfill(8))
         self.addText(text)
         
-        if(bs.batteryOk):
-            self.addText(_translate("sportiduinopq","Battery: OK"))
+        if(bs.batteryVoltage > 3.1):
+            self.addText(_translate("sportiduinopq","Battery: OK ({} V)").format(bs.batteryVoltage))
         else:
-            self.addText(_translate("sportiduinopq","Battery: Low"))
+            self.addText(_translate("sportiduinopq","Battery: Low ({} V)").format(bs.batteryVoltage))
             
         if(bs.mode == BaseStation.MODE_ACTIVE):
             self.addText(_translate("sportiduinopq","Mode: Active"))
