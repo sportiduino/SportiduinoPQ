@@ -368,7 +368,9 @@ class Sportiduino(object):
         bs.antennaGain = pageData[8][3]
         bs.num = pageData[9][0]
         bs.settings = pageData[9][1]
-        bs.batteryVoltage = byte2int(pageData[9][2]*20)/1000.0;
+
+        bs.battery = BaseStation.Battery(byte2int(pageData[9][2]))
+
         bs.mode = pageData[9][3]
         bs.timestamp = Sportiduino._to_int(pageData[10][0:4])
  
@@ -747,7 +749,23 @@ class BaseStation(object):
     SERIAL_ERROR_FUNC  = 0x2
     SERIAL_ERROR_SIZE  = 0x3
     SERIAL_ERROR_PWD   = 0x4
-    
+
+    class Battery(object):
+        def __init__(self, byte = None):
+            self.voltage = None
+            self.isOk = False
+
+            if byte is None:
+                return
+
+            if byte == 0 or byte == 1:
+                # Old firmware
+                self.isOk = bool(byte)
+            else:
+                self.voltage = byte*20.0/1000.0;
+                if self.voltage > 3.1:
+                    self.isOk = True
+
     def __init__(self):
         self.version = Sportiduino.Version(0)
         self.mode = BaseStation.MODE_ACTIVE
@@ -755,7 +773,7 @@ class BaseStation(object):
         self.num = 0
         self.timestamp = 0
         self.wakeup = 0
-        self.batteryVoltage = 0
+        self.battery = self.Battery()
         self.antennaGain = 7<<4
         
     def readInfoBySerial(self, port, pwd1, pwd2, pwd3):
@@ -804,7 +822,7 @@ class BaseStation(object):
         self.settings = msg[pos]
         pos += 1    
            
-        self.batteryVoltage = msg[pos]
+        self.battery = self.Battery(msg[pos])
         pos += 1
         
         self.mode = msg[pos]
