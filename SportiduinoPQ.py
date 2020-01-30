@@ -23,28 +23,28 @@ from PyQt5.QtWidgets import QApplication, QFileDialog
 from PyQt5.QtCore import QTranslator
 from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QCoreApplication
-from six import int2byte, byte2int, iterbytes, print_, PY3
+from six import int2byte
 
 _translate = QCoreApplication.translate
 
-class App(QtWidgets.QMainWindow):
+class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = design.Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setWindowTitle("SportiduinoPQ v0.7.1")
+        self.setWindowTitle("SportiduinoPQ v0.7.99")
         
-        self.log =''
         self.readData = []
         self.dumpData = []
         self.connected = False
         self.CardNum = '0'
         self.printer = QPrinter()
         self.ui.printerName.setText(self.printer.printerName())
-        
+
         self.initTime = datetime.now()
-        self.addText('{:%Y-%m-%d %H:%M:%S}'.format(self.initTime))
+        self.logger = self.Logger(self.initTime)
+        self.log('{:%Y-%m-%d %H:%M:%S}'.format(self.initTime))
         
         dt = QDateTime.currentDateTime()
         tm = QTime(dt.time().hour(), dt.time().minute(), 0)
@@ -55,6 +55,7 @@ class App(QtWidgets.QMainWindow):
         if platform.system() == 'Linux':
             availablePorts = [os.path.join('/dev', f) for f in os.listdir('/dev') if
                               re.match('ttyUSB.+', f)]
+            availablePorts.sort()
         elif platform.system() == 'Windows':
             availablePorts = ['COM' + str(i) for i in range(32)]
         self.ui.choiseCom.addItems(availablePorts)
@@ -86,12 +87,12 @@ class App(QtWidgets.QMainWindow):
 
     def Connect_clicked(self):
 
-        self.addText("")
+        self.log("")
         
         if self.connected:
             self.sportiduino.disconnect()
             text = _translate("sportiduinopq","Master station is disconnected")
-            self.addText(text)
+            self.log(text)
             self.connected = False
             self.ui.Connect.setText(_translate("MainWindow", "Connect"))
         else:
@@ -114,7 +115,7 @@ class App(QtWidgets.QMainWindow):
                 self.sportiduino.beep_ok()
                 self.connected = True
                 text = _translate("sportiduinopq","Master station {} on port {} is connected").format(self.sportiduino.version, self.sportiduino.port)
-                self.addText(text)
+                self.log(text)
                 self.ui.Connect.setText(_translate("MainWindow", "Disconn."))
                 
             except BaseException as err:
@@ -126,7 +127,7 @@ class App(QtWidgets.QMainWindow):
             return
 
         try:
-            self.addText(_translate("sportiduinopq","Read a card"))
+            self.log(_translate("sportiduinopq","Read a card"))
             
             card_type = self.sportiduino.read_card_type()
             raw_data = self.sportiduino.read_card_raw()
@@ -145,7 +146,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText(_translate("sportiduinopq","Initialize the participant card"))
+            self.log(_translate("sportiduinopq","Initialize the participant card"))
         
             text = self.ui.cardLine.text()
         
@@ -167,7 +168,7 @@ class App(QtWidgets.QMainWindow):
                 self.ui.cardLine.setText(self.CardNum)
             
             if code == Sportiduino.RESP_OK :
-                self.addText(_translate("sportiduinopq","The participant card N{} ({}) has been initialized successfully")
+                self.log(_translate("sportiduinopq","The participant card N{} ({}) has been initialized successfully")
                     .format(num, Sportiduino.card_name(data[0])))
             
         except BaseException as err:
@@ -179,7 +180,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText(_translate("sportiduinopq","Write the master card to set number of a base station"))
+            self.log(_translate("sportiduinopq","Write the master card to set number of a base station"))
             num = self.ui.sbStationNum.value()
         
             if num == 0 or num > 255:
@@ -197,7 +198,7 @@ class App(QtWidgets.QMainWindow):
 
         try:
             
-            self.addText(_translate("sportiduinopq","Write the master card to set clock of a base station. Put the card on a base station after second signal"))
+            self.log(_translate("sportiduinopq","Write the master card to set clock of a base station. Put the card on a base station after second signal"))
             self.sportiduino.init_time_card(datetime.utcnow() + timedelta(seconds=3))
             self._master_card_ok()
             
@@ -210,7 +211,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText(_translate("sportiduinopq","Write the master card to set a base station as the start station"))
+            self.log(_translate("sportiduinopq","Write the master card to set a base station as the start station"))
             self.sportiduino.init_cp_number_card(Sportiduino.START_STATION)
             self.ui.sbStationNum.setValue(Sportiduino.START_STATION)
             self._master_card_ok()
@@ -224,7 +225,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText(_translate("sportiduinopq","Write the master card to set a base station as the finish station"))
+            self.log(_translate("sportiduinopq","Write the master card to set a base station as the finish station"))
             self.sportiduino.init_cp_number_card(Sportiduino.FINISH_STATION)
             self.ui.sbStationNum.setValue(Sportiduino.FINISH_STATION)
             self._master_card_ok()
@@ -238,7 +239,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText(_translate("sportiduinopq","Write the master card to set a base station as the check station"))
+            self.log(_translate("sportiduinopq","Write the master card to set a base station as the check station"))
             self.sportiduino.init_cp_number_card(Sportiduino.CHECK_STATION)
             self.ui.sbStationNum.setValue(Sportiduino.CHECK_STATION)
             self._master_card_ok()
@@ -252,7 +253,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText(_translate("sportiduinopq","Write the master card to set a base station as the clear station"))
+            self.log(_translate("sportiduinopq","Write the master card to set a base station as the clear station"))
             self.sportiduino.init_cp_number_card(Sportiduino.CLEAR_STATION)
             self.ui.sbStationNum.setValue(Sportiduino.CLEAR_STATION)
             self._master_card_ok()
@@ -266,7 +267,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
         
-            self.addText(_translate("sportiduinopq","Write the master card to get log of a base station"))
+            self.log(_translate("sportiduinopq","Write the master card to get log of a base station"))
             self.sportiduino.init_backupreader()
             self._master_card_ok()
             
@@ -280,7 +281,7 @@ class App(QtWidgets.QMainWindow):
         text = ""
         
         try:
-            self.addText(_translate("sportiduinopq","Read the card contained log of a base station"))
+            self.log(_translate("sportiduinopq","Read the card contained log of a base station"))
             
             data = self.sportiduino.read_backup()
             
@@ -301,7 +302,7 @@ class App(QtWidgets.QMainWindow):
                         text += "{:>4} {}".format(*pair) + "\n"
 
                 
-            self.addText(text)
+            self.log(text)
                 
             #self.dumpData.append(data)
             #dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
@@ -317,7 +318,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText(_translate("sportiduinopq","Write the master card to sleep a base station"))
+            self.log(_translate("sportiduinopq","Write the master card to sleep a base station"))
             self.sportiduino.init_sleepcard(self.ui.dtCompetion.dateTime().toUTC())
             self._master_card_ok()
             
@@ -330,7 +331,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
 
-            self.addText(_translate("sportiduinopq","Write the master card to write new password and settings to a base station"))
+            self.log(_translate("sportiduinopq","Write the master card to write new password and settings to a base station"))
             setSt = self.getSettingsFromUI()
 
             oldPass = self.ui.sbOldPwd1.value()<<16 | self.ui.sbOldPwd2.value()<<8 | self.ui.sbOldPwd3.value()
@@ -356,10 +357,10 @@ class App(QtWidgets.QMainWindow):
         curPass = self.ui.sbCurPwd1.value()<<16 | self.ui.sbCurPwd2.value()<<8 | self.ui.sbCurPwd3.value()
         
         try:
-            self.addText(_translate("sportiduinopq","Apply the current password"))
+            self.log(_translate("sportiduinopq","Apply the current password"))
             
             self.sportiduino.apply_pwd(curPass)
-            self.addText(_translate("sportiduinopq","The password has been applied successfully"))
+            self.log(_translate("sportiduinopq","The password has been applied successfully"))
 
         except BaseException as err:
             self._process_error(err)
@@ -370,7 +371,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
            
-            self.addText(_translate("sportiduinopq","Write the master card to get info about a base station"))
+            self.log(_translate("sportiduinopq","Write the master card to get info about a base station"))
             self.sportiduino.init_info_card()
             self._master_card_ok()
             
@@ -383,7 +384,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText(_translate("sportiduinopq","Read the card contained info about a base station"))
+            self.log(_translate("sportiduinopq","Read the card contained info about a base station"))
             bs = self.sportiduino.read_info_card()
             self.showBaseStationInfo(bs)
             
@@ -392,7 +393,7 @@ class App(QtWidgets.QMainWindow):
             
     def LoadSet_clicked(self):
         
-        self.addText("\n" + _translate("sportiduinopq","Load settings from file /data/settings.json"))
+        self.log("\n" + _translate("sportiduinopq","Load settings from file /data/settings.json"))
         
         try:  
             
@@ -419,14 +420,14 @@ class App(QtWidgets.QMainWindow):
             self.ui.sbOldPwd2.setValue(pwd2)
             self.ui.sbOldPwd3.setValue(pwd3)
             
-            self.addText(_translate("sportiduinopq","Settings has been loaded successfully"))
-            self.addText(_translate("sportiduinopq","Click 'Apply Pwd' on #Settings1 tab"))
+            self.log(_translate("sportiduinopq","Settings has been loaded successfully"))
+            self.log(_translate("sportiduinopq","Click 'Apply Pwd' on #Settings1 tab"))
         
         except BaseException as err:
             self._process_error(err)
 
     def SaveSet_clicked(self):    
-        self.addText("\n" + _translate("sportiduinopq","Save settings to file /data/settings.json"))  
+        self.log("\n" + _translate("sportiduinopq","Save settings to file /data/settings.json"))  
         
         try:  
             
@@ -444,22 +445,21 @@ class App(QtWidgets.QMainWindow):
             json.dump(obj, file)
             file.close()
             
-            self.addText(_translate("sportiduinopq","Settings has been saved successfully"))
+            self.log(_translate("sportiduinopq","Settings has been saved successfully"))
         
         except BaseException as err:
             self._process_error(err)
 
-    def addText(self,text):
+    def log(self, text):
         text += '\n'
-        logFile = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(self.initTime)),'a')
         print(text)
         browserText = self.ui.textBrowser.toPlainText()
         browserText = browserText + text
         self.ui.textBrowser.setPlainText(browserText)
         # Scroll down
         self.ui.textBrowser.verticalScrollBar().setValue(self.ui.textBrowser.verticalScrollBar().maximum())
-        logFile.write(text)
-        logFile.close()
+
+        self.logger(text)
 
     def SelectPrinter_clicked(self):
         dialog = QtPrintSupport.QPrintDialog(self.printer)
@@ -476,14 +476,14 @@ class App(QtWidgets.QMainWindow):
             page_size.setWidth(self.printer.width())
             self.ui.textBrowser.document().setPageSize(page_size)
             self.ui.textBrowser.document().setDocumentMargin(0.0)
-            self.ui.textBrowser.document().print_(self.printer)
+            self.ui.textBrowser.document().print(self.printer)
         except BaseException as err:
             self._process_error(err)
         
     def SerialRead_clicked(self):
         try:
         
-            self.addText("\n" + _translate("sportiduinopq", "Reads info about a base station by UART"))
+            self.log("\n" + _translate("sportiduinopq", "Reads info about a base station by UART"))
             
             port = self.ui.cbUartPort.currentText()
             
@@ -500,7 +500,7 @@ class App(QtWidgets.QMainWindow):
         
         try:
             
-            self.addText("\n" + _translate("sportiduinopq","Writes settings and password to a base station by UART"))
+            self.log("\n" + _translate("sportiduinopq","Writes settings and password to a base station by UART"))
             port = self.ui.cbUartPort.currentText()
             
             oldPwd1 = self.ui.sbOldPwd1.value()
@@ -520,7 +520,7 @@ class App(QtWidgets.QMainWindow):
             bs.writeSettingsBySerial(port, oldPwd1, oldPwd2, oldPwd3, 
                                      newPwd1, newPwd2, newPwd3, num, sets, wakeup, gain)
             
-            self.addText(_translate("sportiduinopq","Settings and password has been written successfully"))
+            self.log(_translate("sportiduinopq","Settings and password has been written successfully"))
         
         except BaseException as err:
             self._process_error(err)
@@ -588,7 +588,7 @@ class App(QtWidgets.QMainWindow):
             else:
                text.append(_translate("sportiduinopq","Uninitialized card"))
    
-        self.addText('\n'.join(text))
+        self.log('\n'.join(text))
         
         if (self.ui.AutoPrint.checkState() != 0):
             self.Print_clicked()
@@ -686,7 +686,7 @@ class App(QtWidgets.QMainWindow):
         return setSt
     
     def showBaseStationInfo(self, bs):
-        self.addText(_translate("sportiduinopq","Version: {}.{}.{}").format(bs.version.major, bs.version.minor, bs.version.patch))
+        self.log(_translate("sportiduinopq","Version: {}.{}.{}").format(bs.version.major, bs.version.minor, bs.version.patch))
         
         text = _translate("sportiduinopq","Station N: {} ").format(bs.num)
 
@@ -699,35 +699,35 @@ class App(QtWidgets.QMainWindow):
         elif (bs.num == BaseStation.CLEAR_STATION_NUM):
             text += _translate("sportiduinopq","(Clear)")
             
-        self.addText(text)
+        self.log(text)
         
         text = _translate("sportiduinopq","Settings: {}").format(bin(bs.settings).lstrip('-0b').zfill(8))
-        self.addText(text)
+        self.log(text)
         
         voltageText = ''
         if bs.battery.voltage is not None:
             voltageText = _translate("sportiduinopq", " ({:.2f} V)").format(bs.battery.voltage)
 
         if(bs.battery.isOk):
-            self.addText(_translate("sportiduinopq","Battery: OK") + voltageText)
+            self.log(_translate("sportiduinopq","Battery: OK") + voltageText)
         else:
-            self.addText(_translate("sportiduinopq","Battery: Low") + voltageText)
+            self.log(_translate("sportiduinopq","Battery: Low") + voltageText)
             
         if(bs.mode == BaseStation.MODE_ACTIVE):
-            self.addText(_translate("sportiduinopq","Mode: Active"))
+            self.log(_translate("sportiduinopq","Mode: Active"))
         elif(bs.mode == BaseStation.MODE_WAIT):
-            self.addText(_translate("sportiduinopq","Mode: Wait"))
+            self.log(_translate("sportiduinopq","Mode: Wait"))
         elif(bs.mode == BaseStation.MODE_SLEEP):
-            self.addText(_translate("sportiduinopq","Mode: Sleep"))
+            self.log(_translate("sportiduinopq","Mode: Sleep"))
             
         text = _translate("sportiduinopq", "Clock: {}").format(datetime.fromtimestamp(bs.timestamp))
-        self.addText(text)
+        self.log(text)
         text = _translate("sportiduinopq", "Alarm: {}").format(datetime.fromtimestamp(bs.wakeup))
-        self.addText(text)
+        self.log(text)
 
         idx = (bs.antennaGain >> 4) - 2;
         self.ui.cbAntennaGain.setCurrentIndex(idx)
-        self.addText(_translate("sportiduinopq","Antenna Gain: {}").format(self.ui.cbAntennaGain.currentText()))
+        self.log(_translate("sportiduinopq","Antenna Gain: {}").format(self.ui.cbAntennaGain.currentText()))
         
         # apply settings to ui    
         self.ui.sbStationNum.setValue(bs.num)
@@ -735,28 +735,37 @@ class App(QtWidgets.QMainWindow):
         self.ui.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))            
         self.showSettings(bs.settings)
         
-        self.addText(_translate("sportiduinopq","Settings displayed by UI has been chaged to the base station settings"))
+        self.log(_translate("sportiduinopq","Settings displayed by UI has been chaged to the base station settings"))
     
     def _process_error(self, err):
-        self.addText(_translate("sportiduinopq","Error: {}").format(err))
+        self.log(_translate("sportiduinopq","Error: {}").format(err))
         
     def _check_connection(self):
-        self.addText("")
+        self.log("")
         if not self.connected:
-            self.addText(_translate("sportiduinopq","Master station is not connected"))
+            self.log(_translate("sportiduinopq","Master station is not connected"))
             return False
         return True
     
     def _master_card_ok(self):
-        self.addText(_translate("sportiduinopq","The master card has been written successfully"))
+        self.log(_translate("sportiduinopq","The master card has been written successfully"))
+
+    class Logger(object):
+        def __init__(self, init_time):
+            self.log_file = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(init_time)),'a')
+
+        def __call__(self, text):
+            self.log_file.write(text)
         
+        def __del__(self):
+            print("Close log file")
+            self.log_file.close();
+
+
 if __name__ == '__main__':
     
-    try:
-        os.mkdir('log')
-        os.mkdir('data')
-    except Exception:
-        pass
+    os.makedirs('log', exist_ok=True)
+    os.makedirs('data', exist_ok=True)
 
     app = QtWidgets.QApplication(sys.argv)
     
@@ -765,6 +774,6 @@ if __name__ == '__main__':
     if not app.installTranslator(translator):
         print("Can not install translation!")
 
-    window = App()
-    window.show()
+    main_window = SportiduinoPqMainWindow()
+    main_window.show()
     app.exec_()
