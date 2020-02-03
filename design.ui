@@ -157,7 +157,7 @@
            <locale language="English" country="UnitedStates"/>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_4">
            <attribute name="title">
@@ -803,14 +803,40 @@
             <property name="editable">
              <bool>false</bool>
             </property>
+            <property name="currentText">
+             <string>2</string>
+            </property>
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
             <item>
              <property name="text">
-              <string>6 hour</string>
+              <string>1</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>24 hour</string>
+              <string>2</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>4</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>8</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>16</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>32</string>
              </property>
             </item>
             <item>
@@ -834,122 +860,14 @@
              </rect>
             </property>
             <property name="text">
-             <string>Work Time</string>
+             <string>Active Time (h)</string>
             </property>
-           </widget>
-           <widget class="QLabel" name="label_2">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>50</y>
-              <width>141</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Start / Finish</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="StartFinish">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>50</y>
-              <width>81</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="editable">
-             <bool>false</bool>
-            </property>
-            <item>
-             <property name="text">
-              <string>off</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>on</string>
-             </property>
-            </item>
-           </widget>
-           <widget class="QLabel" name="label_3">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>90</y>
-              <width>141</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Check InitTime</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="CheckInitTime">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>90</y>
-              <width>81</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="editable">
-             <bool>false</bool>
-            </property>
-            <item>
-             <property name="text">
-              <string>off</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>on</string>
-             </property>
-            </item>
-           </widget>
-           <widget class="QLabel" name="label_5">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>130</y>
-              <width>141</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>AutoDel Set</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="AutoDel">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>130</y>
-              <width>81</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="editable">
-             <bool>false</bool>
-            </property>
-            <item>
-             <property name="text">
-              <string>off</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>on</string>
-             </property>
-            </item>
            </widget>
            <widget class="QPushButton" name="PassCard">
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>390</y>
+              <y>280</y>
               <width>231</width>
               <height>31</height>
              </rect>
@@ -958,46 +876,14 @@
              <string>Creates the master card to write password and settings to a base station</string>
             </property>
             <property name="text">
-             <string>Create Pwd Card</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="SaveSet">
-            <property name="geometry">
-             <rect>
-              <x>130</x>
-              <y>430</y>
-              <width>111</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="toolTip">
-             <string>Stores settings to a file</string>
-            </property>
-            <property name="text">
-             <string>Save Set</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="LoadSet">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>430</y>
-              <width>111</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="toolTip">
-             <string>Loads settings from a file</string>
-            </property>
-            <property name="text">
-             <string>Load Set</string>
+             <string>Create Config Card</string>
             </property>
            </widget>
            <widget class="QGroupBox" name="groupBox_7">
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>240</y>
+              <y>210</y>
               <width>231</width>
               <height>71</height>
              </rect>
@@ -1050,82 +936,6 @@
              </property>
             </widget>
             <widget class="QSpinBox" name="sbNewPwd1">
-             <property name="geometry">
-              <rect>
-               <x>130</x>
-               <y>30</y>
-               <width>51</width>
-               <height>31</height>
-              </rect>
-             </property>
-             <property name="frame">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-            </widget>
-           </widget>
-           <widget class="QGroupBox" name="groupBox_8">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>310</y>
-              <width>231</width>
-              <height>71</height>
-             </rect>
-            </property>
-            <property name="toolTip">
-             <string>Old password of a base station</string>
-            </property>
-            <property name="locale">
-             <locale language="English" country="UnitedStates"/>
-            </property>
-            <property name="title">
-             <string>Old Password</string>
-            </property>
-            <widget class="QSpinBox" name="sbOldPwd3">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>30</y>
-               <width>51</width>
-               <height>31</height>
-              </rect>
-             </property>
-             <property name="frame">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-            </widget>
-            <widget class="QSpinBox" name="sbOldPwd2">
-             <property name="geometry">
-              <rect>
-               <x>70</x>
-               <y>30</y>
-               <width>51</width>
-               <height>31</height>
-              </rect>
-             </property>
-             <property name="frame">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <property name="maximum">
-              <number>255</number>
-             </property>
-            </widget>
-            <widget class="QSpinBox" name="sbOldPwd1">
              <property name="geometry">
               <rect>
                <x>130</x>
@@ -1278,47 +1088,11 @@
              </property>
             </widget>
            </widget>
-           <widget class="QLabel" name="label_6">
-            <property name="geometry">
-             <rect>
-              <x>10</x>
-              <y>170</y>
-              <width>141</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="text">
-             <string>Fast Mark</string>
-            </property>
-           </widget>
-           <widget class="QComboBox" name="cbFastMark">
-            <property name="geometry">
-             <rect>
-              <x>160</x>
-              <y>170</y>
-              <width>81</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="editable">
-             <bool>false</bool>
-            </property>
-            <item>
-             <property name="text">
-              <string>off</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>on</string>
-             </property>
-            </item>
-           </widget>
            <widget class="QComboBox" name="cbAntennaGain">
             <property name="geometry">
              <rect>
               <x>160</x>
-              <y>210</y>
+              <y>170</y>
               <width>81</width>
               <height>31</height>
              </rect>
@@ -1327,7 +1101,7 @@
              <bool>false</bool>
             </property>
             <property name="currentIndex">
-             <number>5</number>
+             <number>2</number>
             </property>
             <item>
              <property name="text">
@@ -1364,13 +1138,52 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>210</y>
+              <y>170</y>
               <width>141</width>
               <height>31</height>
              </rect>
             </property>
             <property name="text">
              <string>Antenna Gain</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="cbStartFinish">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>50</y>
+              <width>221</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Start / Finish</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="cbCheckInitTime">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>90</y>
+              <width>221</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Check InitTime</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="cbFastPunch">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>130</y>
+              <width>221</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Fast Punch</string>
             </property>
            </widget>
           </widget>

@@ -58,7 +58,7 @@ class Sportiduino(object):
     # Protocol commands
     CMD_INIT_TIMECARD     = b'\x41'
     CMD_INIT_CP_NUM_CARD  = b'\x42'
-    CMD_INIT_PASSWDCARD   = b'\x43'
+    CMD_INIT_PASSWDCARD   = b'\x43' # deprecated
     CMD_INIT_CARD         = b'\x44'
     CMD_WRITE_PAGES6_7    = b'\x45'
     CMD_READ_VERS         = b'\x46'
@@ -74,6 +74,7 @@ class Sportiduino(object):
     CMD_READ_CARD_TYPE    = b'\x51'
     CMD_BEEP_ERROR        = b'\x58'
     CMD_BEEP_OK           = b'\x59'
+    CMD_INIT_CONFIG_CARD  = b'\x5a'
 
     # Protocol responses
     RESP_BACKUP         = b'\x61'
@@ -92,6 +93,7 @@ class Sportiduino(object):
     ERR_READ_CARD       = b'\x03'
     ERR_READ_EEPROM     = b'\x04'
     ERR_CARD_NOT_FOUND  = b'\x05'
+    ERR_UNKNOWN_CMD     = b'\x06'
     
     MASTER_CARD_GET_INFO     = b'\xF9'
     MASTER_CARD_SET_TIME     = b'\xFA'
@@ -218,7 +220,7 @@ class Sportiduino(object):
             return {
                 password: [byte2int(data[0]), byte2int(data[1]), byte2int(data[2])],
                 bits: byte2int(data[3]),
-                antennaGain: byte2int(data[4])
+                antenna_gain: byte2int(data[4])
             }
 
 
@@ -335,20 +337,10 @@ class Sportiduino(object):
         self._send_command(Sportiduino.CMD_INIT_TIMECARD, params, wait_response=True)
 
 
-    def init_passwd_card(self, old_passwd, new_passwd, settings, antennaGain):
-        """Initialize card for writing new password to base station.
-        @param old_passwd: Old password (default 0x000000).
-        @param new_passwd: New password (default 0x000000).
-        @param flags:      Flags byte (default 0x00).
+    def init_config_card(self, bs):
+        """Initialize card for writing configuration to base station.
         """
-        params = b''
-        params += Sportiduino._to_str(new_passwd, 3)
-        params += Sportiduino._to_str(old_passwd, 3)
-        params += Sportiduino._to_str(settings, 1)
-        params += Sportiduino._to_str(antennaGain, 1)
-        self.password = new_passwd
-        self.settings = settings
-        self._send_command(Sportiduino.CMD_INIT_PASSWDCARD, params, wait_response=True)
+        self._send_command(Sportiduino.CMD_INIT_CONFIG_CARD, bs.to_config(), wait_response=True)
         
     def init_info_card(self):
         """Initialize card for writing check point number to base station.
@@ -365,16 +357,13 @@ class Sportiduino(object):
             raise SportiduinoException(_translate("sportiduino","The card contained info about a base station is not found"))
             
         bs.version = Sportiduino.Version(*pageData[8][0:3])
-        bs.antennaGain = pageData[8][3]
-        bs.num = pageData[9][0]
-        bs.settings = pageData[9][1]
+        bs.from_config(pageData[9])
 
-        bs.battery = BaseStation.Battery(byte2int(pageData[9][2]))
+        bs.battery = BaseStation.Battery(byte2int(pageData[10][0]))
+        bs.mode = pageData[10][1]
 
-        bs.mode = pageData[9][3]
-        bs.timestamp = Sportiduino._to_int(pageData[10][0:4])
- 
-        bs.wakeup = Sportiduino._to_int(pageData[11][0:4])
+        bs.timestamp = Sportiduino._to_int(pageData[11][0:4])
+        bs.wakeup = Sportiduino._to_int(pageData[12][0:4])
 
         return bs
 
@@ -383,7 +372,6 @@ class Sportiduino(object):
         params = b''
         params += Sportiduino._to_str(pwd, 3)
         params += Sportiduino._to_str(flags, 1)
-        self.password = pwd
         self._send_command(Sportiduino.CMD_APPLY_PWD, params, wait_response=True)
 
     def write_pages6_7(self, page6, page7):
@@ -587,6 +575,8 @@ class Sportiduino(object):
                     raise SportiduinoException(_translate("sportiduino","Card is not found"))
                 else :
                     raise SportiduinoException(_translate("sportiduino","Unsupported card type = {}").format(card_type))
+            elif err_code == Sportiduino.ERR_UNKNOWN_CMD:
+                raise SportiduinoException(_translate("sportiduino","Unknown command"))
             else:
                 raise SportiduinoException(_translate("sportiduino","Error code {}").format(hex(byte2int(err_code))))
         elif func == Sportiduino.RESP_OK:
@@ -750,6 +740,13 @@ class BaseStation(object):
     SERIAL_ERROR_SIZE  = 0x3
     SERIAL_ERROR_PWD   = 0x4
 
+    ANTENNA_GAIN_18DB  = 0x02
+    ANTENNA_GAIN_23DB  = 0x03
+    ANTENNA_GAIN_33DB  = 0x04
+    ANTENNA_GAIN_38DB  = 0x05
+    ANTENNA_GAIN_43DB  = 0x06
+    ANTENNA_GAIN_48DB  = 0x07
+
     class Battery(object):
         def __init__(self, byte = None):
             self.voltage = None
@@ -768,14 +765,52 @@ class BaseStation(object):
 
     def __init__(self):
         self.version = Sportiduino.Version(0)
-        self.mode = BaseStation.MODE_ACTIVE
-        self.settings = 0
+
         self.num = 0
+        self.active_mode_duration = 2 # hours
+        self.check_start_finish = False
+        self.check_card_init_time = False
+        self.fast_punch = False
+        self.antenna_gain = BaseStation.ANTENNA_GAIN_33DB
+
+        self.mode = BaseStation.MODE_ACTIVE
+        self.battery = self.Battery()
         self.timestamp = 0
         self.wakeup = 0
-        self.battery = self.Battery()
-        self.antennaGain = 7<<4
-        
+        self.password = (0, 0, 0)
+
+    def from_config(self, config_data):
+        self.num = byte2int(config_data[0])
+
+        active_mode_bits = config_data[1] & 0x7
+        self.active_mode_duration = active_mode_bits
+
+        self.check_start_finish = config_data[1] & 0x08 > 0
+        self.check_card_init_time = config_data[1] & 0x10 > 0
+        self.fast_punch = config_data[1] & 0x40 > 0
+
+        self.antenna_gain = byte2int(config_data[2])
+
+    def to_config(self):
+        config_data = b''
+        config_data += int2byte(self.num)
+
+        flags = self.active_mode_duration
+
+        if self.check_start_finish:
+            flags |= 0x08
+        if self.check_card_init_time:
+            flags |= 0x10
+        if self.fast_punch:
+            flags |= 0x40
+        config_data += int2byte(flags)
+        config_data += int2byte(self.antenna_gain)
+        config_data += int2byte(self.password[0])
+        config_data += int2byte(self.password[1])
+        config_data += int2byte(self.password[2])
+
+        return config_data
+
     def readInfoBySerial(self, port, pwd1, pwd2, pwd3):
         ser = Serial(port, baudrate=9600, timeout=10)
         
@@ -846,7 +881,7 @@ class BaseStation(object):
         self.wakeup |= msg[pos]
         pos += 1
         
-        self.antennaGain = msg[pos]
+        self.antenna_gain = msg[pos]
         
     def writeSettingsBySerial(self, port, oldPwd1, oldPwd2, oldPwd3, newPwd1, newPwd2, newPwd3, num, settings, wakeup, gain):
         ser = Serial(port, baudrate=9600, timeout=1)

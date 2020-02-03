@@ -74,8 +74,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.ReadLog.clicked.connect(self.ReadLog_clicked)
         self.ui.SleepCard.clicked.connect(self.SleepCard_clicked)
         self.ui.PassCard.clicked.connect(self.PassCard_clicked)
-        self.ui.SaveSet.clicked.connect(self.SaveSet_clicked)
-        self.ui.LoadSet.clicked.connect(self.LoadSet_clicked)
         self.ui.SelectPrinter.clicked.connect(self.SelectPrinter_clicked)
         self.ui.Print.clicked.connect(self.Print_clicked)
         self.ui.btnApplyPwd.clicked.connect(self.ApplyPwd_clicked)
@@ -332,14 +330,11 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         try:
 
             self.log(_translate("sportiduinopq","Write the master card to write new password and settings to a base station"))
-            setSt = self.getSettingsFromUI()
 
-            oldPass = self.ui.sbOldPwd1.value()<<16 | self.ui.sbOldPwd2.value()<<8 | self.ui.sbOldPwd3.value()
-            newPass = self.ui.sbNewPwd1.value()<<16 | self.ui.sbNewPwd2.value()<<8 | self.ui.sbNewPwd3.value()
             
-            gain = (self.ui.cbAntennaGain.currentIndex() + 2) << 4
-        
-            self.sportiduino.init_passwd_card(oldPass,newPass,setSt,gain)
+            bs = self.getSettingsFromUI()
+            bs.num = 0 # don't change station number by this master card
+            self.sportiduino.init_config_card(bs)
                 
             self.ui.sbCurPwd3.setValue(self.ui.sbNewPwd3.value())
             self.ui.sbCurPwd2.setValue(self.ui.sbNewPwd2.value())
@@ -391,64 +386,61 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except BaseException as err:
             self._process_error(err)
             
-    def LoadSet_clicked(self):
-        
-        self.log("\n" + _translate("sportiduinopq","Load settings from file /data/settings.json"))
-        
-        try:  
-            
-            file = open(os.path.join('data','settings.json'),'r')
-            
-            obj = json.load(file);
-            
-            file.close()
-            
-            settings = obj['settings']
-            gain = obj['gain']
-            pwd1 = obj['pwd1'] 
-            pwd2 = obj['pwd2']
-            pwd3 = obj['pwd3']
-            
-            self.showSettings(settings)
-            
-            self.ui.cbAntennaGain.setCurrentIndex(gain)
-            
-            self.ui.sbCurPwd1.setValue(pwd1)
-            self.ui.sbCurPwd2.setValue(pwd2)
-            self.ui.sbCurPwd3.setValue(pwd3)
-            self.ui.sbOldPwd1.setValue(pwd1)
-            self.ui.sbOldPwd2.setValue(pwd2)
-            self.ui.sbOldPwd3.setValue(pwd3)
-            
-            self.log(_translate("sportiduinopq","Settings has been loaded successfully"))
-            self.log(_translate("sportiduinopq","Click 'Apply Pwd' on #Settings1 tab"))
-        
-        except BaseException as err:
-            self._process_error(err)
+    #def LoadSet_clicked(self):
+    #    
+    #    self.log("\n" + _translate("sportiduinopq","Load settings from file /data/settings.json"))
+    #    
+    #    try:  
+    #        
+    #        file = open(os.path.join('data','settings.json'),'r')
+    #        
+    #        obj = json.load(file);
+    #        
+    #        file.close()
+    #        
+    #        settings = obj['settings']
+    #        gain = obj['gain']
+    #        pwd1 = obj['pwd1'] 
+    #        pwd2 = obj['pwd2']
+    #        pwd3 = obj['pwd3']
+    #        
+    #        #self.showSettings(settings)
+    #        
+    #        self.ui.cbAntennaGain.setCurrentIndex(gain)
+    #        
+    #        self.ui.sbCurPwd1.setValue(pwd1)
+    #        self.ui.sbCurPwd2.setValue(pwd2)
+    #        self.ui.sbCurPwd3.setValue(pwd3)
+    #        
+    #        self.log(_translate("sportiduinopq","Settings has been loaded successfully"))
+    #        self.log(_translate("sportiduinopq","Click 'Apply Pwd' on #Settings1 tab"))
+    #    
+    #    except BaseException as err:
+    #        self._process_error(err)
 
-    def SaveSet_clicked(self):    
-        self.log("\n" + _translate("sportiduinopq","Save settings to file /data/settings.json"))  
-        
-        try:  
-            
-            settings = self.getSettingsFromUI()
-            gain = self.ui.cbAntennaGain.currentIndex()
-            
-            obj = {}
-            obj['settings'] = settings
-            obj['gain'] = gain
-            obj['pwd1'] = self.ui.sbCurPwd1.value() 
-            obj['pwd2'] = self.ui.sbCurPwd2.value()
-            obj['pwd3'] = self.ui.sbCurPwd3.value()
-            
-            file = open(os.path.join('data','settings.json'),'w')
-            json.dump(obj, file)
-            file.close()
-            
-            self.log(_translate("sportiduinopq","Settings has been saved successfully"))
-        
-        except BaseException as err:
-            self._process_error(err)
+    #def SaveSet_clicked(self):    
+    #    self.log("\n" + _translate("sportiduinopq","Save settings to file /data/settings.json"))  
+    #    
+    #    try:  
+    #        
+    #        settings = self.getSettingsFromUI()
+    #        gain = self.ui.cbAntennaGain.currentIndex()
+    #        
+    #        obj = {}
+    #        obj['settings'] = settings
+    #        obj['gain'] = gain
+    #        obj['pwd1'] = self.ui.sbCurPwd1.value() 
+    #        obj['pwd2'] = self.ui.sbCurPwd2.value()
+    #        obj['pwd3'] = self.ui.sbCurPwd3.value()
+    #        
+    #        file = open(os.path.join('data','settings.json'),'w')
+    #        json.dump(obj, file)
+    #        file.close()
+    #        
+    #        self.log(_translate("sportiduinopq","Settings has been saved successfully"))
+    #    
+    #    except BaseException as err:
+    #        self._process_error(err)
 
     def log(self, text):
         text += '\n'
@@ -503,22 +495,11 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log("\n" + _translate("sportiduinopq","Writes settings and password to a base station by UART"))
             port = self.ui.cbUartPort.currentText()
             
-            oldPwd1 = self.ui.sbOldPwd1.value()
-            oldPwd2 = self.ui.sbOldPwd2.value()
-            oldPwd3 = self.ui.sbOldPwd3.value()
-            
-            newPwd1 = self.ui.sbNewPwd1.value()
-            newPwd2 = self.ui.sbNewPwd2.value()
-            newPwd3 = self.ui.sbNewPwd3.value()
-            
-            num = self.ui.sbStationNumByUart.value()
-            sets = self.getSettingsFromUI()
-            wakeup = self.ui.dtCompetion.dateTime().toUTC().toPyDateTime()
-            gain = (self.ui.cbAntennaGain.currentIndex() + 2) << 4
-            
-            bs = BaseStation()
-            bs.writeSettingsBySerial(port, oldPwd1, oldPwd2, oldPwd3, 
-                                     newPwd1, newPwd2, newPwd3, num, sets, wakeup, gain)
+            bs = self.getSettingsFromUI()
+            bs.num = self.ui.sbStationNumByUart.value()
+            bs.wakeup = self.ui.dtCompetion.dateTime().toUTC().toPyDateTime()
+
+            bs.writeSettingsBySerial(port)
             
             self.log(_translate("sportiduinopq","Settings and password has been written successfully"))
         
@@ -629,61 +610,29 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         json.dump(self.readData, dataFile)
         dataFile.close()
         
-    def showSettings(self, settings):
-        set1 = settings & 0x3
-        self.ui.WorkTime.setCurrentIndex(set1)
-        
-        set2 = (settings & 0x4) >> 0x2
-        self.ui.StartFinish.setCurrentIndex(set2)
-        
-        set3 = (settings & 0x8) >> 0x3
-        self.ui.CheckInitTime.setCurrentIndex(set3)
-        
-        set4 = (settings & 0x10) >> 0x4
-        self.ui.AutoDel.setCurrentIndex(set4)
-        
-        set5 = (settings & 0x20) >> 0x5
-        self.ui.cbFastMark.setCurrentIndex(set5)
+    def apply_settings(self, bs):
+        self.ui.sbStationNum.setValue(bs.num)
+        self.ui.sbStationNumByUart.setValue(bs.num)
+        self.ui.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))            
+
+        self.ui.WorkTime.setCurrentIndex(bs.active_mode_duration)
+
+        self.ui.cbStartFinish.setChecked(bs.check_start_finish)
+        self.ui.cbCheckInitTime.setChecked(bs.check_card_init_time)
+        self.ui.cbFastPunch.setChecked(bs.fast_punch)
+
+        self.ui.cbAntennaGain.setCurrentIndex(bs.antenna_gain - 2)
         
     def getSettingsFromUI(self):
-        workTime = self.ui.WorkTime.currentIndex()
-        stFi = self.ui.StartFinish.currentIndex()
-        checkIT = self.ui.CheckInitTime.currentIndex()
-        autoDel = self.ui.AutoDel.currentIndex()
-        fastMark = self.ui.cbFastMark.currentIndex()
+        bs = BaseStation()
+        bs.active_mode_duration = self.ui.WorkTime.currentIndex()
+        bs.check_start_finish = self.ui.cbStartFinish.isChecked()
+        bs.check_card_init_time = self.ui.cbCheckInitTime.isChecked()
+        bs.fast_punch = self.ui.cbFastPunch.isChecked()
+        bs.antenna_gain = self.ui.cbAntennaGain.currentIndex() + 2
+        bs.password = (self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value())
 
-        if (workTime == 0):
-            a = 0b00
-        elif (workTime == 1):
-            a = 0b01
-        elif (workTime == 2):
-            a = 0b10
-        elif (workTime == 3):
-            a = 0b11
-
-        if (stFi == 0):
-            b = 0b0
-        elif (stFi == 1):
-            b = 0b1
-
-        if (checkIT == 0):
-            c = 0b0
-        elif (checkIT == 1):
-            c = 0b1
-
-        if (autoDel == 0):
-            d = 0b0
-        elif (autoDel == 1):
-            d = 0b1
-            
-        if (fastMark == 0):
-            e = 0b0
-        elif (fastMark == 1):
-            e = 0b1
-
-        setSt = a + ( b<<2) + (c<<3) + (d<<4) + (e<<5)
-        
-        return setSt
+        return bs
     
     def showBaseStationInfo(self, bs):
         self.log(_translate("sportiduinopq","Version: {}.{}.{}").format(bs.version.major, bs.version.minor, bs.version.patch))
@@ -701,8 +650,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         self.log(text)
         
-        text = _translate("sportiduinopq","Settings: {}").format(bin(bs.settings).lstrip('-0b').zfill(8))
-        self.log(text)
+        #text = _translate("sportiduinopq","Settings: {}").format(bin(bs.settings).lstrip('-0b').zfill(8))
+        #self.log(text)
         
         voltageText = ''
         if bs.battery.voltage is not None:
@@ -725,16 +674,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         text = _translate("sportiduinopq", "Alarm: {}").format(datetime.fromtimestamp(bs.wakeup))
         self.log(text)
 
-        idx = (bs.antennaGain >> 4) - 2;
-        self.ui.cbAntennaGain.setCurrentIndex(idx)
-        self.log(_translate("sportiduinopq","Antenna Gain: {}").format(self.ui.cbAntennaGain.currentText()))
-        
         # apply settings to ui    
-        self.ui.sbStationNum.setValue(bs.num)
-        self.ui.sbStationNumByUart.setValue(bs.num)
-        self.ui.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))            
-        self.showSettings(bs.settings)
-        
+        self.apply_settings(bs)
+        self.log(_translate("sportiduinopq","Antenna Gain: {}").format(self.ui.cbAntennaGain.currentText()))
         self.log(_translate("sportiduinopq","Settings displayed by UI has been chaged to the base station settings"))
     
     def _process_error(self, err):
@@ -752,7 +694,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
     class Logger(object):
         def __init__(self, init_time):
-            self.log_file = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(init_time)),'a')
+            self.log_file = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(init_time)),'w')
 
         def __call__(self, text):
             self.log_file.write(text)
