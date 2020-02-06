@@ -480,7 +480,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             port = self.ui.cbUartPort.currentText()
             
             bs = BaseStation()
-            bs.readInfoBySerial(port, self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
+            bs.read_info_by_serial(port, (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value()))
 
             self.showBaseStationInfo(bs)
         
@@ -499,7 +499,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             bs.num = self.ui.sbStationNumByUart.value()
             bs.wakeup = self.ui.dtCompetion.dateTime().toUTC().toPyDateTime()
 
-            bs.writeSettingsBySerial(port)
+            #bs.write_settings_by_serial(port)
             
             self.log(self.tr("Settings and password has been written successfully"))
         
@@ -643,13 +643,13 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.log(self.tr("Settings:"))
 
         text = self.tr("   Station N: {} ").format(bs.num)
-        if(bs.num == BaseStation.START_STATION_NUM):
+        if(bs.num == Sportiduino.START_STATION):
             text += self.tr("(Start)")
-        elif (bs.num == BaseStation.FINISH_STATION_NUM):
+        elif (bs.num == Sportiduino.FINISH_STATION):
             text += self.tr("(Finish)")
-        elif (bs.num == BaseStation.CHECK_STATION_NUM):
+        elif (bs.num == Sportiduino.CHECK_STATION):
             text += self.tr("(Check)")
-        elif (bs.num == BaseStation.CLEAR_STATION_NUM):
+        elif (bs.num == Sportiduino.CLEAR_STATION):
             text += self.tr("(Clear)")
         self.log(text)
 
