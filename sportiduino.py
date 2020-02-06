@@ -783,7 +783,7 @@ class BaseStation(object):
         self.num = byte2int(config_data[0])
 
         active_mode_bits = config_data[1] & 0x7
-        self.active_mode_duration = active_mode_bits
+        self.active_mode_duration = byte2int(active_mode_bits)
 
         self.check_start_finish = config_data[1] & 0x08 > 0
         self.check_card_init_time = config_data[1] & 0x10 > 0
