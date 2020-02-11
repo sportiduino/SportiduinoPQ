@@ -196,7 +196,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         try:
             
-            self.log(self.tr("Write the master card to set clock of a base station. Put the card on a base station after second signal"))
+            self.log(self.tr("Write the master card to set clock of a base station. Put the card on a base station after third signal"))
             self.sportiduino.init_time_card(datetime.utcnow() + timedelta(seconds=3))
             self._master_card_ok()
             
