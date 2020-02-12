@@ -474,7 +474,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
     def SerialRead_clicked(self):
         try:
-        
             self.log("\n" + self.tr( "Reads info about a base station by UART"))
             
             port = self.ui.cbUartPort.currentText()

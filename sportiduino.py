@@ -650,7 +650,7 @@ class SerialProtocol(object):
         cs = self._checsum(cmd_string)
         cmd = self._start_byte + cmd_string + cs
         if self._zero_in_front:
-            cmd = b'\x00' + cmd
+            cmd = b'\x00\x00' + cmd
 
         self._log_debug("=> 0x %s" % ' '.join(('%02x' % byte2int(c)) for c in cmd))
 
@@ -834,16 +834,16 @@ class BaseStation(object):
         params += int2byte(password[1])
         params += int2byte(password[2])
 
-        resp_code, data = self._send_command(port, BaseStation.SERIAL_FUNC_READ_INFO, params)
+        resp_code, data = self._send_command(port, BaseStation.SERIAL_FUNC_READ_INFO, params, timeout=8)
         if resp_code == BaseStation.SERIAL_RESP_INFO:
             self.version = Sportiduino.Version(*data[0:3])
-            self.from_config(data[4:10])
+            self.from_config(data[3:9])
 
-            self.battery = BaseStation.Battery(byte2int(data[10]))
-            self.mode = byte2int(data[11])
+            self.battery = BaseStation.Battery(byte2int(data[9]))
+            self.mode = byte2int(data[10])
 
-            self.timestamp = Sportiduino._to_int(data[12:16])
-            self.wakeup = Sportiduino._to_int(data[16:20])
+            self.timestamp = Sportiduino._to_int(data[11:15])
+            self.wakeup = Sportiduino._to_int(data[15:19])
 
 
     def write_settings_by_serial(self, port, password, config, wakeup_time):
@@ -869,6 +869,8 @@ class BaseStation(object):
         params += int2byte(wakeup.hour)
         params += int2byte(wakeup.minute)
         params += int2byte(wakeup.second)
+        
+        params += int2byte(BaseStation.MODE_WAIT)
 
         self._send_command(port, BaseStation.SERIAL_FUNC_WRITE_SETTINGS, parameters=params)
       
@@ -876,9 +878,10 @@ class BaseStation(object):
     def _send_command(self, port, code, parameters=None, wait_response=True, timeout=None):
         timeout = timeout if timeout is not None else 1
         serial = Serial(port, baudrate=9600, timeout=timeout)
+        time.sleep(5)
         resp_code, data = self._serialproto.send_command(serial, code, parameters, wait_response)
         serial.close()
-        return BaseStation._preprocess_response(resp_code, data, self._log_debug)
+        return BaseStation._preprocess_response(resp_code, data)
 
 
     @staticmethod
