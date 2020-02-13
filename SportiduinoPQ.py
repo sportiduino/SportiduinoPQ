@@ -479,7 +479,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             port = self.ui.cbUartPort.currentText()
             
             bs = BaseStation()
-            bs.read_info_by_serial(port, (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value()))
+            password = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
+            bs.read_info_by_serial(port, password)
 
             self.showBaseStationInfo(bs)
         
@@ -498,7 +499,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             bs.num = self.ui.sbStationNumByUart.value()
             bs.wakeup = self.ui.dtCompetion.dateTime().toUTC().toPyDateTime()
 
-            #bs.write_settings_by_serial(port)
+            password = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
+            bs.write_settings_by_serial(port, password)
             
             self.log(self.tr("Settings and password has been written successfully"))
         

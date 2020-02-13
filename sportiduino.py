@@ -650,7 +650,7 @@ class SerialProtocol(object):
         cs = self._checsum(cmd_string)
         cmd = self._start_byte + cmd_string + cs
         if self._zero_in_front:
-            cmd = b'\x00\x00' + cmd
+            cmd = b'\x00' + cmd
 
         self._log_debug("=> 0x %s" % ' '.join(('%02x' % byte2int(c)) for c in cmd))
 
@@ -846,14 +846,12 @@ class BaseStation(object):
             self.wakeup = Sportiduino._to_int(data[15:19])
 
 
-    def write_settings_by_serial(self, port, password, config, wakeup_time):
-        ser = Serial(port, baudrate=9600, timeout=1)
-        
+    def write_settings_by_serial(self, port, password):
         params = b''
         params += int2byte(password[0])
         params += int2byte(password[1])
         params += int2byte(password[2])
-        params += Sportiduino._to_str(config, 6)
+        params += self.to_config()
 
         utc = datetime.utcnow();
         params += int2byte(utc.year - 2000)
@@ -863,16 +861,16 @@ class BaseStation(object):
         params += int2byte(utc.minute)
         params += int2byte(utc.second)
 
-        params += int2byte(wakeup.year - 2000)
-        params += int2byte(wakeup.month)
-        params += int2byte(wakeup.day)
-        params += int2byte(wakeup.hour)
-        params += int2byte(wakeup.minute)
-        params += int2byte(wakeup.second)
+        params += int2byte(self.wakeup.year - 2000)
+        params += int2byte(self.wakeup.month)
+        params += int2byte(self.wakeup.day)
+        params += int2byte(self.wakeup.hour)
+        params += int2byte(self.wakeup.minute)
+        params += int2byte(self.wakeup.second)
         
         params += int2byte(BaseStation.MODE_WAIT)
 
-        self._send_command(port, BaseStation.SERIAL_FUNC_WRITE_SETTINGS, parameters=params)
+        self._send_command(port, BaseStation.SERIAL_FUNC_WRITE_SETTINGS, parameters=params, timeout=8)
       
 
     def _send_command(self, port, code, parameters=None, wait_response=True, timeout=None):
