@@ -22,7 +22,7 @@ sportiduino.py - Classes to work with Sportiduino v1.2.0 and above.
 from six import int2byte, byte2int, iterbytes, print_, PY3
 from serial import Serial
 from serial.serialutil import SerialException
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 #from binascii import hexlify
 import os
@@ -633,10 +633,9 @@ class SerialProtocol(object):
     OFFSET         = 0x1E
     MAX_DATA_LEN   = 28
 
-    def __init__(self, start_byte, log_debug, zero_in_front=False):
+    def __init__(self, start_byte, log_debug):
         self._start_byte = start_byte
         self._log_debug = log_debug
-        self._zero_in_front = zero_in_front
 
 
     def send_command(self, serial, code, parameters=None, wait_response=True, timeout=None):
@@ -649,8 +648,6 @@ class SerialProtocol(object):
 
         cs = self._checsum(cmd_string)
         cmd = self._start_byte + cmd_string + cs
-        if self._zero_in_front:
-            cmd = b'\x00' + cmd
 
         self._log_debug("=> 0x %s" % ' '.join(('%02x' % byte2int(c)) for c in cmd))
 
@@ -791,7 +788,7 @@ class BaseStation(object):
         self.wakeup = 0
         self.password = (0, 0, 0)
 
-        self._serialproto = SerialProtocol(BaseStation.SERIAL_MSG_START, print_, zero_in_front=True)
+        self._serialproto = SerialProtocol(BaseStation.SERIAL_MSG_START, print_)
 
 
     def from_config(self, config_data):
@@ -853,7 +850,7 @@ class BaseStation(object):
         params += int2byte(password[2])
         params += self.to_config()
 
-        utc = datetime.utcnow();
+        utc = datetime.utcnow() + timedelta(seconds=1);
         params += int2byte(utc.year - 2000)
         params += int2byte(utc.month)
         params += int2byte(utc.day)
@@ -876,7 +873,8 @@ class BaseStation(object):
     def _send_command(self, port, code, parameters=None, wait_response=True, timeout=None):
         timeout = timeout if timeout is not None else 1
         serial = Serial(port, baudrate=9600, timeout=timeout)
-        time.sleep(5)
+        # Wakeup station
+        serial.write(b'\xff')
         resp_code, data = self._serialproto.send_command(serial, code, parameters, wait_response)
         serial.close()
         return BaseStation._preprocess_response(resp_code, data)
