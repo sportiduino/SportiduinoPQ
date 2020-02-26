@@ -61,9 +61,9 @@ class Sportiduino(object):
     CMD_INIT_BACKUPREADER = b'\x47'
     CMD_READ_BACKUPREADER = b'\x48'
     CMD_SET_READ_MODE     = b'\x49' # deprecated
+    CMD_WRITE_SETTINGS    = b'\x4a'
     CMD_READ_CARD         = b'\x4b'
     CMD_READ_RAW          = b'\x4c'
-    CMD_READ_SETTINGS     = b'\x4d'
     CMD_INIT_SLEEPCARD    = b'\x4e'
     CMD_APPLY_PWD         = b'\x4f'
     CMD_INIT_INFOCARD     = b'\x50'
@@ -210,17 +210,6 @@ class Sportiduino(object):
                 return Sportiduino.Version(data[0])
         return None
 
-    def read_settings(self):
-        """Read master station settings.
-        """
-        code, data = self._send_command(Sportiduino.CMD_READ_SETTINGS)
-        if code == Sportiduino.RESP_SETTINGS:
-            return {
-                password: [byte2int(data[0]), byte2int(data[1]), byte2int(data[2])],
-                bits: byte2int(data[3]),
-                antenna_gain: byte2int(data[4])
-            }
-
 
     def read_card_type(self):
         code, data = self._send_command(Sportiduino.CMD_READ_CARD_TYPE)
@@ -313,6 +302,7 @@ class Sportiduino(object):
         params += int2byte(wakeup.time().second())
         self._send_command(Sportiduino.CMD_INIT_SLEEPCARD, params, wait_response=True)
 
+
     def init_cp_number_card(self, cp_number):
         """Initialize card for writing check point number to base station.
         @param cp_number: Check point number.
@@ -340,12 +330,14 @@ class Sportiduino(object):
         """
         self._send_command(Sportiduino.CMD_INIT_CONFIG_CARD, bs.to_config(), wait_response=True)
         
+
     def init_info_card(self):
         """Initialize card for writing check point number to base station.
         @param cp_number: Check point number.
         """
         params = b''
         self._send_command(Sportiduino.CMD_INIT_INFOCARD, params, wait_response=True)
+
 
     def read_info_card(self):
         bs = BaseStation()
@@ -365,12 +357,19 @@ class Sportiduino(object):
 
         return bs
 
+
     def apply_pwd(self, pwd=0, flags=0):
-        
         params = b''
         params += Sportiduino._to_str(pwd, 3)
         params += Sportiduino._to_str(flags, 1)
         self._send_command(Sportiduino.CMD_APPLY_PWD, params, wait_response=True)
+
+
+    def write_settings(self, antenna_gain):
+        params = b''
+        params += int2byte(antenna_gain)
+        self._send_command(Sportiduino.CMD_WRITE_SETTINGS, params)
+
 
     def write_pages6_7(self, page6, page7):
         """Write additional pages."""
