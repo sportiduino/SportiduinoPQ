@@ -358,11 +358,13 @@ class Sportiduino(object):
         return bs
 
 
-    def apply_pwd(self, pwd=0, flags=0):
+    def apply_pwd(self, pwd=(0, 0, 0), flags=0):
         params = b''
-        params += Sportiduino._to_str(pwd, 3)
-        params += Sportiduino._to_str(flags, 1)
-        self._send_command(Sportiduino.CMD_APPLY_PWD, params, wait_response=True)
+        params += int2byte(pwd[0])
+        params += int2byte(pwd[1])
+        params += int2byte(pwd[2])
+        params += int2byte(flags)
+        self._send_command(Sportiduino.CMD_APPLY_PWD, params)
 
 
     def write_settings(self, antenna_gain):
