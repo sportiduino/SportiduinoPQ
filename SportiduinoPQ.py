@@ -124,14 +124,14 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 else:
                     self.sportiduino = Sportiduino(port,debug=True)
 
-                self.sportiduino.beep_ok()
+                curPass = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
+                self.sportiduino.apply_pwd(curPass)
+
+                #self.sportiduino.beep_ok()
                 self.connected = True
                 text = self.tr("Master station {} on port {} is connected").format(self.sportiduino.version, self.sportiduino.port)
                 self.log(text)
                 self.ui.Connect.setText(_translate("MainWindow", "Disconn."))
-
-                curPass = tuple(self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
-                self.sportiduino.apply_pwd(curPass)
                 
             except BaseException as err:
                 self._process_error(err)
