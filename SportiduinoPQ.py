@@ -28,7 +28,7 @@ from six import int2byte
 _translate = QCoreApplication.translate
 
 class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, config):
         super().__init__()
         self.ui = design.Ui_MainWindow()
         self.ui.setupUi(self)
@@ -83,26 +83,37 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
         self.ui.btnClearText.clicked.connect(self.ClearText_clicked)
 
-        self.config = QSettings(os.path.join('data', 'config.ini'), QSettings.IniFormat)
+        self.config = config
+        geometry = self.config.value('geometry')
+        if geometry is not None:
+            self.restoreGeometry(geometry)
  
-        self.ui.cbAntennaGain.setCurrentIndex(self.config.value('settings/antenna_gain', 2, type=int))
-        
-        password = self.config.value('settings/password', [0, 0, 0], type=int)
+        bs_config = BaseStation.Config()
+        for key, default_value in vars(bs_config).items():
+            value_type = type(default_value)
+            if isinstance(default_value, list):
+                value_type = type(default_value[0])
+            setattr(bs_config, key, self.config.value('settings/'+key, default_value, type=value_type))
+        self.apply_settings(bs_config, 0)
 
-        self.ui.sbCurPwd1.setValue(password[0])
-        self.ui.sbCurPwd2.setValue(password[1])
-        self.ui.sbCurPwd3.setValue(password[2])
+        self.ui.sbCurPwd1.setValue(bs_config.password[0])
+        self.ui.sbCurPwd2.setValue(bs_config.password[1])
+        self.ui.sbCurPwd3.setValue(bs_config.password[2])
 
-        self.ui.sbNewPwd1.setValue(password[0])
-        self.ui.sbNewPwd2.setValue(password[1])
-        self.ui.sbNewPwd3.setValue(password[2])
+        self.ui.sbNewPwd1.setValue(bs_config.password[0])
+        self.ui.sbNewPwd2.setValue(bs_config.password[1])
+        self.ui.sbNewPwd3.setValue(bs_config.password[2])
 
         #dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
 
 
     def closeEvent(self, event):
-        self.config.setValue('settings/password', [self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value()])
-        self.config.setValue('settings/antenna_gain', self.ui.cbAntennaGain.currentIndex())
+        self.config.setValue('geometry', self.saveGeometry())
+
+        bs_config = self.get_config_from_ui()
+        for key, value in vars(bs_config).items():
+            self.config.setValue('settings/'+key, value)
+
         event.accept()
 
 
@@ -590,7 +601,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         bs_config.check_card_init_time = self.ui.cbCheckInitTime.isChecked()
         bs_config.fast_punch = self.ui.cbFastPunch.isChecked()
         bs_config.antenna_gain = self.ui.cbAntennaGain.currentIndex() + 2
-        bs_config.password = (self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value())
+        bs_config.password = [self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value()]
 
         return bs_config
     
@@ -677,11 +688,15 @@ if __name__ == '__main__':
 
     app = QtWidgets.QApplication(sys.argv)
     
+    config = QSettings(os.path.join('data', 'config.ini'), QSettings.IniFormat)
+    lang = config.value('language', QLocale.system().name())
+    config.setValue('language', lang)
+
     translator = QTranslator()
-    translator.load("sportiduinopq_" + QLocale.system().name(), "./translation")
+    translator.load("sportiduinopq_" + lang, "./translation")
     if not app.installTranslator(translator):
         print("Can not install translation!")
 
-    main_window = SportiduinoPqMainWindow()
+    main_window = SportiduinoPqMainWindow(config)
     main_window.show()
     app.exec_()

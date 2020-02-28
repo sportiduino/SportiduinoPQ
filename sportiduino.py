@@ -784,7 +784,7 @@ class BaseStation(object):
             self.check_card_init_time = False
             self.fast_punch = False
             self.antenna_gain = BaseStation.ANTENNA_GAIN_33DB
-            self.password = (0, 0, 0)
+            self.password = [0, 0, 0]
 
 
         @staticmethod
