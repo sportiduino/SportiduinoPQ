@@ -349,9 +349,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log(self.tr("Write the master card to write new password and settings to a base station"))
 
             
-            bs = self.get_settings_from_ui()
-            bs.num = 0 # don't change station number by this master card
-            self.sportiduino.init_config_card(bs)
+            bs_config = self.get_config_from_ui()
+            bs_config.num = 0 # don't change station number by this master card
+            self.sportiduino.init_config_card(bs_config.pack())
                 
             self.ui.sbCurPwd3.setValue(self.ui.sbNewPwd3.value())
             self.ui.sbCurPwd2.setValue(self.ui.sbNewPwd2.value())
@@ -396,8 +396,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         try:
             
             self.log(self.tr("Read the card contained info about a base station"))
-            bs = self.sportiduino.read_info_card()
-            self.showBaseStationInfo(bs)
+            bs_state = self.sportiduino.read_info_card()
+            self.show_base_station_info(bs_state)
             
         except BaseException as err:
             self._process_error(err)
@@ -437,12 +437,11 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log("\n" + self.tr( "Reads info about a base station by UART"))
             
             port = self.ui.cbUartPort.currentText()
-            
-            bs = BaseStation()
             password = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
-            bs.read_info_by_serial(port, password)
 
-            self.showBaseStationInfo(bs)
+            bs_state = BaseStation.read_info_by_serial(port, password)
+
+            self.show_base_station_info(bs_state)
         
         except BaseException as err:
             self._process_error(err)
@@ -455,13 +454,13 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log("\n" + self.tr("Writes settings and password to a base station by UART"))
             port = self.ui.cbUartPort.currentText()
             
-            bs = self.get_settings_from_ui()
-            bs.num = self.ui.sbStationNumByUart.value()
-            bs.wakeup = self.ui.dtCompetion.dateTime().toUTC().toPyDateTime()
+            bs_config = self.get_config_from_ui()
+            bs_config.num = self.ui.sbStationNumByUart.value()
+            wakeuptime = self.ui.dtCompetion.dateTime().toUTC().toPyDateTime()
 
             password = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
-            bs.write_settings_by_serial(port, password)
-            
+            BaseStation.write_settings_by_serial(port, password, bs_config, wakeuptime)
+
             self.log(self.tr("Settings and password has been written successfully"))
         
         except BaseException as err:
@@ -571,77 +570,77 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         json.dump(self.readData, dataFile)
         dataFile.close()
         
-    def apply_settings(self, bs):
-        self.ui.sbStationNum.setValue(bs.num)
-        self.ui.sbStationNumByUart.setValue(bs.num)
-        self.ui.dtCompetion.setDateTime(datetime.fromtimestamp(bs.wakeup))            
+    def apply_settings(self, bs_config, wakeuptime):
+        self.ui.sbStationNum.setValue(bs_config.num)
+        self.ui.sbStationNumByUart.setValue(bs_config.num)
+        self.ui.dtCompetion.setDateTime(datetime.fromtimestamp(wakeuptime))            
 
-        self.ui.WorkTime.setCurrentIndex(bs.active_mode_duration)
+        self.ui.WorkTime.setCurrentIndex(bs_config.active_mode_duration)
 
-        self.ui.cbStartFinish.setChecked(bs.check_start_finish)
-        self.ui.cbCheckInitTime.setChecked(bs.check_card_init_time)
-        self.ui.cbFastPunch.setChecked(bs.fast_punch)
+        self.ui.cbStartFinish.setChecked(bs_config.check_start_finish)
+        self.ui.cbCheckInitTime.setChecked(bs_config.check_card_init_time)
+        self.ui.cbFastPunch.setChecked(bs_config.fast_punch)
 
-        self.ui.cbAntennaGain.setCurrentIndex(bs.antenna_gain - 2)
+        self.ui.cbAntennaGain.setCurrentIndex(bs_config.antenna_gain - 2)
         
-    def get_settings_from_ui(self):
-        bs = BaseStation()
-        bs.active_mode_duration = self.ui.WorkTime.currentIndex()
-        bs.check_start_finish = self.ui.cbStartFinish.isChecked()
-        bs.check_card_init_time = self.ui.cbCheckInitTime.isChecked()
-        bs.fast_punch = self.ui.cbFastPunch.isChecked()
-        bs.antenna_gain = self.ui.cbAntennaGain.currentIndex() + 2
-        bs.password = (self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value())
+    def get_config_from_ui(self):
+        bs_config = BaseStation.Config()
+        bs_config.active_mode_duration = self.ui.WorkTime.currentIndex()
+        bs_config.check_start_finish = self.ui.cbStartFinish.isChecked()
+        bs_config.check_card_init_time = self.ui.cbCheckInitTime.isChecked()
+        bs_config.fast_punch = self.ui.cbFastPunch.isChecked()
+        bs_config.antenna_gain = self.ui.cbAntennaGain.currentIndex() + 2
+        bs_config.password = (self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value())
 
-        return bs
+        return bs_config
     
-    def showBaseStationInfo(self, bs):
-        self.log(self.tr("Version: {}.{}.{}").format(bs.version.major, bs.version.minor, bs.version.patch))
+    def show_base_station_info(self, bs_state):
+        self.log(self.tr("Version: {}.{}.{}").format(bs_state.version.major, bs_state.version.minor, bs_state.version.patch))
          
         # apply settings to ui    
-        self.apply_settings(bs)
+        self.apply_settings(bs_state.config, bs_state.wakeuptime)
        
         self.log(self.tr("Settings:"))
 
-        text = self.tr("   Station N: {} ").format(bs.num)
-        if(bs.num == Sportiduino.START_STATION):
+        text = self.tr("   Station N: {} ").format(bs_state.config.num)
+        if(bs_state.config.num == Sportiduino.START_STATION):
             text += self.tr("(Start)")
-        elif (bs.num == Sportiduino.FINISH_STATION):
+        elif (bs_state.config.num == Sportiduino.FINISH_STATION):
             text += self.tr("(Finish)")
-        elif (bs.num == Sportiduino.CHECK_STATION):
+        elif (bs_state.config.num == Sportiduino.CHECK_STATION):
             text += self.tr("(Check)")
-        elif (bs.num == Sportiduino.CLEAR_STATION):
+        elif (bs_state.config.num == Sportiduino.CLEAR_STATION):
             text += self.tr("(Clear)")
         self.log(text)
 
         self.log(self.tr("   Active time (h): {}").format(self.ui.WorkTime.currentText()))
-        if bs.check_start_finish:
+        if bs_state.config.check_start_finish:
             self.log(self.tr("   Check start/finish flag"))
-        if bs.check_card_init_time:
+        if bs_state.config.check_card_init_time:
             self.log(self.tr("   Check card init time flag"))
-        if bs.fast_punch:
+        if bs_state.config.fast_punch:
             self.log(self.tr("   Fast punch flag"))
         self.log(self.tr("   Antenna Gain: {}").format(self.ui.cbAntennaGain.currentText()))
         
         voltageText = ''
-        if bs.battery.voltage is not None:
-            voltageText = self.tr( " ({:.2f} V)").format(bs.battery.voltage)
+        if bs_state.battery.voltage is not None:
+            voltageText = self.tr( " ({:.2f} V)").format(bs_state.battery.voltage)
 
-        if(bs.battery.isOk):
+        if(bs_state.battery.isOk):
             self.log(self.tr("Battery: OK") + voltageText)
         else:
             self.log(self.tr("Battery: Low") + voltageText)
             
-        if(bs.mode == BaseStation.MODE_ACTIVE):
+        if(bs_state.mode == BaseStation.MODE_ACTIVE):
             self.log(self.tr("Mode: Active"))
-        elif(bs.mode == BaseStation.MODE_WAIT):
+        elif(bs_state.mode == BaseStation.MODE_WAIT):
             self.log(self.tr("Mode: Wait"))
-        elif(bs.mode == BaseStation.MODE_SLEEP):
+        elif(bs_state.mode == BaseStation.MODE_SLEEP):
             self.log(self.tr("Mode: Sleep"))
             
-        text = self.tr( "Clock: {}").format(datetime.fromtimestamp(bs.timestamp))
+        text = self.tr( "Clock: {}").format(datetime.fromtimestamp(bs_state.timestamp))
         self.log(text)
-        text = self.tr( "Alarm: {}").format(datetime.fromtimestamp(bs.wakeup))
+        text = self.tr( "Alarm: {}").format(datetime.fromtimestamp(bs_state.wakeuptime))
         self.log(text)
 
         self.log(self.tr("Settings displayed by UI has been chaged to the base station settings"))

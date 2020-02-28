@@ -291,15 +291,15 @@ class Sportiduino(object):
         self._send_command(Sportiduino.CMD_INIT_BACKUPREADER, wait_response=True)
 
 
-    def init_sleepcard(self, wakeup):
+    def init_sleepcard(self, wakeuptime):
         """Initialize sleep card."""
         params = b''
-        params += int2byte(wakeup.date().year() - 2000)
-        params += int2byte(wakeup.date().month())
-        params += int2byte(wakeup.date().day())
-        params += int2byte(wakeup.time().hour())
-        params += int2byte(wakeup.time().minute())
-        params += int2byte(wakeup.time().second())
+        params += int2byte(wakeuptime.date().year() - 2000)
+        params += int2byte(wakeuptime.date().month())
+        params += int2byte(wakeuptime.date().day())
+        params += int2byte(wakeuptime.time().hour())
+        params += int2byte(wakeuptime.time().minute())
+        params += int2byte(wakeuptime.time().second())
         self._send_command(Sportiduino.CMD_INIT_SLEEPCARD, params, wait_response=True)
 
 
@@ -325,10 +325,10 @@ class Sportiduino(object):
         self._send_command(Sportiduino.CMD_INIT_TIMECARD, params, wait_response=True)
 
 
-    def init_config_card(self, bs):
+    def init_config_card(self, bs_config_data):
         """Initialize card for writing configuration to base station.
         """
-        self._send_command(Sportiduino.CMD_INIT_CONFIG_CARD, bs.to_config(), wait_response=True)
+        self._send_command(Sportiduino.CMD_INIT_CONFIG_CARD, bs_config_data, wait_response=True)
         
 
     def init_info_card(self):
@@ -340,22 +340,22 @@ class Sportiduino(object):
 
 
     def read_info_card(self):
-        bs = BaseStation()
         pageData = self.read_card_raw()
         
         if pageData[4][2] != 255 or pageData[4][1] != byte2int(Sportiduino.MASTER_CARD_GET_INFO):
             raise SportiduinoException(_translate("sportiduino","The card contained info about a base station is not found"))
             
-        bs.version = Sportiduino.Version(*pageData[8][0:3])
-        bs.from_config(pageData[9])
+        state = BaseStation.State()
+        state.version = Sportiduino.Version(*pageData[8][0:3])
+        state.config = BaseStation.Config.unpack(pageData[9])
 
-        bs.battery = BaseStation.Battery(byte2int(pageData[10][0]))
-        bs.mode = pageData[10][1]
+        state.battery = BaseStation.Battery(byte2int(pageData[10][0]))
+        state.mode = pageData[10][1]
 
-        bs.timestamp = Sportiduino._to_int(pageData[11][0:4])
-        bs.wakeup = Sportiduino._to_int(pageData[12][0:4])
+        state.timestamp = Sportiduino._to_int(pageData[11][0:4])
+        state.wakeuptime = Sportiduino._to_int(pageData[12][0:4])
 
-        return bs
+        return state
 
 
     def apply_pwd(self, pwd=(0, 0, 0), flags=0):
@@ -757,6 +757,8 @@ class BaseStation(object):
     ANTENNA_GAIN_43DB  = 0x06
     ANTENNA_GAIN_48DB  = 0x07
 
+    _serialproto = SerialProtocol(SERIAL_MSG_START, print_)
+
     class Battery(object):
         def __init__(self, byte = None):
             self.voltage = None
@@ -773,85 +775,93 @@ class BaseStation(object):
                 if self.voltage > 3.1:
                     self.isOk = True
 
-    def __init__(self):
-        self.version = Sportiduino.Version(0)
 
-        self.num = 0
-        self.active_mode_duration = 2 # hours
-        self.check_start_finish = False
-        self.check_card_init_time = False
-        self.fast_punch = False
-        self.antenna_gain = BaseStation.ANTENNA_GAIN_33DB
-
-        self.mode = BaseStation.MODE_ACTIVE
-        self.battery = self.Battery()
-        self.timestamp = 0
-        self.wakeup = 0
-        self.password = (0, 0, 0)
-
-        self._serialproto = SerialProtocol(BaseStation.SERIAL_MSG_START, print_)
+    class Config(object):
+        def __init__(self):
+            self.num = 0
+            self.active_mode_duration = 2 # hours
+            self.check_start_finish = False
+            self.check_card_init_time = False
+            self.fast_punch = False
+            self.antenna_gain = BaseStation.ANTENNA_GAIN_33DB
+            self.password = (0, 0, 0)
 
 
-    def from_config(self, config_data):
-        self.num = byte2int(config_data[0])
+        @staticmethod
+        def unpack(config_data):
+            config = Config()
+            config.num = byte2int(config_data[0])
 
-        active_mode_bits = config_data[1] & 0x7
-        self.active_mode_duration = byte2int(active_mode_bits)
+            active_mode_bits = config_data[1] & 0x7
+            config.active_mode_duration = byte2int(active_mode_bits)
 
-        self.check_start_finish = config_data[1] & 0x08 > 0
-        self.check_card_init_time = config_data[1] & 0x10 > 0
-        self.fast_punch = config_data[1] & 0x40 > 0
+            config.check_start_finish = config_data[1] & 0x08 > 0
+            config.check_card_init_time = config_data[1] & 0x10 > 0
+            config.fast_punch = config_data[1] & 0x40 > 0
 
-        self.antenna_gain = byte2int(config_data[2])
-
-
-    def to_config(self):
-        config_data = b''
-        config_data += int2byte(self.num)
-
-        flags = self.active_mode_duration
-
-        if self.check_start_finish:
-            flags |= 0x08
-        if self.check_card_init_time:
-            flags |= 0x10
-        if self.fast_punch:
-            flags |= 0x40
-        config_data += int2byte(flags)
-        config_data += int2byte(self.antenna_gain)
-        config_data += int2byte(self.password[0])
-        config_data += int2byte(self.password[1])
-        config_data += int2byte(self.password[2])
-
-        return config_data
+            config.antenna_gain = byte2int(config_data[2])
+            return config
 
 
-    def read_info_by_serial(self, port, password):
+        def pack(self):
+            config_data = b''
+            config_data += int2byte(self.num)
+
+            flags = self.active_mode_duration
+
+            if self.check_start_finish:
+                flags |= 0x08
+            if self.check_card_init_time:
+                flags |= 0x10
+            if self.fast_punch:
+                flags |= 0x40
+            config_data += int2byte(flags)
+            config_data += int2byte(self.antenna_gain)
+            config_data += int2byte(self.password[0])
+            config_data += int2byte(self.password[1])
+            config_data += int2byte(self.password[2])
+
+            return config_data
+
+    class State(object):
+        def __init__(self):
+            self.version = Sportiduino.Version(0)
+            self.config = Config()
+            self.mode = BaseStation.MODE_ACTIVE
+            self.battery = self.Battery()
+            self.timestamp = 0
+
+
+    @classmethod
+    def read_info_by_serial(cls, port, password):
         params = b''
         params += int2byte(password[0])
         params += int2byte(password[1])
         params += int2byte(password[2])
 
-        resp_code, data = self._send_command(port, BaseStation.SERIAL_FUNC_READ_INFO, params, timeout=8)
-        if resp_code == BaseStation.SERIAL_RESP_INFO:
-            self.version = Sportiduino.Version(*data[0:3])
-            self.from_config(data[3:9])
+        resp_code, data = cls._send_command(port, cls.SERIAL_FUNC_READ_INFO, params, timeout=8)
+        if resp_code == cls.SERIAL_RESP_INFO:
+            state = cls.State()
+            state.version = Sportiduino.Version(*data[0:3])
+            state.config = cls.Config.unpack(data[3:9])
 
-            self.battery = BaseStation.Battery(byte2int(data[9]))
-            self.mode = byte2int(data[10])
+            state.battery = cls.Battery(byte2int(data[9]))
+            state.mode = byte2int(data[10])
 
-            self.timestamp = Sportiduino._to_int(data[11:15])
-            self.wakeup = Sportiduino._to_int(data[15:19])
+            state.timestamp = Sportiduino._to_int(data[11:15])
+            state.wakeuptime = Sportiduino._to_int(data[15:19])
+            return state
 
 
-    def write_settings_by_serial(self, port, password):
+    @classmethod
+    def write_settings_by_serial(cls, port, password, config, wakeuptime):
         params = b''
         params += int2byte(password[0])
         params += int2byte(password[1])
         params += int2byte(password[2])
-        params += self.to_config()
+        params += config.pack()
 
-        utc = datetime.utcnow() + timedelta(seconds=1);
+        utc = datetime.utcnow();
         params += int2byte(utc.year - 2000)
         params += int2byte(utc.month)
         params += int2byte(utc.day)
@@ -859,39 +869,40 @@ class BaseStation(object):
         params += int2byte(utc.minute)
         params += int2byte(utc.second)
 
-        params += int2byte(self.wakeup.year - 2000)
-        params += int2byte(self.wakeup.month)
-        params += int2byte(self.wakeup.day)
-        params += int2byte(self.wakeup.hour)
-        params += int2byte(self.wakeup.minute)
-        params += int2byte(self.wakeup.second)
+        params += int2byte(wakeuptime.year - 2000)
+        params += int2byte(wakeuptime.month)
+        params += int2byte(wakeuptime.day)
+        params += int2byte(wakeuptime.hour)
+        params += int2byte(wakeuptime.minute)
+        params += int2byte(wakeuptime.second)
         
-        params += int2byte(BaseStation.MODE_WAIT)
+        params += int2byte(cls.MODE_WAIT)
 
-        self._send_command(port, BaseStation.SERIAL_FUNC_WRITE_SETTINGS, parameters=params, timeout=8)
+        cls._send_command(port, cls.SERIAL_FUNC_WRITE_SETTINGS, parameters=params, timeout=8)
       
 
-    def _send_command(self, port, code, parameters=None, wait_response=True, timeout=None):
+    @classmethod
+    def _send_command(cls, port, code, parameters=None, wait_response=True, timeout=None):
         timeout = timeout if timeout is not None else 1
         serial = Serial(port, baudrate=9600, timeout=timeout)
         # Wakeup station
         serial.write(b'\xff')
-        resp_code, data = self._serialproto.send_command(serial, code, parameters, wait_response)
+        resp_code, data = cls._serialproto.send_command(serial, code, parameters, wait_response)
         serial.close()
-        return BaseStation._preprocess_response(resp_code, data)
+        return cls._preprocess_response(resp_code, data)
 
 
-    @staticmethod
+    @classmethod
     def _preprocess_response(resp_code, data):
-        if resp_code == byte2int(BaseStation.SERIAL_RESP_STATUS):
+        if resp_code == byte2int(cls.SERIAL_RESP_STATUS):
             err_code = data[0]
-            if err_code == BaseStation.SERIAL_ERROR_FUNC:
+            if err_code == cls.SERIAL_ERROR_FUNC:
                 raise SportiduinoException(_translate("sportiduino", "Invalid function code"))
-            elif err_code == BaseStation.SERIAL_ERROR_CRC:
+            elif err_code == cls.SERIAL_ERROR_CRC:
                 raise SportiduinoException(_translate("sportiduino", "Checksum mismatch in the request"))
-            elif err_code == BaseStation.SERIAL_ERROR_SIZE:
+            elif err_code == cls.SERIAL_ERROR_SIZE:
                 raise SportiduinoException(_translate("sportiduino", "Invalid size of the request"))
-            elif err_code == BaseStation.SERIAL_ERROR_PWD:
+            elif err_code == cls.SERIAL_ERROR_PWD:
                 raise SportiduinoException(_translate("sportiduino", "Invalid password"))
         
         return resp_code, data
