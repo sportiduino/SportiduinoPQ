@@ -787,9 +787,9 @@ class BaseStation(object):
             self.password = [0, 0, 0]
 
 
-        @staticmethod
-        def unpack(config_data):
-            config = Config()
+        @classmethod
+        def unpack(cls, config_data):
+            config = cls()
             config.num = byte2int(config_data[0])
 
             active_mode_bits = config_data[1] & 0x7
@@ -826,9 +826,9 @@ class BaseStation(object):
     class State(object):
         def __init__(self):
             self.version = Sportiduino.Version(0)
-            self.config = Config()
+            self.config = BaseStation.Config()
             self.mode = BaseStation.MODE_ACTIVE
-            self.battery = self.Battery()
+            self.battery = BaseStation.Battery()
             self.timestamp = 0
 
 
@@ -893,7 +893,7 @@ class BaseStation(object):
 
 
     @classmethod
-    def _preprocess_response(resp_code, data):
+    def _preprocess_response(cls, resp_code, data):
         if resp_code == byte2int(cls.SERIAL_RESP_STATUS):
             err_code = data[0]
             if err_code == cls.SERIAL_ERROR_FUNC:
