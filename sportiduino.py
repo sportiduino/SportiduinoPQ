@@ -64,6 +64,7 @@ class Sportiduino(object):
     CMD_WRITE_SETTINGS    = b'\x4a'
     CMD_READ_CARD         = b'\x4b'
     CMD_READ_RAW          = b'\x4c'
+    CMD_READ_SETTINGS     = b'\x4d'
     CMD_INIT_SLEEPCARD    = b'\x4e'
     CMD_APPLY_PWD         = b'\x4f'
     CMD_INIT_INFOCARD     = b'\x50'
@@ -365,6 +366,16 @@ class Sportiduino(object):
         params += int2byte(pwd[2])
         params += int2byte(flags)
         self._send_command(Sportiduino.CMD_APPLY_PWD, params)
+
+
+    def read_settings(self):
+        code, data = self._send_command(Sportiduino.CMD_READ_SETTINGS)
+        if code == Sportiduino.RESP_SETTINGS:
+            return {
+                antenna_gain: byte2int(data[0])
+            }
+        else:
+            raise SportiduinoException("Read settings failed")
 
 
     def write_settings(self, antenna_gain):

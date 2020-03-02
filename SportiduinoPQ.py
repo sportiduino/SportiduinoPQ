@@ -82,6 +82,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.btnUartRead.clicked.connect(self.SerialRead_clicked)
         self.ui.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
         self.ui.btnClearText.clicked.connect(self.ClearText_clicked)
+        self.ui.btnMsConfigRead.clicked.connect(self.btnMsConfigRead_clicked)
+        self.ui.btnMsConfigWrite.clicked.connect(self.btnMsConfigWrite_clicked)
 
         self.config = config
         geometry = self.config.value('geometry')
@@ -143,13 +145,15 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 text = self.tr("Master station {} on port {} is connected").format(self.sportiduino.version, self.sportiduino.port)
                 self.log(text)
                 self.ui.Connect.setText(_translate("MainWindow", "Disconn."))
+
+                self.btnMsConfigRead_clicked()
                 
             except BaseException as err:
                 self._process_error(err)
                 self.connected = False
 
     def ReadCard_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
 
         try:
@@ -167,7 +171,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     def InitCard_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
@@ -201,7 +205,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
             
     def SetNum_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
@@ -246,7 +250,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     def SetFinish_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
@@ -260,7 +264,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     def CheckSt_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
@@ -274,7 +278,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     def ClearSt_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
@@ -288,7 +292,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     def LogCard_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
@@ -301,7 +305,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
                 
     def ReadLog_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
 
         text = ""
@@ -339,7 +343,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     def SleepCard_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
@@ -352,7 +356,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     def PassCard_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
@@ -374,7 +378,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
             
     def ApplyPwd_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
 
         try:
@@ -388,7 +392,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
             
     def CreateInfo_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
@@ -401,11 +405,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
         
     def ReadInfo_clicked(self):
-        if self._check_connection() == False:
+        if not self._check_connection():
             return
         
         try:
-            
             self.log(self.tr("Read the card contained info about a base station"))
             bs_state = self.sportiduino.read_info_card()
             self.show_base_station_info(bs_state)
@@ -459,9 +462,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
 
     def SerialWrite_clicked(self):
-        
         try:
-            
             self.log("\n" + self.tr("Writes settings and password to a base station by UART"))
             port = self.ui.cbUartPort.currentText()
             
@@ -476,9 +477,35 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         except BaseException as err:
             self._process_error(err)
+
             
     def ClearText_clicked(self):
         self.ui.textBrowser.setPlainText('')
+
+
+    def btnMsConfigRead_clicked(self):
+        if not self._check_connection():
+            return
+
+        try:
+            ms_config = self.sportiduino.read_settings()
+            if ms_config.antenna_gain is not None:
+                self.ui.cbMsAntennaGain.setCurrentIndex(ms_config.antenna_gain - 2)
+        except BaseException as err:
+            self._process_error(err)
+
+
+    def btnMsConfigWrite_clicked(self):
+        if not self._check_connection():
+            return
+
+        try:
+            self.sportiduino.write_settings(self.ui.cbMsAntennaGain.currentIndex() + 2)
+        except BaseException as err:
+            self._process_error(err)
+
+
+
     
     def showCardData(self, data, card_type):
         if (self.ui.AutoPrint.checkState() != 0):
@@ -586,7 +613,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.sbStationNumByUart.setValue(bs_config.num)
         self.ui.dtCompetion.setDateTime(datetime.fromtimestamp(wakeuptime))            
 
-        self.ui.WorkTime.setCurrentIndex(bs_config.active_mode_duration)
+        self.ui.cbActiveTime.setCurrentIndex(bs_config.active_mode_duration)
 
         self.ui.cbStartFinish.setChecked(bs_config.check_start_finish)
         self.ui.cbCheckInitTime.setChecked(bs_config.check_card_init_time)
@@ -596,7 +623,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
     def get_config_from_ui(self):
         bs_config = BaseStation.Config()
-        bs_config.active_mode_duration = self.ui.WorkTime.currentIndex()
+        bs_config.active_mode_duration = self.ui.cbActiveTime.currentIndex()
         bs_config.check_start_finish = self.ui.cbStartFinish.isChecked()
         bs_config.check_card_init_time = self.ui.cbCheckInitTime.isChecked()
         bs_config.fast_punch = self.ui.cbFastPunch.isChecked()
@@ -624,7 +651,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             text += self.tr("(Clear)")
         self.log(text)
 
-        self.log(self.tr("   Active time (h): {}").format(self.ui.WorkTime.currentText()))
+        self.log(self.tr("   Active time (h): {}").format(self.ui.cbActiveTime.currentText()))
         if bs_state.config.check_start_finish:
             self.log(self.tr("   Check start/finish flag"))
         if bs_state.config.check_card_init_time:
@@ -693,9 +720,10 @@ if __name__ == '__main__':
     config.setValue('language', lang)
 
     translator = QTranslator()
-    translator.load("sportiduinopq_" + lang, "./translation")
-    if not app.installTranslator(translator):
-        print("Can not install translation!")
+    if lang != 'en':
+        translator.load("sportiduinopq_" + lang, "./translation")
+        if not app.installTranslator(translator):
+            print('Can not install translation for language "{}"!'.format(lang))
 
     main_window = SportiduinoPqMainWindow(config)
     main_window.show()

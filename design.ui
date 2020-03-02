@@ -159,7 +159,7 @@
           <property name="currentIndex">
            <number>2</number>
           </property>
-          <widget class="QWidget" name="tab_4">
+          <widget class="QWidget" name="tab_1">
            <attribute name="title">
             <string>Main</string>
            </attribute>
@@ -324,7 +324,7 @@
           </widget>
           <widget class="QWidget" name="tab_2">
            <attribute name="title">
-            <string>Settings#1</string>
+            <string>Card</string>
            </attribute>
            <widget class="QGroupBox" name="groupBox">
             <property name="geometry">
@@ -399,7 +399,7 @@
               <locale language="English" country="UnitedStates"/>
              </property>
              <property name="text">
-              <string>Competion Date/Time</string>
+              <string>Wake Up Time</string>
              </property>
             </widget>
            </widget>
@@ -653,7 +653,7 @@
              <locale language="English" country="UnitedStates"/>
             </property>
             <property name="title">
-             <string>Status Card</string>
+             <string>State Card</string>
             </property>
             <widget class="QPushButton" name="btnCreateInfoCard">
              <property name="geometry">
@@ -789,9 +789,9 @@
           </widget>
           <widget class="QWidget" name="tab_3">
            <attribute name="title">
-            <string>Settings#2</string>
+            <string>Config</string>
            </attribute>
-           <widget class="QComboBox" name="WorkTime">
+           <widget class="QComboBox" name="cbActiveTime">
             <property name="geometry">
              <rect>
               <x>160</x>
@@ -867,7 +867,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>280</y>
+              <y>290</y>
               <width>231</width>
               <height>31</height>
              </rect>
@@ -959,7 +959,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>460</y>
+              <y>450</y>
               <width>231</width>
               <height>151</height>
              </rect>
@@ -1185,6 +1185,115 @@
             <property name="text">
              <string>Fast Punch</string>
             </property>
+           </widget>
+          </widget>
+          <widget class="QWidget" name="tab_4">
+           <attribute name="title">
+            <string>MS</string>
+           </attribute>
+           <widget class="QGroupBox" name="groupBox_8">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>10</y>
+              <width>231</width>
+              <height>111</height>
+             </rect>
+            </property>
+            <property name="title">
+             <string>Master Station Config</string>
+            </property>
+            <widget class="QLabel" name="label_12">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>30</y>
+               <width>121</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Antenna Gain</string>
+             </property>
+            </widget>
+            <widget class="QComboBox" name="cbMsAntennaGain">
+             <property name="geometry">
+              <rect>
+               <x>140</x>
+               <y>30</y>
+               <width>81</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="editable">
+              <bool>false</bool>
+             </property>
+             <property name="currentIndex">
+              <number>2</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>18 dB</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>23 dB</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>33 dB</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>38 dB</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>43 dB</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>48 dB</string>
+              </property>
+             </item>
+            </widget>
+            <widget class="QPushButton" name="btnMsConfigRead">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>70</y>
+               <width>101</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="toolTip">
+              <string>Reads settings of master station</string>
+             </property>
+             <property name="text">
+              <string>Read</string>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="btnMsConfigWrite">
+             <property name="geometry">
+              <rect>
+               <x>120</x>
+               <y>70</y>
+               <width>101</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="toolTip">
+              <string>Writes settings to master station</string>
+             </property>
+             <property name="text">
+              <string>Write</string>
+             </property>
+            </widget>
            </widget>
           </widget>
          </widget>
