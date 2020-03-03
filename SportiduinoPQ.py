@@ -33,7 +33,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui = design.Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setWindowTitle("SportiduinoPQ v0.7.99")
+        self.setWindowTitle("SportiduinoPQ v0.7.99-unstable")
         
         self.readData = []
         self.dumpData = []
