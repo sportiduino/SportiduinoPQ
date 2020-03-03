@@ -17,7 +17,7 @@ from serial import Serial
 from sportiduino import Sportiduino, BaseStation
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
-from PyQt5.QtCore import QSizeF, QDateTime, QTime, QSettings
+from PyQt5.QtCore import QSizeF, QSettings
 from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtWidgets import QApplication, QFileDialog
 from PyQt5.QtCore import QTranslator
@@ -38,19 +38,13 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.readData = []
         self.dumpData = []
         self.connected = False
-        self.CardNum = '0'
         self.printer = QPrinter()
         self.ui.printerName.setText(self.printer.printerName())
 
-        self.initTime = datetime.now()
-        self.logger = self.Logger(self.initTime)
-        self.log('{:%Y-%m-%d %H:%M:%S}'.format(self.initTime))
+        self._init_time = datetime.now()
+        self._logger = self.Logger()
+        self.log('{:%Y-%m-%d %H:%M:%S}'.format(self._init_time))
         
-        dt = QDateTime.currentDateTime()
-        tm = QTime(dt.time().hour(), dt.time().minute(), 0)
-        dt.setTime(tm)
-        self.ui.dtCompetion.setDateTime(dt)
-
         availablePorts = []
         if platform.system() == 'Linux':
             availablePorts = [os.path.join('/dev', f) for f in os.listdir('/dev') if
@@ -82,8 +76,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.btnUartRead.clicked.connect(self.SerialRead_clicked)
         self.ui.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
         self.ui.btnClearText.clicked.connect(self.ClearText_clicked)
-        self.ui.btnMsConfigRead.clicked.connect(self.btnMsConfigRead_clicked)
-        self.ui.btnMsConfigWrite.clicked.connect(self.btnMsConfigWrite_clicked)
+        self.ui.btnMsConfigRead.clicked.connect(self.read_ms_config)
+        self.ui.btnMsConfigWrite.clicked.connect(self.write_ms_config)
 
         self.config = config
         geometry = self.config.value('geometry')
@@ -96,7 +90,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             if isinstance(default_value, list):
                 value_type = type(default_value[0])
             setattr(bs_config, key, self.config.value('settings/'+key, default_value, type=value_type))
-        self.apply_settings(bs_config, 0)
+        self._apply_settings(bs_config, datetime.now())
 
         self.ui.sbCurPwd1.setValue(bs_config.password[0])
         self.ui.sbCurPwd2.setValue(bs_config.password[1])
@@ -106,13 +100,13 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.sbNewPwd2.setValue(bs_config.password[1])
         self.ui.sbNewPwd3.setValue(bs_config.password[2])
 
-        #dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
+        #dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self._init_time)),'w')
 
 
     def closeEvent(self, event):
         self.config.setValue('geometry', self.saveGeometry())
 
-        bs_config = self.get_config_from_ui()
+        bs_config = self._get_config_from_ui()
         for key, value in vars(bs_config).items():
             self.config.setValue('settings/'+key, value)
 
@@ -146,7 +140,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 self.log(text)
                 self.ui.Connect.setText(_translate("MainWindow", "Disconn."))
 
-                self.btnMsConfigRead_clicked()
+                self.read_ms_config()
                 
             except BaseException as err:
                 self._process_error(err)
@@ -164,8 +158,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
             data = Sportiduino.raw_data_to_card_data(raw_data)
             
-            self.showCardData(data, card_type)
-            self.saveCardDataJson(data)
+            self._show_card_data(data, card_type)
+            self._save_card_data_json(data)
             
         except BaseException as err:
             self._process_error(err)
@@ -173,34 +167,25 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
     def InitCard_clicked(self):
         if not self._check_connection():
             return
-        
         try:
-            
             self.log(self.tr("Initialize the participant card"))
-        
-            text = self.ui.cardLine.text()
-        
-            if(text.isdigit()):
-                self.CardNum = text
-            else:
-                self.CardNum = '0'
 
-            num = int(self.CardNum)
-        
-            if (num < Sportiduino.MIN_CARD_NUM or num > Sportiduino.MAX_CARD_NUM):
-                raise BaseException(self.tr("Incorrect card number"))
-            
-            code, data = self.sportiduino.init_card(num)
-            
-            if (self.ui.AutoIncriment.checkState() != 0):
-                self.AutoIn = True
-                self.CardNum = str(num + 1)
-                self.ui.cardLine.setText(self.CardNum)
-            
+            card_num = 0
+            text = self.ui.cardLine.text()
+            if(text.isdigit()):
+                card_num = int(text)
+
+            if (card_num < Sportiduino.MIN_CARD_NUM or card_num > Sportiduino.MAX_CARD_NUM):
+                raise Exception(self.tr("Incorrect card number"))
+
+            code, data = self.sportiduino.init_card(card_num)
             if code == Sportiduino.RESP_OK :
                 self.log(self.tr("The participant card N{} ({}) has been initialized successfully")
-                    .format(num, Sportiduino.card_name(data[0])))
-            
+                    .format(card_num, Sportiduino.card_name(data[0])))
+ 
+            if self.ui.AutoIncriment.isChecked():
+                self.ui.cardLine.setText(card_num + 1)
+
         except BaseException as err:
             self._process_error(err)
             
@@ -213,8 +198,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log(self.tr("Write the master card to set number of a base station"))
             num = self.ui.sbStationNum.value()
         
-            if num == 0 or num > 255:
-                raise BaseException(self.tr("Not correct station number"))
+            if num < 1 or num > 255:
+                raise Exception(self.tr("Not correct station number"))
             
             self.sportiduino.init_cp_number_card(num)
             self._master_card_ok()
@@ -335,7 +320,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log(text)
                 
             #self.dumpData.append(data)
-            #dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
+            #dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self._init_time)),'w')
             #json.dump(self.dumpData, dumpFile)
             #dumpFile.close()
 
@@ -361,10 +346,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
 
-            self.log(self.tr("Write the master card to write new password and settings to a base station"))
+            self.log(self.tr("Write the config master card"))
 
             
-            bs_config = self.get_config_from_ui()
+            bs_config = self._get_config_from_ui()
             bs_config.num = 0 # don't change station number by this master card
             self.sportiduino.init_config_card(bs_config.pack())
                 
@@ -397,8 +382,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
            
-            self.log(self.tr("Write the master card to get info about a base station"))
-            self.sportiduino.init_info_card()
+            self.log(self.tr("Write the master card to get a base station state"))
+            self.sportiduino.init_state_card()
             self._master_card_ok()
             
         except BaseException as err:
@@ -409,9 +394,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             return
         
         try:
-            self.log(self.tr("Read the card contained info about a base station"))
-            bs_state = self.sportiduino.read_info_card()
-            self.show_base_station_info(bs_state)
+            self.log(self.tr("Read the card contained a base station state"))
+            bs_state = self.sportiduino.read_state_card()
+            self._show_base_station_state(bs_state)
             
         except BaseException as err:
             self._process_error(err)
@@ -425,7 +410,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         # Scroll down
         self.ui.textBrowser.verticalScrollBar().setValue(self.ui.textBrowser.verticalScrollBar().maximum())
 
-        self.logger(text)
+        self._logger(text)
 
     def SelectPrinter_clicked(self):
         dialog = QtPrintSupport.QPrintDialog(self.printer)
@@ -455,7 +440,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             bs_state = BaseStation.read_info_by_serial(port, password)
 
-            self.show_base_station_info(bs_state)
+            self._show_base_station_state(bs_state)
         
         except BaseException as err:
             self._process_error(err)
@@ -466,7 +451,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log("\n" + self.tr("Writes settings and password to a base station by UART"))
             port = self.ui.cbUartPort.currentText()
             
-            bs_config = self.get_config_from_ui()
+            bs_config = self._get_config_from_ui()
             bs_config.num = self.ui.sbStationNumByUart.value()
             wakeuptime = self.ui.dtCompetion.dateTime().toUTC().toPyDateTime()
 
@@ -483,7 +468,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.textBrowser.setPlainText('')
 
 
-    def btnMsConfigRead_clicked(self):
+    def read_ms_config(self):
         if not self._check_connection():
             return
 
@@ -495,7 +480,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
 
-    def btnMsConfigWrite_clicked(self):
+    def write_ms_config(self):
         if not self._check_connection():
             return
 
@@ -505,10 +490,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
 
-
-    
-    def showCardData(self, data, card_type):
-        if (self.ui.AutoPrint.checkState() != 0):
+    def _show_card_data(self, data, card_type):
+        if self.ui.AutoPrint.isChecked():
             self.ClearText_clicked()
                 
         text = []
@@ -569,10 +552,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
    
         self.log('\n'.join(text))
         
-        if (self.ui.AutoPrint.checkState() != 0):
+        if self.ui.AutoPrint.isChecked():
             self.Print_clicked()
             
-    def saveCardDataJson(self,data):
+    def _save_card_data_json(self,data):
         
         if data['master_card_flag'] == 255:
             return
@@ -604,14 +587,14 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         self.readData.append(data)
             
-        dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self.initTime)),'w')
+        dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self._init_time)),'w')
         json.dump(self.readData, dataFile)
         dataFile.close()
         
-    def apply_settings(self, bs_config, wakeuptime):
+    def _apply_settings(self, bs_config, wakeuptime):
         self.ui.sbStationNum.setValue(bs_config.num)
         self.ui.sbStationNumByUart.setValue(bs_config.num)
-        self.ui.dtCompetion.setDateTime(datetime.fromtimestamp(wakeuptime))            
+        self.ui.dtCompetion.setDateTime(wakeuptime)            
 
         self.ui.cbActiveTime.setCurrentIndex(bs_config.active_mode_duration)
 
@@ -621,7 +604,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         self.ui.cbAntennaGain.setCurrentIndex(bs_config.antenna_gain - 2)
         
-    def get_config_from_ui(self):
+    def _get_config_from_ui(self):
         bs_config = BaseStation.Config()
         bs_config.active_mode_duration = self.ui.cbActiveTime.currentIndex()
         bs_config.check_start_finish = self.ui.cbStartFinish.isChecked()
@@ -632,11 +615,11 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         return bs_config
     
-    def show_base_station_info(self, bs_state):
+    def _show_base_station_state(self, bs_state):
         self.log(self.tr("Version: {}.{}.{}").format(bs_state.version.major, bs_state.version.minor, bs_state.version.patch))
          
         # apply settings to ui    
-        self.apply_settings(bs_state.config, bs_state.wakeuptime)
+        self._apply_settings(bs_state.config, bs_state.wakeuptime)
        
         self.log(self.tr("Settings:"))
 
@@ -676,9 +659,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         elif(bs_state.mode == BaseStation.MODE_SLEEP):
             self.log(self.tr("Mode: Sleep"))
             
-        text = self.tr( "Clock: {}").format(datetime.fromtimestamp(bs_state.timestamp))
+        text = self.tr( "Clock: {}").format(bs_state.timestamp)
         self.log(text)
-        text = self.tr( "Alarm: {}").format(datetime.fromtimestamp(bs_state.wakeuptime))
+        text = self.tr( "Alarm: {}").format(bs_state.wakeuptime)
         self.log(text)
 
         self.log(self.tr("Settings displayed by UI has been chaged to the base station settings"))
@@ -697,15 +680,15 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.log(self.tr("The master card has been written successfully"))
 
     class Logger(object):
-        def __init__(self, init_time):
-            self.log_file = open(os.path.join('log','logFile{:%Y%m%d%H%M%S}.txt'.format(init_time)),'w')
+        def __init__(self):
+            self._log_file = open(os.path.join('log','log{:%Y%m%d}.txt'.format(datetime.now())),'a')
 
         def __call__(self, text):
-            self.log_file.write(text)
+            self._log_file.write(text)
         
         def __del__(self):
             print("Close log file")
-            self.log_file.close();
+            self._log_file.close();
 
 
 if __name__ == '__main__':

@@ -67,7 +67,7 @@ class Sportiduino(object):
     CMD_READ_SETTINGS     = b'\x4d'
     CMD_INIT_SLEEPCARD    = b'\x4e'
     CMD_APPLY_PWD         = b'\x4f'
-    CMD_INIT_INFOCARD     = b'\x50'
+    CMD_INIT_STATECARD    = b'\x50'
     CMD_READ_CARD_TYPE    = b'\x51'
     CMD_BEEP_ERROR        = b'\x58'
     CMD_BEEP_OK           = b'\x59'
@@ -92,7 +92,7 @@ class Sportiduino(object):
     ERR_CARD_NOT_FOUND  = b'\x05'
     ERR_UNKNOWN_CMD     = b'\x06'
     
-    MASTER_CARD_GET_INFO     = b'\xF9'
+    MASTER_CARD_GET_STATE    = b'\xF9'
     MASTER_CARD_SET_TIME     = b'\xFA'
     MASTER_CARD_SET_NUMBER   = b'\xFB'
     MASTER_CARD_SLEEP        = b'\xFC'
@@ -332,19 +332,16 @@ class Sportiduino(object):
         self._send_command(Sportiduino.CMD_INIT_CONFIG_CARD, bs_config_data, wait_response=True)
         
 
-    def init_info_card(self):
-        """Initialize card for writing check point number to base station.
-        @param cp_number: Check point number.
-        """
+    def init_state_card(self):
         params = b''
-        self._send_command(Sportiduino.CMD_INIT_INFOCARD, params, wait_response=True)
+        self._send_command(Sportiduino.CMD_INIT_STATECARD, params, wait_response=True)
 
 
-    def read_info_card(self):
+    def read_state_card(self):
         pageData = self.read_card_raw()
         
-        if pageData[4][2] != 255 or pageData[4][1] != byte2int(Sportiduino.MASTER_CARD_GET_INFO):
-            raise SportiduinoException(_translate("sportiduino","The card contained info about a base station is not found"))
+        if pageData[4][2] != 255 or pageData[4][1] != byte2int(Sportiduino.MASTER_CARD_GET_STATE):
+            raise SportiduinoException(_translate("sportiduino","The state-card not found"))
             
         state = BaseStation.State()
         state.version = Sportiduino.Version(*pageData[8][0:3])
@@ -353,8 +350,8 @@ class Sportiduino(object):
         state.battery = BaseStation.Battery(byte2int(pageData[10][0]))
         state.mode = pageData[10][1]
 
-        state.timestamp = Sportiduino._to_int(pageData[11][0:4])
-        state.wakeuptime = Sportiduino._to_int(pageData[12][0:4])
+        state.timestamp = datetime.fromtimestamp(Sportiduino._to_int(pageData[11][0:4]))
+        state.wakeuptime = datetime.fromtimestamp(Sportiduino._to_int(pageData[12][0:4]))
 
         return state
 
