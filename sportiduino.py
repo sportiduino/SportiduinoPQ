@@ -859,8 +859,8 @@ class BaseStation(object):
             state.battery = cls.Battery(byte2int(data[9]))
             state.mode = byte2int(data[10])
 
-            state.timestamp = Sportiduino._to_int(data[11:15])
-            state.wakeuptime = Sportiduino._to_int(data[15:19])
+            state.timestamp = datetime.fromtimestamp(Sportiduino._to_int(data[11:15]))
+            state.wakeuptime = datetime.fromtimestamp(Sportiduino._to_int(data[15:19]))
             return state
 
 
