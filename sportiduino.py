@@ -131,6 +131,11 @@ class Sportiduino(object):
             """
             return 'v%d.%d.%s' % (self.major, self.minor, int(self.patch) if self.patch is not None else 'x')
 
+    class Config(object):
+        def __init__(self, antenna_gain = 0):
+            self.antenna_gain = antenna_gain
+        
+
     def __init__(self, port=None, debug=False, logger=None):
         """Initializes communication with master station at port.
         @param port: Serial device for the connection. If port is None it
@@ -368,9 +373,7 @@ class Sportiduino(object):
     def read_settings(self):
         code, data = self._send_command(Sportiduino.CMD_READ_SETTINGS)
         if code == Sportiduino.RESP_SETTINGS:
-            return {
-                antenna_gain: byte2int(data[0])
-            }
+            return Sportiduino.Config(antenna_gain=byte2int(data[0]))
         else:
             raise SportiduinoException("Read settings failed")
 

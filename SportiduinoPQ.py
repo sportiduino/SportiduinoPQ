@@ -76,7 +76,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.btnUartRead.clicked.connect(self.SerialRead_clicked)
         self.ui.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
         self.ui.btnClearText.clicked.connect(self.ClearText_clicked)
-        self.ui.btnMsConfigRead.clicked.connect(self.read_ms_config)
+        self.ui.btnMsConfigRead.clicked.connect(self.btnMsConfigRead_clicked)
         self.ui.btnMsConfigWrite.clicked.connect(self.write_ms_config)
 
         self.config = config
@@ -469,13 +469,17 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
 
     def read_ms_config(self):
+        ms_config = self.sportiduino.read_settings()
+        if ms_config.antenna_gain is not None:
+            self.ui.cbMsAntennaGain.setCurrentIndex(ms_config.antenna_gain - 2)
+       
+    def btnMsConfigRead_clicked(self):
         if not self._check_connection():
             return
 
         try:
-            ms_config = self.sportiduino.read_settings()
-            if ms_config.antenna_gain is not None:
-                self.ui.cbMsAntennaGain.setCurrentIndex(ms_config.antenna_gain - 2)
+            self.read_ms_config()
+            self.sportiduino.beep_ok()
         except BaseException as err:
             self._process_error(err)
 
@@ -670,7 +674,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.log(self.tr("Error: {}").format(err))
         
     def _check_connection(self):
-        self.log("")
         if not self.connected:
             self.log(self.tr("Master station is not connected"))
             return False
