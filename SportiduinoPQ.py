@@ -5,13 +5,10 @@ sys.path.append('..')
 import os.path
 import platform
 import re
-import time
 import datetime
 import serial
 import json
-import copy
 import design
-import traceback
 
 from serial import Serial
 from sportiduino import Sportiduino, BaseStation
