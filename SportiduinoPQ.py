@@ -111,13 +111,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
 
     def Connect_clicked(self):
-
-        self.log("")
-        
         if self.connected:
             self.sportiduino.disconnect()
-            text = self.tr("Master station is disconnected")
-            self.log(text)
+            self.log('\n' + self.tr("Master station is disconnected"))
             self.connected = False
             self.ui.Connect.setText(_translate("MainWindow", "Connect"))
         else:
@@ -133,8 +129,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
                 #self.sportiduino.beep_ok()
                 self.connected = True
-                text = self.tr("Master station {} on port {} is connected").format(self.sportiduino.version, self.sportiduino.port)
-                self.log(text)
+                self.log('\n' + self.tr("Master station {} on port {} is connected").format(self.sportiduino.version, self.sportiduino.port))
                 self.ui.Connect.setText(_translate("MainWindow", "Disconn."))
 
                 self.read_ms_config()
@@ -148,7 +143,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             return
 
         try:
-            self.log(self.tr("Read a card"))
+            self.log("\n" + self.tr("Read a card"))
             
             card_type = self.sportiduino.read_card_type()
             raw_data = self.sportiduino.read_card_raw()
@@ -165,7 +160,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         if not self._check_connection():
             return
         try:
-            self.log(self.tr("Initialize the participant card"))
+            self.log("\n" + self.tr("Initialize the participant card"))
 
             card_num = 0
             text = self.ui.cardLine.text()
@@ -181,7 +176,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                     .format(card_num, Sportiduino.card_name(data[0])))
  
             if self.ui.AutoIncriment.isChecked():
-                self.ui.cardLine.setText(card_num + 1)
+                self.ui.cardLine.setText(str(card_num + 1))
 
         except BaseException as err:
             self._process_error(err)
@@ -192,7 +187,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
             
-            self.log(self.tr("Write the master card to set number of a base station"))
+            self.log("\n" + self.tr("Write the master card to set number of a base station"))
             num = self.ui.sbStationNum.value()
         
             if num < 1 or num > 255:
@@ -210,7 +205,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         try:
             
-            self.log(self.tr("Write the master card to set clock of a base station. Put the card on a base station after third signal"))
+            self.log("\n" + self.tr("Write the master card to set clock of a base station. Put the card on a base station after third signal"))
             self.sportiduino.init_time_card(datetime.utcnow() + timedelta(seconds=3))
             self._master_card_ok()
             
@@ -223,7 +218,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
             
-            self.log(self.tr("Write the master card to set a base station as the start station"))
+            self.log("\n" + self.tr("Write the master card to set a base station as the start station"))
             self.sportiduino.init_cp_number_card(Sportiduino.START_STATION)
             self.ui.sbStationNum.setValue(Sportiduino.START_STATION)
             self._master_card_ok()
@@ -237,7 +232,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
             
-            self.log(self.tr("Write the master card to set a base station as the finish station"))
+            self.log("\n" + self.tr("Write the master card to set a base station as the finish station"))
             self.sportiduino.init_cp_number_card(Sportiduino.FINISH_STATION)
             self.ui.sbStationNum.setValue(Sportiduino.FINISH_STATION)
             self._master_card_ok()
@@ -251,7 +246,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
             
-            self.log(self.tr("Write the master card to set a base station as the check station"))
+            self.log("\n" + self.tr("Write the master card to set a base station as the check station"))
             self.sportiduino.init_cp_number_card(Sportiduino.CHECK_STATION)
             self.ui.sbStationNum.setValue(Sportiduino.CHECK_STATION)
             self._master_card_ok()
@@ -265,7 +260,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
             
-            self.log(self.tr("Write the master card to set a base station as the clear station"))
+            self.log("\n" + self.tr("Write the master card to set a base station as the clear station"))
             self.sportiduino.init_cp_number_card(Sportiduino.CLEAR_STATION)
             self.ui.sbStationNum.setValue(Sportiduino.CLEAR_STATION)
             self._master_card_ok()
@@ -279,7 +274,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
         
-            self.log(self.tr("Write the master card to get log of a base station"))
+            self.log("\n" + self.tr("Write the master card to get log of a base station"))
             self.sportiduino.init_backupreader()
             self._master_card_ok()
             
@@ -293,7 +288,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         text = ""
         
         try:
-            self.log(self.tr("Read the card contained log of a base station"))
+            self.log("\n" + self.tr("Read the card contained log of a base station"))
             
             data = self.sportiduino.read_backup()
             
@@ -303,12 +298,12 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             text = self.tr("Station N: {} ").format(data['cp']) + "\n"
 
             cards = data['cards']
-            
+
+            text += self.tr("Total punches {}").format(len(cards)) + "\n"
             if len(cards) > 0:
-                text += self.tr("Total punches {}").format(len(cards)) + "\n"
                 text += self.tr("Cards:") + "\n"
                 if isinstance(cards[0], int):
-                    text += ', '.join(cards)
+                    text += ', '.join([str(c) for c in cards])
                 else:
                     for pair in cards:
                         text += "{:>4} {}".format(*pair) + "\n"
@@ -330,7 +325,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
             
-            self.log(self.tr("Write the master card to sleep a base station"))
+            self.log("\n" + self.tr("Write the master card to sleep a base station"))
             self.sportiduino.init_sleepcard(self.ui.dtCompetion.dateTime().toUTC())
             self._master_card_ok()
             
@@ -343,7 +338,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
 
-            self.log(self.tr("Write the config master card"))
+            self.log("\n" + self.tr("Write the config master card"))
 
             
             bs_config = self._get_config_from_ui()
@@ -364,7 +359,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             return
 
         try:
-            self.log(self.tr("Apply the current password"))
+            self.log("\n" + self.tr("Apply the current password"))
             
             curPass = tuple(self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
             self.sportiduino.apply_pwd(curPass)
@@ -379,7 +374,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
            
-            self.log(self.tr("Write the master card to get a base station state"))
+            self.log("\n" + self.tr("Write the master card to get a base station state"))
             self.sportiduino.init_state_card()
             self._master_card_ok()
             
@@ -391,7 +386,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             return
         
         try:
-            self.log(self.tr("Read the card contained a base station state"))
+            self.log("\n" + self.tr("Read the card contained a base station state"))
             bs_state = self.sportiduino.read_state_card()
             self._show_base_station_state(bs_state)
             
@@ -399,10 +394,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
             
     def log(self, text):
-        text += '\n'
         print(text)
         browserText = self.ui.textBrowser.toPlainText()
-        browserText = browserText + text
+        browserText = browserText + text + '\n'
         self.ui.textBrowser.setPlainText(browserText)
         # Scroll down
         self.ui.textBrowser.verticalScrollBar().setValue(self.ui.textBrowser.verticalScrollBar().maximum())
@@ -503,7 +497,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             # show master card info
             master_type = int2byte(data['master_card_type'])
             
-            if master_type == Sportiduino.MASTER_CARD_GET_INFO:
+            if master_type == Sportiduino.MASTER_CARD_GET_STATE:
                 text.append(self.tr("Master card to get info about a base station"))
             elif master_type == Sportiduino.MASTER_CARD_SET_TIME:
                 text.append(self.tr("Master card to set time of a base station"))
@@ -511,7 +505,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 text.append(self.tr("Master card to set number of a base station"))
             elif master_type == Sportiduino.MASTER_CARD_SLEEP:
                 text.append(self.tr("Master card to sleep a base station"))
-            elif master_type == Sportiduino.MASTER_CARD_READ_DUMP:
+            elif master_type == Sportiduino.MASTER_CARD_READ_BACKUP:
                 text.append(self.tr("Master card to get punches log of a base station"))
             elif master_type == Sportiduino.MASTER_CARD_SET_PASS:
                 text.append(self.tr("Master card to write password and settings to a base station"))

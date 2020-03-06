@@ -96,7 +96,7 @@ class Sportiduino(object):
     MASTER_CARD_SET_TIME     = b'\xFA'
     MASTER_CARD_SET_NUMBER   = b'\xFB'
     MASTER_CARD_SLEEP        = b'\xFC'
-    MASTER_CARD_READ_DUMP    = b'\xFD'
+    MASTER_CARD_READ_BACKUP  = b'\xFD'
     MASTER_CARD_SET_PASS     = b'\xFE'
     
     MIN_CARD_NUM = 1
@@ -622,14 +622,15 @@ class Sportiduino(object):
         ret['cp'] = byte2int(data[0])
         ret['cards'] = []
 
-        if data[1] == 0: # with timestamps
-            for i in range(2, len(data), 6):
-                card_number = Sportiduino._to_int(data[i:i + 2])
-                time = datetime.fromtimestamp(Sportiduino._to_int(data[i + 2:i + 6]))
-                ret['cards'].append((card_number, time))
-        else:
-            for i in range(1, len(data), 2):
-                ret['cards'].append(Sportiduino._to_int(data[i:i + 2]))
+        if len(data) > 1:
+            if data[1] == 0xff: # with timestamps
+                for i in range(2, len(data), 6):
+                    card_number = Sportiduino._to_int(data[i:i + 2])
+                    time = datetime.fromtimestamp(Sportiduino._to_int(data[i + 2:i + 6]))
+                    ret['cards'].append((card_number, time))
+            else:
+                for i in range(1, len(data), 2):
+                    ret['cards'].append(Sportiduino._to_int(data[i:i + 2]))
 
         return ret
 
@@ -782,7 +783,7 @@ class BaseStation(object):
                 # Old firmware
                 self.isOk = bool(byte)
             else:
-                self.voltage = byte*20.0/1000.0;
+                self.voltage = byte/50.0;
                 if self.voltage > 3.1:
                     self.isOk = True
 
