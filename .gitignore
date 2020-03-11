@@ -3,5 +3,5 @@
 *.txt
 *.exe
 *.zip
-*.json
 *.ini
+data/

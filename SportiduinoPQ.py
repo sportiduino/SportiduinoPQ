@@ -309,9 +309,12 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 else:
                     for pair in cards:
                         text += "{:>4} {}".format(*pair) + "\n"
-                with open(os.path.join('data', 'station{}_{:%Y%m%d%H%M%S}.csv'.format(datetime.now()), 'w', newline='')) as station_backupfile:
+                with open(os.path.join('data', 'station{}_{:%Y%m%d%H%M%S}.csv'.format(data['cp'], datetime.now())), 'w', newline='') as station_backupfile:
                     station_backupfile_writer = csv.writer(station_backupfile, delimiter=',')
-                    station_backupfile_writer.writerows(cards)
+                    if isinstance(cards[0], int):
+                        station_backupfile_writer.writerow(cards)
+                    else:
+                        station_backupfile_writer.writerows(cards)
 
                 
             self.log(text)
@@ -610,7 +613,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         return bs_config
     
     def _show_base_station_state(self, bs_state):
-        self.log(self.tr("Version: {}.{}.{}").format(bs_state.version.major, bs_state.version.minor, bs_state.version.patch))
+        self.log(self.tr("Version: {}").format(bs_state.version))
          
         # apply settings to ui    
         self._apply_settings(bs_state.config, bs_state.wakeuptime)
