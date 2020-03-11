@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="ru" sourcelanguage="en">
+<!DOCTYPE TS>
+<TS version="2.1" language="ru" sourcelanguage="en">
 <context>
     <name>MainWindow</name>
     <message>
@@ -918,17 +919,17 @@
     <message>
         <location filename="../SportiduinoPQ.py" line="341"/>
         <source>Write the config master card</source>
-        <translation type="unfinished"></translation>
+        <translation>Записываю мастер-чип конфигурации</translation>
     </message>
     <message>
         <location filename="../SportiduinoPQ.py" line="377"/>
         <source>Write the master card to get a base station state</source>
-        <translation type="unfinished"></translation>
+        <translation>Записываю мастер-чип для получения информации о состоянии базовой станции</translation>
     </message>
     <message>
         <location filename="../SportiduinoPQ.py" line="389"/>
         <source>Read the card contained a base station state</source>
-        <translation type="unfinished"></translation>
+        <translation>Читаю мастер-чип с информацией о состоянии базовой станции</translation>
     </message>
 </context>
 <context>
@@ -1086,7 +1087,7 @@
     <message>
         <location filename="../sportiduino.py" line="356"/>
         <source>The state-card not found</source>
-        <translation type="unfinished"></translation>
+        <translation>Мастер чип состояния не обнаружен</translation>
     </message>
 </context>
 </TS>
