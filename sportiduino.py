@@ -129,7 +129,14 @@ class Sportiduino(object):
             """Override __str__ method.
             @return: User friendly version string.
             """
-            return 'v%d.%d.%s' % (self.major, self.minor, int(self.patch) if self.patch is not None else 'x')
+            vers_suffix = 'x'
+            if self.patch is not None:
+                vers_suffix = str(self.patch)
+                max_patch_version = 239
+                if self.patch > max_patch_version:
+                    vers_suffix = '0-beta.%d' % (self.patch - max_patch_version)
+            int(self.patch) if self.patch is not None else 'x'
+            return 'v%d.%d.%s' % (self.major, self.minor, vers_suffix)
 
     class Config(object):
         def __init__(self, antenna_gain = 0):
