@@ -8,6 +8,7 @@ import re
 import datetime
 import serial
 import json
+import csv
 import design
 
 from serial import Serial
@@ -34,15 +35,16 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         self.setWindowTitle("SportiduinoPQ {}".format(sportiduinopq_version_string))
         
-        self.readData = []
-        self.dumpData = []
         self.connected = False
         self.printer = QPrinter()
         self.ui.printerName.setText(self.printer.printerName())
 
-        self._init_time = datetime.now()
+        init_time = datetime.now()
+        self.cards_data_filename = os.path.join('data','cards{:%Y%m%d%H%M%S}.json'.format(init_time))
+        self.cards_data = []
+
         self._logger = self.Logger()
-        self.log('{:%Y-%m-%d %H:%M:%S}'.format(self._init_time))
+        self.log('{:%Y-%m-%d %H:%M:%S}'.format(init_time))
         
         availablePorts = []
         if platform.system() == 'Linux':
@@ -99,8 +101,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.sbNewPwd2.setValue(bs_config.password[1])
         self.ui.sbNewPwd3.setValue(bs_config.password[2])
 
-        #dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self._init_time)),'w')
-
 
     def closeEvent(self, event):
         self.config.setValue('geometry', self.saveGeometry())
@@ -153,7 +153,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             data = Sportiduino.raw_data_to_card_data(raw_data)
             
             self._show_card_data(data, card_type)
-            self._save_card_data_json(data)
+            self._save_card_data_to_file(data)
             
         except BaseException as err:
             self._process_error(err)
@@ -309,15 +309,13 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 else:
                     for pair in cards:
                         text += "{:>4} {}".format(*pair) + "\n"
+                with open(os.path.join('data', 'station{}_{:%Y%m%d%H%M%S}.csv'.format(datetime.now()), 'w', newline='')) as station_backupfile:
+                    station_backupfile_writer = csv.writer(station_backupfile, delimiter=',')
+                    station_backupfile_writer.writerows(cards)
 
                 
             self.log(text)
                 
-            #self.dumpData.append(data)
-            #dumpFile = open(os.path.join('data','dumpData{:%Y%m%d%H%M%S}.json'.format(self._init_time)),'w')
-            #json.dump(self.dumpData, dumpFile)
-            #dumpFile.close()
-
         except BaseException as err:
             self._process_error(err)
 
@@ -552,7 +550,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         if self.ui.AutoPrint.isChecked():
             self.Print_clicked()
             
-    def _save_card_data_json(self,data):
+    def _save_card_data_to_file(self,data):
         
         if data['master_card_flag'] == 255:
             return
@@ -582,12 +580,11 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         del data['page6']
         del data['page7']
 
-        self.readData.append(data)
+        self.cards_data.append(data)
             
-        dataFile = open(os.path.join('data','readData{:%Y%m%d%H%M%S}.json'.format(self._init_time)),'w')
-        json.dump(self.readData, dataFile)
-        dataFile.close()
-        
+        with open(self.cards_data_filename, 'w') as cards_data_file:
+            json.dump(self.cards_data, cards_data_file)
+
     def _apply_settings(self, bs_config, wakeuptime):
         self.ui.sbStationNum.setValue(bs_config.num)
         self.ui.sbStationNumByUart.setValue(bs_config.num)
