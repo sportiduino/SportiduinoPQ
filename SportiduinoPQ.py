@@ -24,13 +24,15 @@ from six import int2byte
 
 _translate = QCoreApplication.translate
 
+sportiduinopq_version_string = "v0.8.0-beta.1"
+
 class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
     def __init__(self, config):
         super().__init__()
         self.ui = design.Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.setWindowTitle("SportiduinoPQ v0.7.99-unstable")
+        self.setWindowTitle("SportiduinoPQ {}".format(sportiduinopq_version_string))
         
         self.readData = []
         self.dumpData = []
