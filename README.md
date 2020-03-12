@@ -20,7 +20,7 @@ Or run the program under Python3.
 For that you should install [Python](https://www.python.org/) and then install all requirements by command:
 
 ```commandline
-pip install pyserial pyqt5 six sip
+pip install -r requirements.txt
 ```
 
 For generating exe file run:
@@ -30,4 +30,17 @@ pip install pyinstaller
 pyinstaller --onefile --noconsole SportiduinoPQ.py
 ```
 
+## Usage
+
+### Linux
+
+In terminal emulator run:
+
+```sh
+./SportiduinoPQ.py
+```
+
+### Windows
+
+Run `SportiduinoPQ.exe`
 

@@ -1,7 +1,7 @@
 *.swp
 *.pyc
-*.txt
 *.exe
 *.zip
 *.ini
 data/
+log/
