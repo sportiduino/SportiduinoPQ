@@ -398,8 +398,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
     def log(self, text):
         print(text)
+        text += '\n'
         browserText = self.ui.textBrowser.toPlainText()
-        browserText = browserText + text + '\n'
+        browserText = browserText + text
         self.ui.textBrowser.setPlainText(browserText)
         # Scroll down
         self.ui.textBrowser.verticalScrollBar().setValue(self.ui.textBrowser.verticalScrollBar().maximum())
