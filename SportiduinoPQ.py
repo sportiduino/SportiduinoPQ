@@ -1,7 +1,6 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 import sys
-sys.path.append('..')
 import os.path
 import platform
 import re
@@ -25,7 +24,7 @@ from six import int2byte
 
 _translate = QCoreApplication.translate
 
-sportiduinopq_version_string = "v0.8.0-beta.1"
+sportiduinopq_version_string = "v0.8.0-beta.2"
 
 class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
     def __init__(self, config):
@@ -694,6 +693,11 @@ if __name__ == '__main__':
     os.makedirs('data', exist_ok=True)
 
     app = QtWidgets.QApplication(sys.argv)
+
+    translation_dir = './translation'
+    if hasattr(sys, '_MEIPASS'):
+        print('Running in a PyInstaller bundle')
+        translation_dir = sys._MEIPASS + '/translation'
     
     config = QSettings(os.path.join('data', 'config.ini'), QSettings.IniFormat)
     lang = config.value('language', QLocale.system().name())
@@ -701,7 +705,7 @@ if __name__ == '__main__':
 
     translator = QTranslator()
     if lang != 'en':
-        translator.load("sportiduinopq_" + lang, "./translation")
+        translator.load("sportiduinopq_" + lang, translation_dir)
         if not app.installTranslator(translator):
             print('Can not install translation for language "{}"!'.format(lang))
 
