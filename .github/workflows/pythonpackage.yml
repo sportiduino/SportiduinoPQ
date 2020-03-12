@@ -56,7 +56,7 @@ jobs:
         pip install pyinstaller
         pyinstaller --onefile --noconsole SportiduinoPQ.py
     - name: Upload artifacts
-      uses: actions/upload-artifacts@v1
+      uses: actions/upload-artifact@v1
       if: always()
       with:
         name: SportiduinoPQ-win
