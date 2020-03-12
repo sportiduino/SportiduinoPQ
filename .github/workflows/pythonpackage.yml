@@ -60,6 +60,6 @@ jobs:
       if: always()
       with:
         name: SportiduinoPQ-win
-        path: dist/*
+        path: dist/SportiduinoPQ.exe
 
 # vim: ts=2 sw=2 et
