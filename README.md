@@ -1,5 +1,7 @@
 # SportiduinoPQ
 
+![](https://github.com/sportiduino/SportiduinoPQ/workflows/Python%20package/badge.svg)
+
 ![SportiduinoPQ Screenshot](/images/main1.JPG)
 
 [Русский язык](README.ru.md)
