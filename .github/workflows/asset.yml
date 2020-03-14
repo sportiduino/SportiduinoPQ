@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        architecture: [x64]
+        architecture: [x86, x64]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -36,7 +36,6 @@ jobs:
         shell: bash
       - name: Upload artifacts
         uses: actions/upload-artifact@v1
-        if: always()
         with:
           name: SportiduinoPQ-${{ steps.get_version.outputs.VERSION }}-win-${{ matrix.architecture }}
           path: dist/SportiduinoPQ.exe
