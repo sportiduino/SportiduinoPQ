@@ -11,7 +11,8 @@ import csv
 import design
 
 from serial import Serial
-from sportiduino import Sportiduino, BaseStation
+from sportiduino import Sportiduino, SportiduinoException, SportiduinoTimeout
+from basestation import BaseStation
 from datetime import datetime, timedelta
 from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
 from PyQt5.QtCore import QSizeF, QSettings
@@ -24,7 +25,7 @@ from six import int2byte
 
 _translate = QCoreApplication.translate
 
-sportiduinopq_version_string = "v0.8.0-beta.2"
+sportiduinopq_version_string = "v0.8.0-beta.3"
 
 class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
     def __init__(self, config):
@@ -121,9 +122,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             port = self.ui.choiseCom.currentText()
             try:
                 if (port == QCoreApplication.translate("MainWindow", "auto")):
-                    self.sportiduino = Sportiduino(debug=True)
+                    self.sportiduino = Sportiduino(debug=True, translator=QCoreApplication.translate)
                 else:
-                    self.sportiduino = Sportiduino(port,debug=True)
+                    self.sportiduino = Sportiduino(port, debug=True)
 
                 curPass = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
                 self.sportiduino.apply_pwd(curPass)
@@ -147,15 +148,19 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log("\n" + self.tr("Read a card"))
             
             card_type = self.sportiduino.read_card_type()
-            raw_data = self.sportiduino.read_card_raw()
-            
-            data = Sportiduino.raw_data_to_card_data(raw_data)
+            try:
+                data = self.sportiduino.read_card(timeout=0.2)
+            except SportiduinoTimeout as err:
+                data = Sportiduino.raw_data_to_card_data(self.sportiduino.read_card_raw())
+            else:
+                self.sportiduino.beep_ok()
             
             self._show_card_data(data, card_type)
             self._save_card_data_to_file(data)
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
     def InitCard_clicked(self):
         if not self._check_connection():
@@ -389,7 +394,19 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         try:
             self.log("\n" + self.tr("Read the card contained a base station state"))
-            bs_state = self.sportiduino.read_state_card()
+
+            state = self.sportiduino.read_state_card()
+
+            bs_state = BaseStation.State()
+            bs_state.version = Sportiduino.Version(*state['version'])
+            bs_state.config = BaseStation.Config.unpack(state['config'])
+
+            bs_state.battery = BaseStation.Battery(state['battery'])
+            bs_state.mode = state['mode']
+
+            bs_state.timestamp = state['timestamp']
+            bs_state.wakeuptime = state['wakeuptime']
+
             self._show_base_station_state(bs_state)
             
         except BaseException as err:
@@ -496,7 +513,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         card_name = Sportiduino.card_name(card_type)
         text.append(card_name)
         
-        if data['master_card_flag'] == 0xFF:
+        if 'master_card_flag' in data:
             # show master card info
             master_type = int2byte(data['master_card_type'])
             
@@ -518,29 +535,34 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         else:
             # show participant card info
             card_number = data['card_number']
-            init_time = datetime.fromtimestamp(data['init_timestamp'])
-            punches = data['punches']
+            init_time = -1
+            if 'init_timestamp' in data:
+                init_time = (data['init_timestamp'])
             
-            if data['init_timestamp'] != 0 and card_number >= Sportiduino.MIN_CARD_NUM and card_number <= Sportiduino.MAX_CARD_NUM:
+            if init_time != 0 and card_number >= Sportiduino.MIN_CARD_NUM and card_number <= Sportiduino.MAX_CARD_NUM:
                 punches_count = 0
         
                 text.append(self.tr("Participant card N{}").format(card_number))
-                text.append(self.tr("Init time {}").format(init_time))
-                text.append(self.tr("Punches (Check point - Time):"))
+                if init_time > 0:
+                    text.append(self.tr("Init time {}").format(datetime.fromtimestamp(init_time)))
             
+                text.append(self.tr("Punches (Check point - Time):"))
+                punch_str = "{:>5} - {}"
+                if 'start' in data:
+                    text.append(punch_str.format(self.tr("Start"), data["start"]))
+
+                punches = data['punches']
                 for punch in punches:
                     punches_count += 1
                     
                     cp = punch[0]
                     cp_time = punch[1]
                             
-                    if cp == Sportiduino.START_STATION:
-                        cp = self.tr("Start")
-                    if cp == Sportiduino.FINISH_STATION:
-                        cp = self.tr("Finish")
-                        
-                    text.append("{} - {}".format(cp, cp_time))
-                        
+                    text.append(punch_str.format(cp, cp_time))
+
+                if 'finish' in data:
+                    text.append(punch_str.format(self.tr("Finish"), data["finish"]))
+
                 if punches_count == 0:
                     text.append(self.tr( "No punches"))
                 else:
@@ -555,7 +577,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
     def _save_card_data_to_file(self,data):
         
-        if data['master_card_flag'] == 255:
+        if 'master_card_flag' in data:
             return
         
         card_number = data['card_number']
@@ -563,13 +585,13 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         if card_number < Sportiduino.MIN_CARD_NUM or card_number > Sportiduino.MAX_CARD_NUM:
             return
         
-        if('start' in data):
+        if 'start' in data:
             data['start'] = int(data['start'].timestamp())
             
-        if('finish' in data):
+        if 'finish' in data:
             data['finish'] = int(data['finish'].timestamp())
 
-        if ('punches' in data):
+        if 'punches' in data:
             punches = data['punches']
             bufferPunch = []
             for punch in punches:
@@ -577,9 +599,12 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 bufferPunch.append(kort)
             data['punches']=bufferPunch
             
-        del data['master_card_flag']
-        del data['master_card_type']
-        del data['init_timestamp']
+        if 'master_card_flag' in data:
+            del data['master_card_flag']
+        if 'master_card_type' in data:
+            del data['master_card_type']
+        if 'init_timestamp' in data:
+            del data['init_timestamp']
         del data['page6']
         del data['page7']
 
