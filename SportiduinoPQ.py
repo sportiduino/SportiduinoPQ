@@ -97,10 +97,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.sbCurPwd2.setValue(bs_config.password[1])
         self.ui.sbCurPwd3.setValue(bs_config.password[2])
 
-        self.ui.sbNewPwd1.setValue(bs_config.password[0])
-        self.ui.sbNewPwd2.setValue(bs_config.password[1])
-        self.ui.sbNewPwd3.setValue(bs_config.password[2])
-
 
     def closeEvent(self, event):
         self.config.setValue('geometry', self.saveGeometry())
@@ -127,7 +123,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                     self.sportiduino = Sportiduino(port, debug=True)
 
                 curPass = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
-                self.sportiduino.apply_pwd(curPass)
+                self._apply_pwd(curPass)
 
                 #self.sportiduino.beep_ok()
                 self.connected = True
@@ -136,9 +132,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
                 self.read_ms_config()
                 
-            except BaseException as err:
+            except Exception as err:
                 self._process_error(err)
                 self.connected = False
+                raise err
 
     def ReadCard_clicked(self):
         if not self._check_connection():
@@ -184,8 +181,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             if self.ui.AutoIncriment.isChecked():
                 self.ui.cardLine.setText(str(card_num + 1))
 
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
             
     def SetNum_clicked(self):
         if not self._check_connection():
@@ -202,8 +200,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.sportiduino.init_cp_number_card(num)
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
                             
     def SetTime_clicked(self):
         if self._check_connection() == False :
@@ -215,8 +214,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.sportiduino.init_time_card(datetime.utcnow() + timedelta(seconds=3))
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
     def SetStart_clicked(self):
         if self._check_connection() == False :
@@ -229,8 +229,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.sbStationNum.setValue(Sportiduino.START_STATION)
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
     def SetFinish_clicked(self):
         if not self._check_connection():
@@ -243,8 +244,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.sbStationNum.setValue(Sportiduino.FINISH_STATION)
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
     def CheckSt_clicked(self):
         if not self._check_connection():
@@ -257,8 +259,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.sbStationNum.setValue(Sportiduino.CHECK_STATION)
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
     def ClearSt_clicked(self):
         if not self._check_connection():
@@ -271,8 +274,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.sbStationNum.setValue(Sportiduino.CLEAR_STATION)
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
     def LogCard_clicked(self):
         if not self._check_connection():
@@ -284,8 +288,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.sportiduino.init_backupreader()
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
                 
     def ReadLog_clicked(self):
         if not self._check_connection():
@@ -299,7 +304,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             data = self.sportiduino.read_backup()
             
             if data is None:
-                raise BaseException(self.tr("No log data available"))
+                raise Exception(self.tr("No log data available"))
             
             text = self.tr("Station N: {} ").format(data['cp']) + "\n"
 
@@ -323,8 +328,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 
             self.log(text)
                 
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
     def SleepCard_clicked(self):
         if not self._check_connection():
@@ -336,8 +342,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.sportiduino.init_sleepcard(self.ui.dtCompetion.dateTime().toUTC())
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
     def PassCard_clicked(self):
         if not self._check_connection():
@@ -358,8 +365,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
             
     def ApplyPwd_clicked(self):
         if not self._check_connection():
@@ -368,12 +376,13 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         try:
             self.log("\n" + self.tr("Apply the current password"))
             
-            curPass = tuple(self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
-            self.sportiduino.apply_pwd(curPass)
+            curPass = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
+            self._apply_pwd(curPass)
             self.log(self.tr("The password has been applied successfully"))
 
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
             
     def CreateInfo_clicked(self):
         if not self._check_connection():
@@ -385,8 +394,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.sportiduino.init_state_card()
             self._master_card_ok()
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
         
     def ReadInfo_clicked(self):
         if not self._check_connection():
@@ -409,8 +419,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             self._show_base_station_state(bs_state)
             
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
             
     def log(self, text):
         print(text)
@@ -439,8 +450,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.textBrowser.document().setPageSize(page_size)
             self.ui.textBrowser.document().setDocumentMargin(0.0)
             self.ui.textBrowser.document().print(self.printer)
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
         
     def SerialRead_clicked(self):
         try:
@@ -453,8 +465,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             self._show_base_station_state(bs_state)
         
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
         
 
     def SerialWrite_clicked(self):
@@ -471,8 +484,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             self.log(self.tr("Settings and password has been written successfully"))
         
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
             
     def ClearText_clicked(self):
@@ -491,8 +505,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         try:
             self.read_ms_config()
             self.sportiduino.beep_ok()
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
 
     def write_ms_config(self):
@@ -501,8 +516,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         try:
             self.sportiduino.write_settings(self.ui.cbMsAntennaGain.currentIndex() + 2)
-        except BaseException as err:
+        except Exception as err:
             self._process_error(err)
+            raise err
 
 
     def _show_card_data(self, data, card_type):
@@ -699,6 +715,13 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
     
     def _master_card_ok(self):
         self.log(self.tr("The master card has been written successfully"))
+
+    def _apply_pwd(self, curPass):
+        self.sportiduino.apply_pwd(curPass)
+
+        self.ui.sbNewPwd1.setValue(curPass[0])
+        self.ui.sbNewPwd2.setValue(curPass[1])
+        self.ui.sbNewPwd3.setValue(curPass[2])
 
     class Logger(object):
         def __init__(self):
