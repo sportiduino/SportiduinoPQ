@@ -79,7 +79,7 @@ class Sportiduino(object):
     RESP_CARD_RAW       = b'\x65'
     RESP_VERS           = b'\x66'
     RESP_SETTINGS       = b'\x67'
-    RESP_MODE           = b'\x69'
+    RESP_MODE           = b'\x69' # deprecated
     RESP_CARD_TYPE      = b'\x70'
     RESP_ERROR          = b'\x78'
     RESP_OK             = b'\x79'
@@ -375,7 +375,7 @@ class Sportiduino(object):
         """Read backup from backupreader card.
         @return: Backup data in dictionary.
         """
-        code, data = self._send_command(Sportiduino.CMD_READ_BACKUPREADER)
+        code, data = self._send_command(Sportiduino.CMD_READ_BACKUPREADER, timeout=1)
         if code == Sportiduino.RESP_BACKUP:
             return self._parse_backup(data)
         else:

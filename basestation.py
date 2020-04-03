@@ -53,7 +53,7 @@ class BaseStation(object):
                 self.isOk = bool(byte)
             else:
                 self.voltage = byte/50.0;
-                if self.voltage > 3.1:
+                if self.voltage > 3.6:
                     self.isOk = True
 
 

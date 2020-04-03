@@ -156,6 +156,9 @@
           <property name="locale">
            <locale language="English" country="UnitedStates"/>
           </property>
+          <property name="currentIndex">
+           <number>2</number>
+          </property>
           <widget class="QWidget" name="tab_1">
            <attribute name="title">
             <string>Main</string>
@@ -730,7 +733,7 @@
               <rect>
                <x>10</x>
                <y>30</y>
-               <width>51</width>
+               <width>55</width>
                <height>31</height>
               </rect>
              </property>
@@ -749,7 +752,7 @@
               <rect>
                <x>70</x>
                <y>30</y>
-               <width>51</width>
+               <width>55</width>
                <height>31</height>
               </rect>
              </property>
@@ -768,7 +771,7 @@
               <rect>
                <x>130</x>
                <y>30</y>
-               <width>51</width>
+               <width>55</width>
                <height>31</height>
               </rect>
              </property>
@@ -899,7 +902,7 @@
               <rect>
                <x>10</x>
                <y>30</y>
-               <width>51</width>
+               <width>55</width>
                <height>31</height>
               </rect>
              </property>
@@ -918,7 +921,7 @@
               <rect>
                <x>70</x>
                <y>30</y>
-               <width>51</width>
+               <width>55</width>
                <height>31</height>
               </rect>
              </property>
@@ -937,7 +940,7 @@
               <rect>
                <x>130</x>
                <y>30</y>
-               <width>51</width>
+               <width>55</width>
                <height>31</height>
               </rect>
              </property>
