@@ -175,8 +175,6 @@ class BaseStation(object):
 
     @classmethod
     def _preprocess_response(cls, resp_code, data):
-        print("_preprocess_response")
-        print(resp_code)
         if resp_code == cls.SERIAL_RESP_STATUS:
             err_code = data[0]
             print(err_code)

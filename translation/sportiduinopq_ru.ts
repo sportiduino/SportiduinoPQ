@@ -23,47 +23,47 @@
         <translation>авто</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="164"/>
+        <location filename="../design.ui" line="161"/>
         <source>Main</source>
         <translation>Осн.</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="176"/>
+        <location filename="../design.ui" line="173"/>
         <source>Print</source>
         <translation>Печатать</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="189"/>
+        <location filename="../design.ui" line="186"/>
         <source>Select Printer</source>
         <translation>Выбрать</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="202"/>
+        <location filename="../design.ui" line="199"/>
         <source>Reads a participant card</source>
         <translation>Прочитать чип участника</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="205"/>
+        <location filename="../design.ui" line="202"/>
         <source>Read Card</source>
         <translation>Прочитать чип</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="218"/>
+        <location filename="../design.ui" line="215"/>
         <source>AutoPrint</source>
         <translation>Автопечать</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="276"/>
+        <location filename="../design.ui" line="273"/>
         <source>Inits a participant card</source>
         <translation>Подготовить чип участника к старту</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="279"/>
+        <location filename="../design.ui" line="276"/>
         <source>Init Card</source>
         <translation>Подготовить чип</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="292"/>
+        <location filename="../design.ui" line="289"/>
         <source>AutoIncriment</source>
         <translation>Автоувеличение</translation>
     </message>
@@ -73,7 +73,7 @@
         <translation type="obsolete">Настройки#1</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="342"/>
+        <location filename="../design.ui" line="339"/>
         <source>Sleep Card</source>
         <translation>Мастер-чип &quot;Сон&quot;</translation>
     </message>
@@ -83,12 +83,12 @@
         <translation type="obsolete">Создать мастер-чип для перевода базовой станции в режим сна</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="674"/>
+        <location filename="../design.ui" line="671"/>
         <source>Create</source>
         <translation>Создать</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="383"/>
+        <location filename="../design.ui" line="380"/>
         <source>dd.MM.yyyy HH:mm</source>
         <translation></translation>
     </message>
@@ -98,7 +98,7 @@
         <translation type="obsolete">Начало соревнований</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="419"/>
+        <location filename="../design.ui" line="416"/>
         <source>Dump Card</source>
         <translation>Мастер-чип &quot;Лог Отм.&quot;</translation>
     </message>
@@ -108,7 +108,7 @@
         <translation type="obsolete">Прочитать чип содержащий журнал отметок базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1278"/>
+        <location filename="../design.ui" line="1275"/>
         <source>Read</source>
         <translation>Читать</translation>
     </message>
@@ -118,7 +118,7 @@
         <translation type="obsolete">Создать мастер-чип для получения журнала отметок базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="478"/>
+        <location filename="../design.ui" line="475"/>
         <source>StationNum Card</source>
         <translation>Мастер-чип &quot;Номер&quot;</translation>
     </message>
@@ -128,7 +128,7 @@
         <translation type="obsolete">Создать мастер-чип для установки номера базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="496"/>
+        <location filename="../design.ui" line="493"/>
         <source>Set Num</source>
         <translation>Создать</translation>
     </message>
@@ -138,7 +138,7 @@
         <translation type="obsolete">Создать мастре-чип для установки базовой станции как станция &quot;Старт&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="515"/>
+        <location filename="../design.ui" line="512"/>
         <source>Set Start</source>
         <translation>Старт</translation>
     </message>
@@ -148,7 +148,7 @@
         <translation type="obsolete">Создать мастер-чип для установки базовой станции как станция &quot;Финиш&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="534"/>
+        <location filename="../design.ui" line="531"/>
         <source>Set Finish</source>
         <translation>Финиш</translation>
     </message>
@@ -158,7 +158,7 @@
         <translation type="obsolete">Создать мастер-чип для установки базовой станции как станция &quot;Проверка&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="558"/>
+        <location filename="../design.ui" line="555"/>
         <source>Check St</source>
         <translation>Проверка</translation>
     </message>
@@ -168,12 +168,12 @@
         <translation type="obsolete">Создать мастер-чип для установки базовой станции как станция &quot;Очистка&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="582"/>
+        <location filename="../design.ui" line="579"/>
         <source>Clear St</source>
         <translation>Очистка</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="621"/>
+        <location filename="../design.ui" line="618"/>
         <source>Date/Time Card</source>
         <translation>Мастер-чип &quot;Часы&quot;</translation>
     </message>
@@ -183,17 +183,17 @@
         <translation type="obsolete">Создать мастер-чип для установки часов базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="455"/>
+        <location filename="../design.ui" line="452"/>
         <source>Creates the master card to read punches log of a base station</source>
         <translation>Создать мастер-чип для получения журнала отметок базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="707"/>
+        <location filename="../design.ui" line="704"/>
         <source>Current password of a base station</source>
         <translation>Текущий пароль базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="713"/>
+        <location filename="../design.ui" line="710"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
@@ -203,7 +203,7 @@
         <translation type="obsolete">Применить текущий пароль для всех мастер-чипов</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="728"/>
+        <location filename="../design.ui" line="725"/>
         <source>Apply</source>
         <translation>OK</translation>
     </message>
@@ -223,12 +223,12 @@
         <translation type="obsolete">24 часа</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="844"/>
+        <location filename="../design.ui" line="841"/>
         <source>not work</source>
         <translation>никогда</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="849"/>
+        <location filename="../design.ui" line="846"/>
         <source>all time</source>
         <translation>всегда</translation>
     </message>
@@ -238,7 +238,7 @@
         <translation type="obsolete">Актив. Время</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1160"/>
+        <location filename="../design.ui" line="1157"/>
         <source>Start / Finish</source>
         <translation>Старт/Финиш</translation>
     </message>
@@ -253,7 +253,7 @@
         <translation type="obsolete">да</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1173"/>
+        <location filename="../design.ui" line="1170"/>
         <source>Check InitTime</source>
         <translation>Пров. вр. чипа</translation>
     </message>
@@ -293,12 +293,12 @@
         <translation type="obsolete">Загр. наст.</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="892"/>
+        <location filename="../design.ui" line="889"/>
         <source>New password for a base station</source>
         <translation>Новый пароль для базовых станций</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="898"/>
+        <location filename="../design.ui" line="895"/>
         <source>New Password</source>
         <translation>Новый пароль</translation>
     </message>
@@ -313,27 +313,27 @@
         <translation type="obsolete">Старый пароль</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="968"/>
+        <location filename="../design.ui" line="965"/>
         <source>Config by UART</source>
         <translation>Настройка по UART</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1030"/>
+        <location filename="../design.ui" line="1027"/>
         <source>Station Num</source>
         <translation>Номер станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1046"/>
+        <location filename="../design.ui" line="1043"/>
         <source>Reads settings of a base station by UART</source>
         <translation>Прочитать настройки базовой станции по UART</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1062"/>
+        <location filename="../design.ui" line="1059"/>
         <source>Writes settings to a base station by UART</source>
         <translation>Записать настройки базовой станции по UART</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1294"/>
+        <location filename="../design.ui" line="1291"/>
         <source>Write</source>
         <translation>Записать</translation>
     </message>
@@ -343,102 +343,102 @@
         <translation type="obsolete">Быст. Отметка</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1236"/>
+        <location filename="../design.ui" line="1233"/>
         <source>18 dB</source>
         <translation>18 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1241"/>
+        <location filename="../design.ui" line="1238"/>
         <source>23 dB</source>
         <translation>23 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1246"/>
+        <location filename="../design.ui" line="1243"/>
         <source>33 dB</source>
         <translation>33 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1251"/>
+        <location filename="../design.ui" line="1248"/>
         <source>38 dB</source>
         <translation>38 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1256"/>
+        <location filename="../design.ui" line="1253"/>
         <source>43 dB</source>
         <translation>43 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1261"/>
+        <location filename="../design.ui" line="1258"/>
         <source>48 dB</source>
         <translation>48 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1216"/>
+        <location filename="../design.ui" line="1213"/>
         <source>Antenna Gain</source>
         <translation>Усил. антенны</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1333"/>
+        <location filename="../design.ui" line="1330"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1348"/>
+        <location filename="../design.ui" line="1345"/>
         <source>Chose COM-port</source>
         <translation>Выбрать COM-порт</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1353"/>
+        <location filename="../design.ui" line="1350"/>
         <source>Save log</source>
         <translation>Сохранить лог</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1358"/>
+        <location filename="../design.ui" line="1355"/>
         <source>Open help.txt</source>
         <translation>Открыть help.txt</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="354"/>
+        <location filename="../design.ui" line="351"/>
         <source>Creates the master card to force a base station to sleep and to wake-up at competion date</source>
         <translation>Создать мастер-чип для перевода базовой станции в режим сна</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1006"/>
+        <location filename="../design.ui" line="1003"/>
         <source>Port</source>
         <translation>Порт</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="436"/>
+        <location filename="../design.ui" line="433"/>
         <source>Reads the card contained punches log of a base station</source>
         <translation>Прочитать чип с журналом отметок базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="490"/>
+        <location filename="../design.ui" line="487"/>
         <source>Creates the master card to set number of a base station</source>
         <translation>Создать мастер-чип для установки номера базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="509"/>
+        <location filename="../design.ui" line="506"/>
         <source>Creates the master card to make a base station as a start station</source>
         <translation>Создать мастер-чип для установки базовой станции как станции &quot;Старт&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="528"/>
+        <location filename="../design.ui" line="525"/>
         <source>Creates the master card to make a base station as a finish station</source>
         <translation>Создать мастер-чип для установки базовой станции как станции &quot;Финиш&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="552"/>
+        <location filename="../design.ui" line="549"/>
         <source>Creates the master card to make a base station as a check station</source>
         <translation>Создать мастер-чип для установки базовой станции как станции &quot;Проверка&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="576"/>
+        <location filename="../design.ui" line="573"/>
         <source>Creates the master card to make a base station as a clear station</source>
         <translation>Создать мастер-чип для установки базовой станции как станции &quot;Очистка&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="633"/>
+        <location filename="../design.ui" line="630"/>
         <source>Creates the master card to set clock of a base station</source>
         <translation>Создать мастер-чип для установки часов базовой станции</translation>
     </message>
@@ -448,22 +448,22 @@
         <translation type="obsolete">Мастер-чип &quot;Состояние&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="668"/>
+        <location filename="../design.ui" line="665"/>
         <source>Creates the master card to get info about a base station</source>
         <translation>Создать мастер-чип для получения информации о состоянии базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="687"/>
+        <location filename="../design.ui" line="684"/>
         <source>Reads the card contained info about a base station</source>
         <translation>Прочитать чип с информацией о состоянии базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="725"/>
+        <location filename="../design.ui" line="722"/>
         <source>Applies this password for all master cards</source>
         <translation>Применить текущий пароль для всех мастер-чипов</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="876"/>
+        <location filename="../design.ui" line="873"/>
         <source>Creates the master card to write password and settings to a base station</source>
         <translation>Создать мастер-чип для записи пароля и настроек в базовую станцию</translation>
     </message>
@@ -473,92 +473,92 @@
         <translation>Октл.</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="321"/>
+        <location filename="../design.ui" line="318"/>
         <source>Card No</source>
         <translation>Чип №</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="819"/>
+        <location filename="../design.ui" line="816"/>
         <source>2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../design.ui" line="814"/>
+        <location filename="../design.ui" line="811"/>
         <source>1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../design.ui" line="824"/>
+        <location filename="../design.ui" line="821"/>
         <source>4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../design.ui" line="829"/>
+        <location filename="../design.ui" line="826"/>
         <source>8</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../design.ui" line="834"/>
+        <location filename="../design.ui" line="831"/>
         <source>16</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../design.ui" line="839"/>
+        <location filename="../design.ui" line="836"/>
         <source>32</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../design.ui" line="863"/>
+        <location filename="../design.ui" line="860"/>
         <source>Active Time (h)</source>
         <translation>Актив. время (ч)</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="879"/>
+        <location filename="../design.ui" line="876"/>
         <source>Create Config Card</source>
         <translation>Создать чип настроек</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1186"/>
+        <location filename="../design.ui" line="1183"/>
         <source>Fast Punch</source>
         <translation>Быст. отметка</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="327"/>
+        <location filename="../design.ui" line="324"/>
         <source>Card</source>
         <translation>Чип</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="402"/>
+        <location filename="../design.ui" line="399"/>
         <source>Wake Up Time</source>
         <translation>Время пробуждения</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="656"/>
+        <location filename="../design.ui" line="653"/>
         <source>State Card</source>
         <translation>Мастер-чип &quot;Состояние&quot;</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="792"/>
+        <location filename="../design.ui" line="789"/>
         <source>Config</source>
         <translation>Конф.</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1192"/>
+        <location filename="../design.ui" line="1189"/>
         <source>MS</source>
         <translation>МС</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1204"/>
+        <location filename="../design.ui" line="1201"/>
         <source>Master Station Config</source>
         <translation>Конф. станции сопряж.</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1275"/>
+        <location filename="../design.ui" line="1272"/>
         <source>Reads settings of master station</source>
         <translation>Прочитать настройки станции сопряжения</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1291"/>
+        <location filename="../design.ui" line="1288"/>
         <source>Writes settings to master station</source>
         <translation>Записать настройки станции сопряжения</translation>
     </message>
@@ -1044,22 +1044,22 @@
         <translation type="obsolete">Не совпадает контрольная сумма в ответе</translation>
     </message>
     <message>
-        <location filename="../basestation.py" line="184"/>
+        <location filename="../basestation.py" line="182"/>
         <source>Invalid function code</source>
         <translation>Неверный код функции</translation>
     </message>
     <message>
-        <location filename="../basestation.py" line="186"/>
+        <location filename="../basestation.py" line="184"/>
         <source>Checksum mismatch in the request</source>
         <translation>Не совпадает контрольная сумма в запросе</translation>
     </message>
     <message>
-        <location filename="../basestation.py" line="188"/>
+        <location filename="../basestation.py" line="186"/>
         <source>Invalid size of the request</source>
         <translation>Неверный размер запроса</translation>
     </message>
     <message>
-        <location filename="../basestation.py" line="190"/>
+        <location filename="../basestation.py" line="188"/>
         <source>Invalid password</source>
         <translation>Неверный пароль</translation>
     </message>
