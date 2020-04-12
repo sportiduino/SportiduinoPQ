@@ -378,22 +378,22 @@
         <translation>Усил. антенны</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1330"/>
+        <location filename="../design.ui" line="1333"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1345"/>
+        <location filename="../design.ui" line="1348"/>
         <source>Chose COM-port</source>
         <translation>Выбрать COM-порт</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1350"/>
+        <location filename="../design.ui" line="1353"/>
         <source>Save log</source>
         <translation>Сохранить лог</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1355"/>
+        <location filename="../design.ui" line="1358"/>
         <source>Open help.txt</source>
         <translation>Открыть help.txt</translation>
     </message>
@@ -566,7 +566,7 @@
 <context>
     <name>SportiduinoPqMainWindow</name>
     <message>
-        <location filename="../SportiduinoPQ.py" line="712"/>
+        <location filename="../SportiduinoPQ.py" line="715"/>
         <source>Master station is not connected</source>
         <translation>Станция сопряжения не подключена</translation>
     </message>
@@ -656,7 +656,7 @@
         <translation>Станция №: {} </translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="585"/>
+        <location filename="../SportiduinoPQ.py" line="588"/>
         <source>Total punches {}</source>
         <translation>Всего отметок {}</translation>
     </message>
@@ -696,82 +696,82 @@
         <translation type="obsolete">Читаю мастер-чип с информацией о состоянии базовой станции</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="459"/>
+        <location filename="../SportiduinoPQ.py" line="462"/>
         <source>Reads info about a base station by UART</source>
         <translation>Читаю информацию о состоянии базовой станции по UART</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="475"/>
+        <location filename="../SportiduinoPQ.py" line="478"/>
         <source>Writes settings and password to a base station by UART</source>
         <translation>Записываю новый пароль и настройки в базовую станцию по UART</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="485"/>
+        <location filename="../SportiduinoPQ.py" line="488"/>
         <source>Settings and password has been written successfully</source>
         <translation>Настройки и пароль были успешно записаны</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="537"/>
+        <location filename="../SportiduinoPQ.py" line="540"/>
         <source>Master card to get info about a base station</source>
         <translation>мастер-чип для получения информации о базовой станции</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="539"/>
+        <location filename="../SportiduinoPQ.py" line="542"/>
         <source>Master card to set time of a base station</source>
         <translation>Мастер-чип для установки времени базовой станции</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="541"/>
+        <location filename="../SportiduinoPQ.py" line="544"/>
         <source>Master card to set number of a base station</source>
         <translation>Мастер-чип для установки номера базовой станции</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="543"/>
+        <location filename="../SportiduinoPQ.py" line="546"/>
         <source>Master card to sleep a base station</source>
         <translation>Мастер-чип для перевода базовой станции в режим сна</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="545"/>
+        <location filename="../SportiduinoPQ.py" line="548"/>
         <source>Master card to get punches log of a base station</source>
         <translation>Мастер-чип для чтения лога базовой станции</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="547"/>
+        <location filename="../SportiduinoPQ.py" line="550"/>
         <source>Master card to write password and settings to a base station</source>
         <translation>Мастер-чип для записи пароля и настроек базовой станции</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="587"/>
+        <location filename="../SportiduinoPQ.py" line="590"/>
         <source>Uninitialized card</source>
         <translation>Чип не инициализирован</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="561"/>
+        <location filename="../SportiduinoPQ.py" line="564"/>
         <source>Participant card N{}</source>
         <translation>Чип участника №{}</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="563"/>
+        <location filename="../SportiduinoPQ.py" line="566"/>
         <source>Init time {}</source>
         <translation>Время инициализации {}</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="565"/>
+        <location filename="../SportiduinoPQ.py" line="568"/>
         <source>Punches (Check point - Time):</source>
         <translation>Отметки (КП - Время):</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="568"/>
+        <location filename="../SportiduinoPQ.py" line="571"/>
         <source>Start</source>
         <translation>Старт</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="580"/>
+        <location filename="../SportiduinoPQ.py" line="583"/>
         <source>Finish</source>
         <translation>Финиш</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="583"/>
+        <location filename="../SportiduinoPQ.py" line="586"/>
         <source>No punches</source>
         <translation>Нет отметок</translation>
     </message>
@@ -781,112 +781,112 @@
         <translation type="obsolete">Версия: {}.{}.{}</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="662"/>
+        <location filename="../SportiduinoPQ.py" line="665"/>
         <source>Settings:</source>
         <translation>Настройки:</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="664"/>
+        <location filename="../SportiduinoPQ.py" line="667"/>
         <source>   Station N: {} </source>
         <translation>   Станция №: {} </translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="666"/>
+        <location filename="../SportiduinoPQ.py" line="669"/>
         <source>(Start)</source>
         <translation>(Старт)</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="668"/>
+        <location filename="../SportiduinoPQ.py" line="671"/>
         <source>(Finish)</source>
         <translation>(Финиш)</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="670"/>
+        <location filename="../SportiduinoPQ.py" line="673"/>
         <source>(Check)</source>
         <translation>(Проверка)</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="672"/>
+        <location filename="../SportiduinoPQ.py" line="675"/>
         <source>(Clear)</source>
         <translation>(Очистка)</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="682"/>
+        <location filename="../SportiduinoPQ.py" line="685"/>
         <source>   Antenna Gain: {}</source>
         <translation>   Усиление антенны: {}</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="686"/>
+        <location filename="../SportiduinoPQ.py" line="689"/>
         <source> ({:.2f} V)</source>
         <translation> ({:.2f} В)</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="689"/>
+        <location filename="../SportiduinoPQ.py" line="692"/>
         <source>Battery: OK</source>
         <translation>Батарея: в норме</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="691"/>
+        <location filename="../SportiduinoPQ.py" line="694"/>
         <source>Battery: Low</source>
         <translation>Батарея: низкий заряд, необходимо заменить</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="694"/>
+        <location filename="../SportiduinoPQ.py" line="697"/>
         <source>Mode: Active</source>
         <translation>Режим: Активный</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="696"/>
+        <location filename="../SportiduinoPQ.py" line="699"/>
         <source>Mode: Wait</source>
         <translation>Режим: Ожидание</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="698"/>
+        <location filename="../SportiduinoPQ.py" line="701"/>
         <source>Mode: Sleep</source>
         <translation>Режим: Сон</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="700"/>
+        <location filename="../SportiduinoPQ.py" line="703"/>
         <source>Clock: {}</source>
         <translation>Часы: {}</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="702"/>
+        <location filename="../SportiduinoPQ.py" line="705"/>
         <source>Alarm: {}</source>
         <translation>Будильник: {}</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="705"/>
+        <location filename="../SportiduinoPQ.py" line="708"/>
         <source>Settings displayed by UI has been chaged to the base station settings</source>
         <translation>Настройки в окне приложения изменены в соответствии с настройками базовой станции</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="708"/>
+        <location filename="../SportiduinoPQ.py" line="711"/>
         <source>Error: {}</source>
         <translation>Ошибка: {}</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="717"/>
+        <location filename="../SportiduinoPQ.py" line="720"/>
         <source>The master card has been written successfully</source>
         <translation>Мастер-чип успешно записан</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="675"/>
+        <location filename="../SportiduinoPQ.py" line="678"/>
         <source>   Active time (h): {}</source>
         <translation>   Активное время (ч): {}</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="677"/>
+        <location filename="../SportiduinoPQ.py" line="680"/>
         <source>   Check start/finish flag</source>
         <translation>   Флаг проверки старта/финиша</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="679"/>
+        <location filename="../SportiduinoPQ.py" line="682"/>
         <source>   Check card init time flag</source>
         <translation>   Флаг проверки времени инициализации чипа</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="681"/>
+        <location filename="../SportiduinoPQ.py" line="684"/>
         <source>   Fast punch flag</source>
         <translation>   Флаг быстрой отменки</translation>
     </message>
@@ -916,7 +916,7 @@
         <translation>Читаю мастер-чип с информацией о состоянии базовой станции</translation>
     </message>
     <message>
-        <location filename="../SportiduinoPQ.py" line="657"/>
+        <location filename="../SportiduinoPQ.py" line="660"/>
         <source>Version: {}</source>
         <translation>Версия: {}</translation>
     </message>
@@ -924,57 +924,57 @@
 <context>
     <name>sportiduino</name>
     <message>
-        <location filename="../sportiduino.py" line="543"/>
+        <location filename="../sportiduino.py" line="545"/>
         <source>Unknown type</source>
         <translation>Неизвестный тип</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="517"/>
+        <location filename="../sportiduino.py" line="519"/>
         <source>Compliant with ISO/IEC 14443-4</source>
         <translation>Совместимый с ISO/IEC 14443-4</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="519"/>
+        <location filename="../sportiduino.py" line="521"/>
         <source>Compliant with ISO/IEC 18092 (NFC)</source>
         <translation>Совместимый с ISO/IEC 18092 (NFC)</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="539"/>
+        <location filename="../sportiduino.py" line="541"/>
         <source>Not detected</source>
         <translation>Не обнаружен</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="621"/>
+        <location filename="../sportiduino.py" line="623"/>
         <source>COM error</source>
         <translation>Ошибка COM порта</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="623"/>
+        <location filename="../sportiduino.py" line="625"/>
         <source>Can&apos;t write the card ({})</source>
         <translation>Не могу записать чип ({})</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="625"/>
+        <location filename="../sportiduino.py" line="627"/>
         <source>Can&apos;t read the card ({})</source>
         <translation>Не могу прочитать чип ({})</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="627"/>
+        <location filename="../sportiduino.py" line="629"/>
         <source>Can&apos;t read EEPROM</source>
         <translation>Не могу прочитать EEPROM</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="630"/>
+        <location filename="../sportiduino.py" line="632"/>
         <source>Card is not found</source>
         <translation>Чип не обнаружен</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="632"/>
+        <location filename="../sportiduino.py" line="634"/>
         <source>Unsupported card type = {}</source>
         <translation>Тип чипа = {} не поддерживается</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="636"/>
+        <location filename="../sportiduino.py" line="638"/>
         <source>Error code {}</source>
         <translation>Код ошибки {}</translation>
     </message>
@@ -984,17 +984,17 @@
         <translation type="obsolete">Ответ Ok получен</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="558"/>
+        <location filename="../sportiduino.py" line="560"/>
         <source>Could not open port {}</source>
         <translation>Не могу открыть порт {}</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="563"/>
+        <location filename="../sportiduino.py" line="565"/>
         <source>Could not flush port {}</source>
         <translation>Не могу записать в порт {}</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="346"/>
+        <location filename="../sportiduino.py" line="348"/>
         <source>Unknown error during card reading</source>
         <translation>Произошла неизвестная ошибка в процессе чтения чипа</translation>
     </message>
@@ -1014,7 +1014,7 @@
         <translation>Ошибка чтения ответа станции сопряжения {}</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="292"/>
+        <location filename="../sportiduino.py" line="294"/>
         <source>No Sportiduino master station found. Possible reasons: {}</source>
         <translation>Станция сопряжения не обнаружена, возможные причины: {}</translation>
     </message>
@@ -1064,17 +1064,17 @@
         <translation>Неверный пароль</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="541"/>
+        <location filename="../sportiduino.py" line="543"/>
         <source>Unknown card type: {}</source>
         <translation>Неизвестный тип чипа: {}</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="634"/>
+        <location filename="../sportiduino.py" line="636"/>
         <source>Unknown command</source>
         <translation>Неизвестная команда</translation>
     </message>
     <message>
-        <location filename="../sportiduino.py" line="460"/>
+        <location filename="../sportiduino.py" line="462"/>
         <source>The state-card not found</source>
         <translation>Мастер чип состояния не обнаружен</translation>
     </message>

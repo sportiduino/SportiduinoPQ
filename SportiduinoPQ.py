@@ -425,12 +425,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
     def log(self, text):
         print(text)
-        text += '\n'
-        browserText = self.ui.textBrowser.toPlainText()
-        browserText = browserText + text
-        self.ui.textBrowser.setPlainText(browserText)
+        self.ui.plainTextEdit.appendPlainText(text)
         # Scroll down
-        self.ui.textBrowser.verticalScrollBar().setValue(self.ui.textBrowser.verticalScrollBar().maximum())
+        self.ui.plainTextEdit.verticalScrollBar().setValue(self.ui.plainTextEdit.verticalScrollBar().maximum())
 
         self._logger(text)
 
@@ -447,9 +444,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             page_size = QSizeF()
             page_size.setHeight(self.printer.height())
             page_size.setWidth(self.printer.width())
-            self.ui.textBrowser.document().setPageSize(page_size)
-            self.ui.textBrowser.document().setDocumentMargin(0.0)
-            self.ui.textBrowser.document().print(self.printer)
+            self.ui.plainTextEdit.document().setPageSize(page_size)
+            self.ui.plainTextEdit.document().setDocumentMargin(0.0)
+            self.ui.plainTextEdit.document().print(self.printer)
         except Exception as err:
             self._process_error(err)
             raise err
@@ -490,7 +487,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             
     def ClearText_clicked(self):
-        self.ui.textBrowser.setPlainText('')
+        self.ui.plainTextEdit.setPlainText('')
 
 
     def read_ms_config(self):
