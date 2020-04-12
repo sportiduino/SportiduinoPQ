@@ -221,6 +221,8 @@ class Sportiduino(object):
                 next_code, next_data = self._read_response(serial, timeout, fragment_num + 1)
                 if next_code == code:
                     data += next_data
+                else: # got an error
+                    return next_code, next_data
 
             return code, data
 
