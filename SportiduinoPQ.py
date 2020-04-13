@@ -34,9 +34,19 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         self.setWindowTitle("SportiduinoPQ {}".format(sportiduinopq_version_string))
-        
+ 
+        self.config = config
+        geometry = self.config.value('geometry')
+        if geometry is not None:
+            self.restoreGeometry(geometry)
+       
         self.connected = False
+
         self.printer = QPrinter()
+        printer_name = config.value('printer/name', self.printer.printerName())
+        self.printer.setPrinterName(printer_name)
+        outputfilename = config.value('printer/outputfilename', self.printer.outputFileName())
+        self.printer.setOutputFileName(outputfilename)
         self.ui.printerName.setText(self.printer.printerName())
 
         init_time = datetime.now()
@@ -80,11 +90,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.btnMsConfigRead.clicked.connect(self.btnMsConfigRead_clicked)
         self.ui.btnMsConfigWrite.clicked.connect(self.write_ms_config)
 
-        self.config = config
-        geometry = self.config.value('geometry')
-        if geometry is not None:
-            self.restoreGeometry(geometry)
- 
         bs_config = BaseStation.Config()
         for key, default_value in vars(bs_config).items():
             value_type = type(default_value)
@@ -100,6 +105,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
     def closeEvent(self, event):
         self.config.setValue('geometry', self.saveGeometry())
+        self.config.setValue('printer/name', self.printer.printerName())
+        self.config.setValue('printer/outputfilename', self.printer.outputFileName())
 
         bs_config = self._get_config_from_ui()
         for key, value in vars(bs_config).items():
@@ -433,20 +440,23 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
     def SelectPrinter_clicked(self):
         dialog = QtPrintSupport.QPrintDialog(self.printer)
+        dialog.setWindowTitle(self.tr("Printer Selection"))
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.printer = dialog.printer()
             self.ui.printerName.setText(self.printer.printerName())
-            
+
     def Print_clicked(self):
         try:
-            self.printer.setFullPage(True)
-            self.printer.setPageMargins(3,3,3,3,QPrinter.Millimeter)
+            #self.printer.setPageMargins(3,3,3,3,QPrinter.Millimeter)
+
             page_size = QSizeF()
             page_size.setHeight(self.printer.height())
             page_size.setWidth(self.printer.width())
-            self.ui.plainTextEdit.document().setPageSize(page_size)
-            self.ui.plainTextEdit.document().setDocumentMargin(0.0)
-            self.ui.plainTextEdit.document().print(self.printer)
+
+            text_document = self.ui.plainTextEdit.document().clone()
+            text_document.setPageSize(page_size)
+            text_document.setDocumentMargin(0.0)
+            text_document.print(self.printer)
         except Exception as err:
             self._process_error(err)
             raise err
