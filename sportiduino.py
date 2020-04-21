@@ -552,7 +552,7 @@ class Sportiduino(object):
 
     def _connect_master_station(self, port):
         try:
-            self._serial = Serial(port, baudrate=9600, timeout=5)
+            self._serial = Serial(port, baudrate=38400, timeout=3)
             # Master station reset on serial open.
             # Wait little time for it startup
             time.sleep(2)
@@ -564,11 +564,15 @@ class Sportiduino(object):
         except (SerialException, OSError):
             raise SportiduinoException(Sportiduino._translate("sportiduino","Could not flush port {}").format(port))
 
+        try:
+            self.version = self.read_version()
+        except SportiduinoTimeout:
+            self._serial.baudrate = 9600
+            self.version = self.read_version()
         self.port = port
         self.baudrate = self._serial.baudrate
-        self.version = self.read_version()
         if self.version is not None:
-            self._log_info("Master station %s on port '%s' is connected" % (self.version, port))
+            self._log_info("Master station %s on port '%s' at %d is connected" % (self.version, port, self.baudrate))
 
 
     def _send_command(self, code, parameters=None, wait_response=True, timeout=None):
