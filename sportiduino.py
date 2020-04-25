@@ -268,6 +268,8 @@ class Sportiduino(object):
 
         self._serialproto = Sportiduino.SerialProtocol(Sportiduino.START_BYTE, self._log_debug)
 
+        self.version = None
+
         errors = ''
         if port is not None:
             self._connect_master_station(port)
@@ -276,6 +278,7 @@ class Sportiduino(object):
             if platform.system() == 'Linux':
                 scan_ports = [os.path.join('/dev', f) for f in os.listdir('/dev') if
                               re.match('ttyUSB.*', f)]
+                scan_ports.sort(reverse=True)
             elif platform.system() == 'Windows':
                 scan_ports = ['COM' + str(i) for i in range(32)]
             else:
@@ -315,11 +318,11 @@ class Sportiduino(object):
         self._connect_master_station(self._serial.port)
 
 
-    def read_version(self):
+    def read_version(self, timeout=None):
         """Read master station firmware version.
         @return: Version object.
         """
-        code, data = self._send_command(Sportiduino.CMD_READ_VERS)
+        code, data = self._send_command(Sportiduino.CMD_READ_VERS, timeout=timeout)
         if code == Sportiduino.RESP_VERS:
             data_len = len(data)
             if data_len == 3:
@@ -553,9 +556,6 @@ class Sportiduino(object):
     def _connect_master_station(self, port):
         try:
             self._serial = Serial(port, baudrate=38400, timeout=3)
-            # Master station reset on serial open.
-            # Wait little time for it startup
-            time.sleep(2)
         except (SerialException, OSError):
             raise SportiduinoException(Sportiduino._translate("sportiduino","Could not open port {}").format(port))
 
@@ -564,15 +564,24 @@ class Sportiduino(object):
         except (SerialException, OSError):
             raise SportiduinoException(Sportiduino._translate("sportiduino","Could not flush port {}").format(port))
 
-        try:
-            self.version = self.read_version()
-        except SportiduinoTimeout:
-            self._serial.baudrate = 9600
-            self.version = self.read_version()
+        # Master station with DTR connected resets on serial open.
+        # It responds on the second attempt.
+        for baudrate in (38400, 38400, 9600):
+            try:
+                self._serial.baudrate = baudrate
+                self._log_debug("Try find master station on port '%s', baudrate %d" % (port, self._serial.baudrate))
+                self.version = self.read_version(timeout=2)
+            except SportiduinoTimeout:
+                self._log_debug("No response")
+            else:
+                break
+
+        if self.version is None:
+            raise SportiduinoTimeout("No response")
+
         self.port = port
         self.baudrate = self._serial.baudrate
-        if self.version is not None:
-            self._log_info("Master station %s on port '%s' at %d is connected" % (self.version, port, self.baudrate))
+        self._log_info("Master station %s on port '%s' at %d is connected" % (self.version, port, self.baudrate))
 
 
     def _send_command(self, code, parameters=None, wait_response=True, timeout=None):
