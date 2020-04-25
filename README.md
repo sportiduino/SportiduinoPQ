@@ -29,7 +29,7 @@ For generating exe file run:
 
 ```commandline
 pip install pyinstaller
-pyinstaller --onefile --noconsole --add-data translation/*.qm:translation/ SportiduinoPQ.py
+pyinstaller --onefile --noconsole --add-data translation/*.qm;translation/ SportiduinoPQ.py
 ```
 
 ## Usage

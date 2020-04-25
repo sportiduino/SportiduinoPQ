@@ -30,7 +30,7 @@ pip install -r requirements.txt
 
 ```commandline
 pip install pyinstaller
-pyinstaller --onefile --noconsole --add-data translation/*.qm:translation/ SportiduinoPQ.py
+pyinstaller --onefile --noconsole --add-data translation/*.qm;translation/ SportiduinoPQ.py
 ```
 
 ## Usage
