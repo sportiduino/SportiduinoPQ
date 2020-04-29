@@ -139,8 +139,21 @@ class Sportiduino(object):
             return 'v%d.%d.%s' % (self.major, self.minor, vers_suffix)
 
     class Config(object):
-        def __init__(self, antenna_gain = 0):
+        def __init__(self, antenna_gain=0, timezone=0):
             self.antenna_gain = antenna_gain
+            self.timezone = timezone
+
+        @classmethod
+        def unpack(cls, config_data):
+            return cls(antenna_gain = byte2int(config_data[0]),
+                timezone = timedelta(minutes=byte2int(config_data[1])*15))
+
+        def pack(self):
+            config_data = b''
+            config_data += int2byte(self.antenna_gain)
+            print(self.timezone.total_seconds())
+            config_data += int2byte(int(self.timezone.total_seconds()/60/15))
+            return config_data
 
 
     class SerialProtocol(object):
@@ -487,14 +500,13 @@ class Sportiduino(object):
     def read_settings(self):
         code, data = self._send_command(Sportiduino.CMD_READ_SETTINGS)
         if code == Sportiduino.RESP_SETTINGS:
-            return Sportiduino.Config(antenna_gain=byte2int(data[0]))
+            return Sportiduino.Config.unpack(data)
         else:
             raise SportiduinoException("Read settings failed")
 
 
-    def write_settings(self, antenna_gain):
-        params = b''
-        params += int2byte(antenna_gain)
+    def write_settings(self, antenna_gain, timezone):
+        params = Sportiduino.Config(antenna_gain, timezone).pack()
         self._send_command(Sportiduino.CMD_WRITE_SETTINGS, params)
 
 

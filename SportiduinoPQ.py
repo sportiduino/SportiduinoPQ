@@ -5,6 +5,7 @@ import os.path
 import platform
 import re
 import datetime
+import time
 import serial
 import json
 import csv
@@ -13,7 +14,7 @@ import design
 from serial import Serial
 from sportiduino import Sportiduino, SportiduinoException, SportiduinoTimeout
 from basestation import BaseStation
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
 from PyQt5.QtCore import QSizeF, QSettings
 from PyQt5.QtPrintSupport import QPrinter
@@ -21,6 +22,7 @@ from PyQt5.QtWidgets import QApplication, QFileDialog
 from PyQt5.QtCore import QTranslator
 from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtCore import QTimeZone
 from six import int2byte
 
 _translate = QCoreApplication.translate
@@ -101,6 +103,21 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.sbCurPwd1.setValue(bs_config.password[0])
         self.ui.sbCurPwd2.setValue(bs_config.password[1])
         self.ui.sbCurPwd3.setValue(bs_config.password[2])
+
+        ianaIds = QTimeZone.availableTimeZoneIds()
+        all_timezones = sorted({QTimeZone(id).offsetFromUtc(datetime.now()) for id in ianaIds})
+        tzlocaloffset = time.localtime().tm_gmtoff
+        tzlocalname = None
+        for dt in all_timezones:
+            tz = timezone(timedelta(seconds=dt))
+            tzname = tz.tzname(None)
+            if dt == tzlocaloffset:
+                tzlocalname = tzname
+            self.ui.cbTimeZone.addItem(tzname, dt)
+        if tzlocalname is not None:
+            self.ui.cbTimeZone.setCurrentText(tzlocalname)
+        else:
+            self.ui.cbTimeZone.setCurrentText(timezone(offset=timedelta(0)).tzname(None))
 
 
     def closeEvent(self, event):
@@ -504,6 +521,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         ms_config = self.sportiduino.read_settings()
         if ms_config.antenna_gain is not None:
             self.ui.cbMsAntennaGain.setCurrentIndex(ms_config.antenna_gain - 2)
+        if ms_config.timezone is not None:
+            tz = timezone(ms_config.timezone)
+            self.ui.cbTimeZone.setCurrentText(tz.tzname(None))
        
     def btnMsConfigRead_clicked(self):
         if not self._check_connection():
@@ -522,7 +542,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             return
 
         try:
-            self.sportiduino.write_settings(self.ui.cbMsAntennaGain.currentIndex() + 2)
+            tz = timedelta(seconds=self.ui.cbTimeZone.currentData())
+            self.sportiduino.write_settings(self.ui.cbMsAntennaGain.currentIndex() + 2, tz)
         except Exception as err:
             self._process_error(err)
             raise err
