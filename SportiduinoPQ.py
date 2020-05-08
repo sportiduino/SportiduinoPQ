@@ -150,15 +150,14 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 self._apply_pwd(curPass)
 
                 #self.sportiduino.beep_ok()
-                self.connected = True
                 self.log('\n' + self.tr("Master station {} on port {} is connected").format(self.sportiduino.version, self.sportiduino.port))
                 self.ui.Connect.setText(_translate("MainWindow", "Disconn."))
+                self.connected = True
 
                 self.read_ms_config()
                 
             except Exception as err:
                 self._process_error(err)
-                self.connected = False
                 raise err
 
     def ReadCard_clicked(self):
