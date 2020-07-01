@@ -145,8 +145,11 @@ class Sportiduino(object):
 
         @classmethod
         def unpack(cls, config_data):
+            timezone = timedelta()
+            if len(config_data) > 1:
+                timezone = timedelta(minutes=byte2int(config_data[1])*15)
             return cls(antenna_gain = byte2int(config_data[0]),
-                timezone = timedelta(minutes=byte2int(config_data[1])*15))
+                timezone = timezone)
 
         def pack(self):
             config_data = b''
