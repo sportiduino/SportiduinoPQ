@@ -755,7 +755,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._log_file = open(os.path.join('log','log{:%Y%m%d}.txt'.format(datetime.now())),'a')
 
         def __call__(self, text):
-            self._log_file.write(text)
+            self._log_file.write(text + '\n')
         
         def __del__(self):
             print("Close log file")

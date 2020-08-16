@@ -139,7 +139,7 @@ class Sportiduino(object):
             return 'v%d.%d.%s' % (self.major, self.minor, vers_suffix)
 
     class Config(object):
-        def __init__(self, antenna_gain=0, timezone=0):
+        def __init__(self, antenna_gain=0, timezone=timedelta()):
             self.antenna_gain = antenna_gain
             self.timezone = timezone
 
@@ -148,6 +148,8 @@ class Sportiduino(object):
             timezone = timedelta()
             if len(config_data) > 1:
                 timezone = timedelta(minutes=byte2int(config_data[1])*15)
+                if timezone < -timedelta(hours=24) or timezone > timedelta(hours=24):
+                    timezone = timedelta()
             return cls(antenna_gain = byte2int(config_data[0]),
                 timezone = timezone)
 
