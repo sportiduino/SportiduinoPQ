@@ -157,7 +157,7 @@
            <locale language="English" country="UnitedStates"/>
           </property>
           <property name="currentIndex">
-           <number>3</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_1">
            <attribute name="title">

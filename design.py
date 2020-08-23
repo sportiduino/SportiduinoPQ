@@ -418,7 +418,7 @@ class Ui_MainWindow(object):
         self.actionOpen_help_txt.setObjectName("actionOpen_help_txt")
 
         self.retranslateUi(MainWindow)
-        self.Log.setCurrentIndex(3)
+        self.Log.setCurrentIndex(0)
         self.cbActiveTime.setCurrentIndex(1)
         self.cbAntennaGain.setCurrentIndex(2)
         self.cbMsAntennaGain.setCurrentIndex(2)
