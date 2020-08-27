@@ -423,7 +423,7 @@ class Sportiduino(object):
         params += Sportiduino._to_str(t, 4)
         params += page6[:5]
         params += page7[:5]
-        return self._send_command(Sportiduino.CMD_INIT_CARD, params, wait_response=True)
+        return self._send_command(Sportiduino.CMD_INIT_CARD, params, wait_response=True, timeout=3)
 
 
     def init_backupreader(self):
