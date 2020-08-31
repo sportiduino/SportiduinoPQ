@@ -139,8 +139,26 @@ class Sportiduino(object):
             return 'v%d.%d.%s' % (self.major, self.minor, vers_suffix)
 
     class Config(object):
-        def __init__(self, antenna_gain = 0):
+        def __init__(self, antenna_gain=0, timezone=timedelta()):
             self.antenna_gain = antenna_gain
+            self.timezone = timezone
+
+        @classmethod
+        def unpack(cls, config_data):
+            timezone = timedelta()
+            if len(config_data) > 1:
+                timezone = timedelta(minutes=byte2int(config_data[1])*15)
+                if timezone < -timedelta(hours=24) or timezone > timedelta(hours=24):
+                    timezone = timedelta()
+            return cls(antenna_gain = byte2int(config_data[0]),
+                timezone = timezone)
+
+        def pack(self):
+            config_data = b''
+            config_data += int2byte(self.antenna_gain)
+            print(self.timezone.total_seconds())
+            config_data += int2byte(int(self.timezone.total_seconds()/60/15))
+            return config_data
 
 
     class SerialProtocol(object):
@@ -268,6 +286,8 @@ class Sportiduino(object):
 
         self._serialproto = Sportiduino.SerialProtocol(Sportiduino.START_BYTE, self._log_debug)
 
+        self.version = None
+
         errors = ''
         if port is not None:
             self._connect_master_station(port)
@@ -276,6 +296,7 @@ class Sportiduino(object):
             if platform.system() == 'Linux':
                 scan_ports = [os.path.join('/dev', f) for f in os.listdir('/dev') if
                               re.match('ttyUSB.*', f)]
+                scan_ports.sort(reverse=True)
             elif platform.system() == 'Windows':
                 scan_ports = ['COM' + str(i) for i in range(32)]
             else:
@@ -315,11 +336,11 @@ class Sportiduino(object):
         self._connect_master_station(self._serial.port)
 
 
-    def read_version(self):
+    def read_version(self, timeout=None):
         """Read master station firmware version.
         @return: Version object.
         """
-        code, data = self._send_command(Sportiduino.CMD_READ_VERS)
+        code, data = self._send_command(Sportiduino.CMD_READ_VERS, timeout=timeout)
         if code == Sportiduino.RESP_VERS:
             data_len = len(data)
             if data_len == 3:
@@ -402,7 +423,7 @@ class Sportiduino(object):
         params += Sportiduino._to_str(t, 4)
         params += page6[:5]
         params += page7[:5]
-        return self._send_command(Sportiduino.CMD_INIT_CARD, params, wait_response=True)
+        return self._send_command(Sportiduino.CMD_INIT_CARD, params, wait_response=True, timeout=3)
 
 
     def init_backupreader(self):
@@ -484,14 +505,13 @@ class Sportiduino(object):
     def read_settings(self):
         code, data = self._send_command(Sportiduino.CMD_READ_SETTINGS)
         if code == Sportiduino.RESP_SETTINGS:
-            return Sportiduino.Config(antenna_gain=byte2int(data[0]))
+            return Sportiduino.Config.unpack(data)
         else:
             raise SportiduinoException("Read settings failed")
 
 
-    def write_settings(self, antenna_gain):
-        params = b''
-        params += int2byte(antenna_gain)
+    def write_settings(self, antenna_gain, timezone):
+        params = Sportiduino.Config(antenna_gain, timezone).pack()
         self._send_command(Sportiduino.CMD_WRITE_SETTINGS, params)
 
 
@@ -552,10 +572,7 @@ class Sportiduino(object):
 
     def _connect_master_station(self, port):
         try:
-            self._serial = Serial(port, baudrate=9600, timeout=5)
-            # Master station reset on serial open.
-            # Wait little time for it startup
-            time.sleep(2)
+            self._serial = Serial(port, baudrate=38400, timeout=3)
         except (SerialException, OSError):
             raise SportiduinoException(Sportiduino._translate("sportiduino","Could not open port {}").format(port))
 
@@ -564,15 +581,29 @@ class Sportiduino(object):
         except (SerialException, OSError):
             raise SportiduinoException(Sportiduino._translate("sportiduino","Could not flush port {}").format(port))
 
+        # Master station with DTR connected resets on serial open.
+        # It responds on the second attempt.
+        for baudrate in (38400, 38400, 9600):
+            try:
+                self._serial.baudrate = baudrate
+                self._log_debug("Try find master station on port '%s', baudrate %d" % (port, self._serial.baudrate))
+                self.version = self.read_version(timeout=2)
+            except SportiduinoTimeout:
+                self._log_debug("No response")
+            else:
+                break
+
+        if self.version is None:
+            raise SportiduinoTimeout("No response")
+
         self.port = port
         self.baudrate = self._serial.baudrate
-        self.version = self.read_version()
-        if self.version is not None:
-            self._log_info("Master station %s on port '%s' is connected" % (self.version, port))
+        self._log_info("Master station %s on port '%s' at %d is connected" % (self.version, port, self.baudrate))
 
 
     def _send_command(self, code, parameters=None, wait_response=True, timeout=None):
         resp_code, data = self._serialproto.send_command(self._serial, code, parameters, wait_response, timeout)
+        
         return Sportiduino._preprocess_response(resp_code, data, self._log_debug)
 
 
@@ -629,7 +660,7 @@ class Sportiduino(object):
                 raise SportiduinoException(Sportiduino._translate("sportiduino","Can't read EEPROM"))
             elif err_code == Sportiduino.ERR_CARD_NOT_FOUND:
                 if card_type == 0 or card_type == 0xff:
-                    raise SportiduinoException(Sportiduino._translate("sportiduino","Card is not found"))
+                    raise SportiduinoNoCardPresentException(Sportiduino._translate("sportiduino","Card is not found"))
                 else :
                     raise SportiduinoException(Sportiduino._translate("sportiduino","Unsupported card type = {}").format(card_type))
             elif err_code == Sportiduino.ERR_UNKNOWN_CMD:
@@ -748,6 +779,10 @@ class Sportiduino(object):
 
 
 class SportiduinoException(Exception):
+    pass
+
+
+class SportiduinoNoCardPresentException(Exception):
     pass
 
 
