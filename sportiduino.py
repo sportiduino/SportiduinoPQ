@@ -398,7 +398,7 @@ class Sportiduino(object):
         """Read backup from backupreader card.
         @return: Backup data in dictionary.
         """
-        code, data = self._send_command(Sportiduino.CMD_READ_BACKUPREADER, timeout=1)
+        code, data = self._send_command(Sportiduino.CMD_READ_BACKUPREADER, timeout=5)
         if code == Sportiduino.RESP_BACKUP:
             return self._parse_backup(data)
         else:
