@@ -23,11 +23,12 @@ from PyQt5.QtCore import QTranslator
 from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QTimeZone
+from PyQt5.QtCore import QTimer
 from six import int2byte
 
 _translate = QCoreApplication.translate
 
-sportiduinopq_version_string = "v0.8.0"
+sportiduinopq_version_string = "v0.9.0-dev"
 
 class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
     def __init__(self, config):
@@ -57,6 +58,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         self._logger = self.Logger()
         self.log('{:%Y-%m-%d %H:%M:%S}'.format(init_time))
+
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.poll_card)
         
         availablePorts = []
         if platform.system() == 'Linux':
@@ -91,6 +95,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.btnClearText.clicked.connect(self.ClearText_clicked)
         self.ui.btnMsConfigRead.clicked.connect(self.btnMsConfigRead_clicked)
         self.ui.btnMsConfigWrite.clicked.connect(self.write_ms_config)
+        self.ui.AutoRead.stateChanged.connect(self.autoread_change)
 
         bs_config = BaseStation.Config()
         for key, default_value in vars(bs_config).items():
@@ -134,6 +139,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
     def Connect_clicked(self):
         if self.connected:
+            self.ui.AutoRead.setChecked(False)
             self.sportiduino.disconnect()
             self.log('\n' + self.tr("Master station is disconnected"))
             self.connected = False
@@ -182,6 +188,27 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
             raise err
 
+
+    def poll_card(self):
+        if not self._check_connection():
+            return
+
+        try:
+            if self.sportiduino.poll_card():
+                card_number = self.sportiduino.card_data['card_number']
+                self.sportiduino.beep_ok()
+                if card_number != self.prev_card_number:
+                    self._show_card_data(self.sportiduino.card_data)
+                    self._save_card_data_to_file(self.sportiduino.card_data)
+                    self.prev_card_number = card_number
+            else:
+                self.prev_card_number = -1
+            
+        except Exception as err:
+            self._process_error(err)
+            raise err
+
+
     def InitCard_clicked(self):
         if not self._check_connection():
             return
@@ -198,7 +225,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             code, data = self.sportiduino.init_card(card_num)
             if code == Sportiduino.RESP_OK :
-                self.log(self.tr("The participant card N{} ({}) has been initialized successfully")
+                self.log(self.tr("The participant card No {} ({}) has been initialized successfully")
                     .format(card_num, Sportiduino.card_name(data[0])))
  
             if self.ui.AutoIncriment.isChecked():
@@ -329,7 +356,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             if data is None:
                 raise Exception(self.tr("No log data available"))
             
-            text = self.tr("Station N: {} ").format(data['cp']) + "\n"
+            text = self.tr("Station No: {} ").format(data['cp']) + "\n"
 
             cards = data['cards']
 
@@ -524,6 +551,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             tz = timezone(ms_config.timezone)
             self.ui.cbTimeZone.setCurrentText(tz.tzname(None))
        
+
     def btnMsConfigRead_clicked(self):
         if not self._check_connection():
             return
@@ -534,6 +562,23 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
             raise err
+
+
+    def autoread_change(self):
+        if self.ui.AutoRead.isChecked():
+            if not self._check_connection():
+                return
+            self.prev_card_number = -1
+            self.log("\n" + self.tr("Start polling cards"))
+            self.timer.start(1000)
+        else:
+            self.log("\n" + self.tr("Stop polling cards"))
+            self.timer.stop()
+        self.ui.ReadCard.setEnabled(not self.ui.AutoRead.isChecked())
+        self.ui.InitCard.setEnabled(not self.ui.AutoRead.isChecked())
+        self.ui.tab_2.setEnabled(not self.ui.AutoRead.isChecked())
+        self.ui.tab_3.setEnabled(not self.ui.AutoRead.isChecked())
+        self.ui.tab_4.setEnabled(not self.ui.AutoRead.isChecked())
 
 
     def write_ms_config(self):
@@ -548,13 +593,14 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             raise err
 
 
-    def _show_card_data(self, data, card_type):
+    def _show_card_data(self, data, card_type=None):
         if self.ui.AutoPrint.isChecked():
             self.ClearText_clicked()
                 
         text = []
-        card_name = Sportiduino.card_name(card_type)
-        text.append(card_name)
+        if card_type is not None:
+            card_name = Sportiduino.card_name(card_type)
+            text.append(card_name)
         
         if 'master_card_flag' in data:
             # show master card info
@@ -585,7 +631,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             if init_time != 0 and card_number >= Sportiduino.MIN_CARD_NUM and card_number <= Sportiduino.MAX_CARD_NUM:
                 punches_count = 0
         
-                text.append(self.tr("Participant card N{}").format(card_number))
+                text.append(self.tr("Participant card No {}").format(card_number))
                 if init_time > 0:
                     text.append(self.tr("Init time {}").format(datetime.fromtimestamp(init_time)))
             
@@ -688,7 +734,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
        
         self.log(self.tr("Settings:"))
 
-        text = self.tr("   Station N: {} ").format(bs_state.config.num)
+        text = self.tr("   Station No: {} ").format(bs_state.config.num)
         if(bs_state.config.num == Sportiduino.START_STATION):
             text += self.tr("(Start)")
         elif (bs_state.config.num == Sportiduino.FINISH_STATION):

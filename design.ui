@@ -167,7 +167,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>110</y>
+              <y>130</y>
               <width>141</width>
               <height>31</height>
              </rect>
@@ -180,7 +180,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>170</y>
+              <y>190</y>
               <width>141</width>
               <height>31</height>
              </rect>
@@ -209,7 +209,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>210</y>
+              <y>230</y>
               <width>191</width>
               <height>31</height>
              </rect>
@@ -222,7 +222,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>140</y>
+              <y>160</y>
               <width>221</width>
               <height>31</height>
              </rect>
@@ -241,7 +241,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>80</y>
+              <y>110</y>
               <width>221</width>
               <height>20</height>
              </rect>
@@ -254,7 +254,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>240</y>
+              <y>260</y>
               <width>221</width>
               <height>20</height>
              </rect>
@@ -267,7 +267,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>320</y>
+              <y>340</y>
               <width>221</width>
               <height>61</height>
              </rect>
@@ -283,7 +283,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>390</y>
+              <y>410</y>
               <width>221</width>
               <height>31</height>
              </rect>
@@ -296,7 +296,7 @@
             <property name="geometry">
              <rect>
               <x>110</x>
-              <y>270</y>
+              <y>290</y>
               <width>121</width>
               <height>41</height>
              </rect>
@@ -312,13 +312,29 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>270</y>
+              <y>290</y>
               <width>91</width>
               <height>41</height>
              </rect>
             </property>
             <property name="text">
              <string>Card No</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="AutoRead">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>80</y>
+              <width>191</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>Continuous card read mode</string>
+            </property>
+            <property name="text">
+             <string>AutoRead</string>
             </property>
            </widget>
           </widget>
