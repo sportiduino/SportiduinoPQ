@@ -603,6 +603,7 @@ class Sportiduino(object):
 
     def _send_command(self, code, parameters=None, wait_response=True, timeout=None):
         resp_code, data = self._serialproto.send_command(self._serial, code, parameters, wait_response, timeout)
+        
         return Sportiduino._preprocess_response(resp_code, data, self._log_debug)
 
 
@@ -659,7 +660,7 @@ class Sportiduino(object):
                 raise SportiduinoException(Sportiduino._translate("sportiduino","Can't read EEPROM"))
             elif err_code == Sportiduino.ERR_CARD_NOT_FOUND:
                 if card_type == 0 or card_type == 0xff:
-                    raise SportiduinoException(Sportiduino._translate("sportiduino","Card is not found"))
+                    raise SportiduinoNoCardPresentException(Sportiduino._translate("sportiduino","Card is not found"))
                 else :
                     raise SportiduinoException(Sportiduino._translate("sportiduino","Unsupported card type = {}").format(card_type))
             elif err_code == Sportiduino.ERR_UNKNOWN_CMD:
@@ -778,6 +779,10 @@ class Sportiduino(object):
 
 
 class SportiduinoException(Exception):
+    pass
+
+
+class SportiduinoNoCardPresentException(Exception):
     pass
 
 

@@ -12,7 +12,7 @@ import csv
 import design
 
 from serial import Serial
-from sportiduino import Sportiduino, SportiduinoException, SportiduinoTimeout
+from sportiduino import Sportiduino, SportiduinoException, SportiduinoTimeout, SportiduinoNoCardPresentException
 from basestation import BaseStation
 from datetime import datetime, timedelta, timezone
 from PyQt5 import uic, QtWidgets, QtPrintSupport, QtCore, sip
@@ -183,7 +183,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
             self._show_card_data(data, card_type)
             self._save_card_data_to_file(data)
-            
+
+        except SportiduinoNoCardPresentException as err:
+            self.log(self.tr("Card not found. Place card near reader and try again"))
+
         except Exception as err:
             self._process_error(err)
             raise err
