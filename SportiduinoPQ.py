@@ -53,7 +53,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.printerName.setText(self.printer.printerName())
 
         init_time = datetime.now()
-        self.cards_data_filename = os.path.join('data','cards{:%Y%m%d%H%M%S}.json'.format(init_time))
+        self.cards_data_filename = os.path.join('data','cards{:%Y%m%d}.csv'.format(init_time))
+        if not os.path.exists(self.cards_data_filename):
+            with open(self.cards_data_filename, 'w') as cards_data_file:
+                cards_data_file.write('No.;Read at;Card no.;;;;;;;;;;;;;;;;Clear time;;;Check time;;;Start time;;;Finish time;No. of punches;;1.CP;;1.Time;2.CP;;2.Time;3.CP;;3.Time\n')
         self.cards_data = []
 
         self._logger = self.Logger()
@@ -182,7 +185,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 self.sportiduino.beep_ok()
             
             self._show_card_data(data, card_type)
-            self._save_card_data_to_file(data)
+            self._save_card_data_to_csv(data)
             
         except Exception as err:
             self._process_error(err)
@@ -199,7 +202,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 self.sportiduino.beep_ok()
                 if card_number != self.prev_card_number:
                     self._show_card_data(self.sportiduino.card_data)
-                    self._save_card_data_to_file(self.sportiduino.card_data)
+                    self._save_card_data_to_csv(self.sportiduino.card_data)
                     self.prev_card_number = card_number
             else:
                 self.prev_card_number = -1
@@ -664,8 +667,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         if self.ui.AutoPrint.isChecked():
             self.Print_clicked()
             
-    def _save_card_data_to_file(self,data):
-        
+    def _save_card_data_to_file(self, data):
         if 'master_card_flag' in data:
             return
         
@@ -701,6 +703,33 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         with open(self.cards_data_filename, 'w') as cards_data_file:
             json.dump(self.cards_data, cards_data_file)
+
+
+    def _save_card_data_to_csv(self, data):
+        if 'master_card_flag' in data:
+            return
+
+        with open(self.cards_data_filename, 'a') as cards_data_file:
+            csv_writer = csv.writer(cards_data_file, delimiter=';')
+            row_data = [0, datetime.now().strftime('%H:%M:%S'), data['card_number']]
+            for i in range(27):
+                row_data.append(None)
+            if 'start' in data:
+                row_data[24] = data['start'].strftime('%H:%M:%S')
+            if 'finish' in data:
+                row_data[27] = data['finish'].strftime('%H:%M:%S')
+            punches_count = 0
+            for punch in data['punches']:
+                punches_count += 1
+                cp = punch[0]
+                cp_time = punch[1]
+                row_data.append(cp)
+                row_data.append(None)
+                row_data.append(cp_time.strftime('%H:%M:%S'))
+            row_data[28] = punches_count
+
+            csv_writer.writerow(row_data)
+
 
     def _apply_settings(self, bs_config, wakeuptime):
         self.ui.sbStationNum.setValue(bs_config.num)
