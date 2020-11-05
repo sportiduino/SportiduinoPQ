@@ -167,7 +167,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 
             except Exception as err:
                 self._process_error(err)
-                raise err
 
     def ReadCard_clicked(self):
         if not self._check_connection():
@@ -189,7 +188,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
 
 
     def poll_card(self):
@@ -209,7 +207,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
 
 
     def InitCard_clicked(self):
@@ -236,7 +233,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         except Exception as err:
             self._process_error(err)
-            raise err
             
     def SetNum_clicked(self):
         if not self._check_connection():
@@ -255,7 +251,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
                             
     def SetTime_clicked(self):
         if self._check_connection() == False :
@@ -269,7 +264,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
 
     def SetStart_clicked(self):
         if self._check_connection() == False :
@@ -284,7 +278,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
 
     def SetFinish_clicked(self):
         if not self._check_connection():
@@ -299,7 +292,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
 
     def CheckSt_clicked(self):
         if not self._check_connection():
@@ -314,7 +306,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
 
     def ClearSt_clicked(self):
         if not self._check_connection():
@@ -329,7 +320,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
 
     def LogCard_clicked(self):
         if not self._check_connection():
@@ -343,8 +333,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
-                
+
     def ReadLog_clicked(self):
         if not self._check_connection():
             return
@@ -383,7 +372,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 
         except Exception as err:
             self._process_error(err)
-            raise err
 
     def SleepCard_clicked(self):
         if not self._check_connection():
@@ -397,7 +385,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
 
     def PassCard_clicked(self):
         if not self._check_connection():
@@ -420,8 +407,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
-            
+
     def ApplyPwd_clicked(self):
         if not self._check_connection():
             return
@@ -435,8 +421,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         except Exception as err:
             self._process_error(err)
-            raise err
-            
+
     def CreateInfo_clicked(self):
         if not self._check_connection():
             return
@@ -449,8 +434,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
-        
+
     def ReadInfo_clicked(self):
         if not self._check_connection():
             return
@@ -474,7 +458,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             
         except Exception as err:
             self._process_error(err)
-            raise err
+
             
     def log(self, text):
         print(text)
@@ -505,8 +489,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             text_document.print(self.printer)
         except Exception as err:
             self._process_error(err)
-            raise err
-        
+
     def SerialRead_clicked(self):
         try:
             self.log("\n" + self.tr( "Reads info about a base station by UART"))
@@ -520,8 +503,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         except Exception as err:
             self._process_error(err)
-            raise err
-        
 
     def SerialWrite_clicked(self):
         try:
@@ -539,9 +520,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         
         except Exception as err:
             self._process_error(err)
-            raise err
 
-            
     def ClearText_clicked(self):
         self.ui.plainTextEdit.setPlainText('')
 
@@ -564,8 +543,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.sportiduino.beep_ok()
         except Exception as err:
             self._process_error(err)
-            raise err
-
 
     def autoread_change(self):
         if self.ui.AutoRead.isChecked():
@@ -593,7 +570,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.sportiduino.write_settings(self.ui.cbMsAntennaGain.currentIndex() + 2, tz)
         except Exception as err:
             self._process_error(err)
-            raise err
 
 
     def _show_card_data(self, data, card_type=None):
