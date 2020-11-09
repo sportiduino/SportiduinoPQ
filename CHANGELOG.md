@@ -1,7 +1,8 @@
-## [0.9.0]
+## [0.9.0] - 2020-11-09
 - Master station v1.8 support
 - Compatibility with MS v1.6 (only reading card)
 - Added auto card polling mode
+- Fix crashes in Windows
 
 ## [0.8.0] - 2020-04-13
 - Master station v1.7 and Base station vX.7 support
