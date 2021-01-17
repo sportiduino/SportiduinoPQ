@@ -1,7 +1,6 @@
-from six import int2byte, byte2int, iterbytes, print_, PY3
+from six import int2byte, byte2int, print_, PY3
 from serial import Serial
-from datetime import datetime, timedelta
-from PyQt5.QtCore import QCoreApplication
+from datetime import datetime
 from sportiduino import Sportiduino, SportiduinoException
 
 if PY3:
@@ -11,20 +10,21 @@ if PY3:
         except TypeError:
             return x
 
+
 class BaseStation(object):
     MODE_ACTIVE = 0
     MODE_WAIT = 1
     MODE_SLEEP = 2
-    
+
     # UART
     SERIAL_MSG_START = b'\xFA'
 
     SERIAL_FUNC_READ_INFO       = b'\xF0'
     SERIAL_FUNC_WRITE_SETTINGS  = b'\xF1'
-    
+
     SERIAL_RESP_STATUS = b'\x01'
     SERIAL_RESP_INFO   = b'\x02'
-    
+
     SERIAL_OK          = 0x00
     SERIAL_ERROR_CRC   = 0x01
     SERIAL_ERROR_FUNC  = 0x02
@@ -41,7 +41,7 @@ class BaseStation(object):
     _serialproto = Sportiduino.SerialProtocol(SERIAL_MSG_START, print_)
 
     class Battery(object):
-        def __init__(self, byte = None):
+        def __init__(self, byte=None):
             self.voltage = None
             self.isOk = False
 
@@ -52,21 +52,19 @@ class BaseStation(object):
                 # Old firmware
                 self.isOk = bool(byte)
             else:
-                self.voltage = byte/50.0;
+                self.voltage = byte/50.0
                 if self.voltage > 3.6:
                     self.isOk = True
-
 
     class Config(object):
         def __init__(self):
             self.num = 0
-            self.active_mode_duration = 2 # hours
+            self.active_mode_duration = 2  # hours
             self.check_start_finish = False
             self.check_card_init_time = False
             self.fast_punch = False
             self.antenna_gain = BaseStation.ANTENNA_GAIN_33DB
             self.password = [0, 0, 0]
-
 
         @classmethod
         def unpack(cls, config_data):
@@ -82,7 +80,6 @@ class BaseStation(object):
 
             config.antenna_gain = byte2int(config_data[2])
             return config
-
 
         def pack(self):
             config_data = b''
@@ -112,7 +109,6 @@ class BaseStation(object):
             self.battery = BaseStation.Battery()
             self.timestamp = 0
 
-
     @classmethod
     def read_info_by_serial(cls, port, password):
         params = b''
@@ -133,7 +129,6 @@ class BaseStation(object):
             state.wakeuptime = datetime.fromtimestamp(Sportiduino._to_int(data[15:19]))
             return state
 
-
     @classmethod
     def write_settings_by_serial(cls, port, password, config, wakeuptime):
         params = b''
@@ -142,7 +137,7 @@ class BaseStation(object):
         params += int2byte(password[2])
         params += config.pack()
 
-        utc = datetime.utcnow();
+        utc = datetime.utcnow()
         params += int2byte(utc.year - 2000)
         params += int2byte(utc.month)
         params += int2byte(utc.day)
@@ -156,11 +151,10 @@ class BaseStation(object):
         params += int2byte(wakeuptime.hour)
         params += int2byte(wakeuptime.minute)
         params += int2byte(wakeuptime.second)
-        
+
         params += int2byte(cls.MODE_WAIT)
 
         cls._send_command(port, cls.SERIAL_FUNC_WRITE_SETTINGS, parameters=params, timeout=8)
-      
 
     @classmethod
     def _send_command(cls, port, code, parameters=None, wait_response=True, timeout=None):
@@ -171,7 +165,6 @@ class BaseStation(object):
         resp_code, data = cls._serialproto.send_command(serial, code, parameters, wait_response)
         serial.close()
         return cls._preprocess_response(resp_code, data)
-
 
     @classmethod
     def _preprocess_response(cls, resp_code, data):
@@ -186,6 +179,5 @@ class BaseStation(object):
                 raise SportiduinoException(Sportiduino._translate("sportiduino", "Invalid size of the request"))
             elif err_code == cls.SERIAL_ERROR_PWD:
                 raise SportiduinoException(Sportiduino._translate("sportiduino", "Invalid password"))
-        
-        return resp_code, data
 
+        return resp_code, data
