@@ -62,6 +62,7 @@ class BaseStation(object):
             self.active_mode_duration = 2  # hours
             self.check_start_finish = False
             self.check_card_init_time = False
+            self.autosleep = False
             self.fast_punch = False
             self.antenna_gain = BaseStation.ANTENNA_GAIN_33DB
             self.password = [0, 0, 0]
@@ -76,6 +77,7 @@ class BaseStation(object):
 
             config.check_start_finish = config_data[1] & 0x08 > 0
             config.check_card_init_time = config_data[1] & 0x10 > 0
+            config.autosleep = config_data[1] & 0x20 > 0
             config.fast_punch = config_data[1] & 0x40 > 0
 
             config.antenna_gain = byte2int(config_data[2])
@@ -91,6 +93,8 @@ class BaseStation(object):
                 flags |= 0x08
             if self.check_card_init_time:
                 flags |= 0x10
+            if self.autosleep:
+                flags |= 0x20
             if self.fast_punch:
                 flags |= 0x40
             config_data += int2byte(flags)

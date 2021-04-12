@@ -883,7 +883,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>290</y>
+              <y>340</y>
               <width>231</width>
               <height>31</height>
              </rect>
@@ -899,7 +899,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>210</y>
+              <y>260</y>
               <width>231</width>
               <height>71</height>
              </rect>
@@ -1108,7 +1108,7 @@
             <property name="geometry">
              <rect>
               <x>160</x>
-              <y>170</y>
+              <y>210</y>
               <width>81</width>
               <height>31</height>
              </rect>
@@ -1154,7 +1154,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>170</y>
+              <y>210</y>
               <width>141</width>
               <height>31</height>
              </rect>
@@ -1172,6 +1172,9 @@
               <height>31</height>
              </rect>
             </property>
+            <property name="toolTip">
+             <string>Check start / finish punches</string>
+            </property>
             <property name="text">
              <string>Start / Finish</string>
             </property>
@@ -1185,6 +1188,9 @@
               <height>31</height>
              </rect>
             </property>
+            <property name="toolTip">
+             <string>If card has invalid InitTime don't punch</string>
+            </property>
             <property name="text">
              <string>Check InitTime</string>
             </property>
@@ -1193,13 +1199,29 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>130</y>
+              <y>170</y>
               <width>221</width>
               <height>31</height>
              </rect>
             </property>
             <property name="text">
              <string>Fast Punch</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="cbAutosleep">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>130</y>
+              <width>221</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>Autosleep BS after 48 h</string>
+            </property>
+            <property name="text">
+             <string>AutoSleep</string>
             </property>
            </widget>
           </widget>
