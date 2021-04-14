@@ -698,6 +698,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         self.ui.cbStartFinish.setChecked(bs_config.check_start_finish)
         self.ui.cbCheckInitTime.setChecked(bs_config.check_card_init_time)
+        self.ui.cbAutosleep.setChecked(bs_config.autosleep)
         self.ui.cbFastPunch.setChecked(bs_config.fast_punch)
 
         self.ui.cbAntennaGain.setCurrentIndex(bs_config.antenna_gain - 2)
@@ -707,6 +708,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         bs_config.active_mode_duration = self.ui.cbActiveTime.currentIndex()
         bs_config.check_start_finish = self.ui.cbStartFinish.isChecked()
         bs_config.check_card_init_time = self.ui.cbCheckInitTime.isChecked()
+        bs_config.autosleep = self.ui.cbAutosleep.isChecked()
         bs_config.fast_punch = self.ui.cbFastPunch.isChecked()
         bs_config.antenna_gain = self.ui.cbAntennaGain.currentIndex() + 2
         bs_config.password = [self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value()]
@@ -737,6 +739,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log(self.tr("   Check start/finish flag"))
         if bs_state.config.check_card_init_time:
             self.log(self.tr("   Check card init time flag"))
+        if bs_state.config.autosleep:
+            self.log(self.tr("   Autosleep flag"))
+
         if bs_state.config.fast_punch:
             self.log(self.tr("   Fast punch flag"))
         self.log(self.tr("   Antenna Gain: {}").format(self.ui.cbAntennaGain.currentText()))
