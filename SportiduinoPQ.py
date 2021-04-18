@@ -371,7 +371,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         try:
 
             self.log("\n" + self.tr("Write the master card to sleep a base station"))
-            self.sportiduino.init_sleepcard(self.ui.dtCompetion.dateTime().toUTC())
+            self.sportiduino.init_sleepcard(self._get_competion_datetime())
             self._master_card_ok()
 
         except Exception as err:
@@ -499,7 +499,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             bs_config = self._get_config_from_ui()
             bs_config.num = self.ui.sbStationNumByUart.value()
-            wakeuptime = self.ui.dtCompetion.dateTime().toUTC().toPyDateTime()
+            wakeuptime = self._get_competion_datetime().toPyDateTime()
 
             password = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
             BaseStation.write_settings_by_serial(port, password, bs_config, wakeuptime)
@@ -714,6 +714,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         bs_config.password = [self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value()]
 
         return bs_config
+
+    def _get_competion_datetime(self):
+        dt = self.ui.dtCompetion.dateTime().toUTC()
+        return dt.addSecs(-dt.time().second())
 
     def _show_base_station_state(self, bs_state):
         self.log(self.tr("Version: {}").format(bs_state.version))
