@@ -1,3 +1,8 @@
+## [0.10.0] - 2021-05-14
+- Autosleep option for BS v3.9.0
+- Reset secs to 0 for wakeup timestamp for Sleep Card
+- Lint (Flake8) fixes
+
 ## [0.9.0] - 2020-11-09
 - Master station v1.8 support
 - Compatibility with MS v1.6 (only reading card)
