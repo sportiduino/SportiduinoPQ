@@ -1,6 +1,7 @@
 # SportiduinoPQ
 
 ![](https://github.com/sportiduino/SportiduinoPQ/workflows/Python%20package/badge.svg)
+[![SportiduinoPQ version](https://img.shields.io/github/v/release/sportiduino/sportiduinopq)](https://github.com/sportiduino/sportiduinopq/releases)
 
 ![Скриншот SportiduinoPQ](/images/main1.JPG)
 
