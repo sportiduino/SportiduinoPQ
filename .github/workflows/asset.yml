@@ -20,7 +20,7 @@ jobs:
         id: set_up_python
         uses: actions/setup-python@v1
         with:
-          python-version: '3.x'
+          python-version: '3.8'
           architecture: ${{ matrix.architecture }}
       - name: Install dependencies
         run: |
