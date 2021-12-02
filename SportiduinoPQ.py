@@ -208,10 +208,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         try:
             self.log("\n" + self.tr("Initialize the participant card"))
 
-            card_num = 0
-            text = self.ui.cardLine.text()
-            if(text.isdigit()):
-                card_num = int(text)
+            card_num = self.ui.cardNumber.value()
 
             if (card_num < Sportiduino.MIN_CARD_NUM or card_num > Sportiduino.MAX_CARD_NUM):
                 raise Exception(self.tr("Incorrect card number"))
@@ -221,7 +218,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 self.log(self.tr("The participant card No {} ({}) has been initialized successfully")
                         .format(card_num, Sportiduino.card_name(data[0])))
                 if self.ui.AutoIncriment.isChecked():
-                    self.ui.cardLine.setText(str(card_num + 1))
+                    self.ui.cardNumber.setValue(card_num + 1)
 
         except Exception as err:
             self._process_error(err)

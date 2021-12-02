@@ -292,20 +292,26 @@
              <string>AutoIncriment</string>
             </property>
            </widget>
-           <widget class="QLineEdit" name="cardLine">
+           <widget class="QSpinBox" name="cardNumber">
             <property name="geometry">
              <rect>
               <x>110</x>
               <y>290</y>
               <width>121</width>
-              <height>41</height>
+              <height>31</height>
              </rect>
             </property>
-            <property name="text">
-             <string notr="true">1</string>
+            <property name="frame">
+             <bool>true</bool>
             </property>
             <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignRight</set>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>65000</number>
             </property>
            </widget>
            <widget class="QLabel" name="label_11">
@@ -314,7 +320,7 @@
               <x>10</x>
               <y>290</y>
               <width>91</width>
-              <height>41</height>
+              <height>31</height>
              </rect>
             </property>
             <property name="text">
