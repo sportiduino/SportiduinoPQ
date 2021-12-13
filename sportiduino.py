@@ -384,15 +384,16 @@ class Sportiduino(object):
         else:
             raise SportiduinoException("Read backup failed")
 
-    def init_card(self, card_number, page6=None, page7=None):
+    def init_card(self, card_number, fast_punch=False, page7=None):
         """Initialize card. Set card number, init time and additional pages.
         @param card_number: Card number (eg participant bib).
-        @param page6:       Additional page.
+        @param fast_punch:  Enable Fast Punch mode.
         @param page7:       Additional page.
         """
-        # TODO: check page6 and page7 length
-        if page6 is None:
-            page6 = b'\x00\x00\x00\x00'
+        page6 = b'\x00\x00\x00\x00'
+        if fast_punch:
+            page6 = b'\x00\x00\x00\xAA'
+        # TODO: check page7 length
         if page7 is None:
             page7 = b'\x00\x00\x00\x00'
 
