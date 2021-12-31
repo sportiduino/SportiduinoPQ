@@ -720,7 +720,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.log(self.tr("Version: {}").format(bs_state.version))
 
         # apply settings to ui
-        self._apply_settings(bs_state.config, bs_state.wakeuptime)
+        self._apply_settings(bs_state.config, bs_state.wakeuptime if bs_state.wakeuptime > datetime.now() else datetime.now())
 
         self.log(self.tr("Settings:"))
 
