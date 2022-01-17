@@ -1211,7 +1211,10 @@
              </rect>
             </property>
             <property name="text">
-             <string>Fast Punch</string>
+             <string>Fast Punch (deprecated)</string>
+            </property>
+            <property name="enabled">
+             <bool>false</bool>
             </property>
            </widget>
            <widget class="QCheckBox" name="cbAutosleep">

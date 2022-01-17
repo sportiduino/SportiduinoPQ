@@ -108,7 +108,7 @@
         <translation type="obsolete">Прочитать чип содержащий журнал отметок базовой станции</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1322"/>
+        <location filename="../design.ui" line="1325"/>
         <source>Read</source>
         <translation>Читать</translation>
     </message>
@@ -333,7 +333,7 @@
         <translation>Записать настройки базовой станции по UART</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1338"/>
+        <location filename="../design.ui" line="1341"/>
         <source>Write</source>
         <translation>Записать</translation>
     </message>
@@ -343,57 +343,57 @@
         <translation type="obsolete">Быст. Отметка</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1280"/>
+        <location filename="../design.ui" line="1283"/>
         <source>18 dB</source>
         <translation>18 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1285"/>
+        <location filename="../design.ui" line="1288"/>
         <source>23 dB</source>
         <translation>23 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1290"/>
+        <location filename="../design.ui" line="1293"/>
         <source>33 dB</source>
         <translation>33 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1295"/>
+        <location filename="../design.ui" line="1298"/>
         <source>38 dB</source>
         <translation>38 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1300"/>
+        <location filename="../design.ui" line="1303"/>
         <source>43 dB</source>
         <translation>43 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1305"/>
+        <location filename="../design.ui" line="1308"/>
         <source>48 dB</source>
         <translation>48 дБ</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1260"/>
+        <location filename="../design.ui" line="1263"/>
         <source>Antenna Gain</source>
         <translation>Усил. антенны</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1409"/>
+        <location filename="../design.ui" line="1412"/>
         <source>Clear</source>
         <translation>Очистить</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1424"/>
+        <location filename="../design.ui" line="1427"/>
         <source>Chose COM-port</source>
         <translation>Выбрать COM-порт</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1429"/>
+        <location filename="../design.ui" line="1432"/>
         <source>Save log</source>
         <translation>Сохранить лог</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1434"/>
+        <location filename="../design.ui" line="1437"/>
         <source>Open help.txt</source>
         <translation>Открыть help.txt</translation>
     </message>
@@ -520,7 +520,7 @@
     <message>
         <location filename="../design.ui" line="1214"/>
         <source>Fast Punch</source>
-        <translation>Быст. отметка</translation>
+        <translation type="obsolete">Быст. отметка</translation>
     </message>
     <message>
         <location filename="../design.ui" line="349"/>
@@ -543,27 +543,27 @@
         <translation>Конф</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1236"/>
+        <location filename="../design.ui" line="1239"/>
         <source>MS</source>
         <translation>МС</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1248"/>
+        <location filename="../design.ui" line="1251"/>
         <source>Master Station Config</source>
         <translation>Конф. станции сопряж</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1319"/>
+        <location filename="../design.ui" line="1322"/>
         <source>Reads settings of master station</source>
         <translation>Прочитать настройки станции сопряжения</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1335"/>
+        <location filename="../design.ui" line="1338"/>
         <source>Writes settings to master station</source>
         <translation>Записать настройки станции сопряжения</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1351"/>
+        <location filename="../design.ui" line="1354"/>
         <source>Time Zone</source>
         <translation>Часовой пояс</translation>
     </message>
@@ -588,14 +588,19 @@
         <translation>Если чип имеет некорретное время инициализации, не делать отметку</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1227"/>
+        <location filename="../design.ui" line="1230"/>
         <source>Autosleep BS after 48 h</source>
         <translation>Переводить станцию в режим сна после 48 ч</translation>
     </message>
     <message>
-        <location filename="../design.ui" line="1230"/>
+        <location filename="../design.ui" line="1233"/>
         <source>AutoSleep</source>
         <translation>Автосон</translation>
+    </message>
+    <message>
+        <location filename="../design.ui" line="1214"/>
+        <source>Fast Punch (deprecated)</source>
+        <translation>Быст. отметка (устар.)</translation>
     </message>
 </context>
 <context>
