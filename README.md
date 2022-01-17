@@ -12,6 +12,7 @@ and PyQt5 for working with [Sportiduino](https://github.com/sportiduino/sportidu
 
 - [Manual](https://github.com/sportiduino/sportiduino/blob/master/Doc/en/UserManual.md)
 - [Downloads](https://github.com/sportiduino/SportiduinoPQ/releases)
+- [Changelog](CHANGELOG.md)
 
 
 ## Installation

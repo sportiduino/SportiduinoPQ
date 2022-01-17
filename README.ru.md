@@ -12,6 +12,7 @@
 
 - [Руководство пользователя](https://github.com/sportiduino/sportiduino/blob/master/Doc/ru/UserManual.md)
 - [Скачать](https://github.com/sportiduino/SportiduinoPQ/releases)
+- [Список изменений](CHANGELOG.ru.md)
 
 
 ## Установка
