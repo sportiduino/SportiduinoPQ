@@ -97,7 +97,8 @@ class Sportiduino(object):
     MASTER_CARD_SET_NUMBER   = b'\xFB'
     MASTER_CARD_SLEEP        = b'\xFC'
     MASTER_CARD_READ_BACKUP  = b'\xFD'
-    MASTER_CARD_SET_PASS     = b'\xFE'
+    MASTER_CARD_SET_CONFIG   = b'\xFE'
+    MASTER_CARD_SET_PASSWORD = b'\xFF'
 
     MIN_CARD_NUM = 1
     MAX_CARD_NUM = 65000

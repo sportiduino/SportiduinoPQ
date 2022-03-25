@@ -603,8 +603,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 text.append(self.tr("Master card to sleep a base station"))
             elif master_type == Sportiduino.MASTER_CARD_READ_BACKUP:
                 text.append(self.tr("Master card to get punches log of a base station"))
-            elif master_type == Sportiduino.MASTER_CARD_SET_PASS:
-                text.append(self.tr("Master card to write password and settings to a base station"))
+            elif master_type == Sportiduino.MASTER_CARD_SET_CONFIG:
+                text.append(self.tr("Master card to write settings to a base station"))
+            elif master_type == Sportiduino.MASTER_CARD_SET_PASSWORD:
+                text.append(self.tr("Master card to write password to a base station"))
             else:
                 text.append(self.tr("Uninitialized card"))
 
