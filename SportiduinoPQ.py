@@ -84,7 +84,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.LogCard.clicked.connect(self.LogCard_clicked)
         self.ui.ReadLog.clicked.connect(self.ReadLog_clicked)
         self.ui.SleepCard.clicked.connect(self.SleepCard_clicked)
-        self.ui.PassCard.clicked.connect(self.PassCard_clicked)
+        self.ui.ConfigCard.clicked.connect(self.ConfigCard_clicked)
+        self.ui.PasswordCard.clicked.connect(self.PasswordCard_clicked)
         self.ui.SelectPrinter.clicked.connect(self.SelectPrinter_clicked)
         self.ui.Print.clicked.connect(self.Print_clicked)
         self.ui.btnApplyPwd.clicked.connect(self.ApplyPwd_clicked)
@@ -374,7 +375,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def PassCard_clicked(self):
+    def ConfigCard_clicked(self):
         if not self._check_connection():
             return
 
@@ -384,6 +385,25 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             bs_config = self._get_config_from_ui()
             bs_config.num = 0    # don't change station number by this master card
             self.sportiduino.init_config_card(bs_config.pack())
+
+            self.ui.sbCurPwd3.setValue(self.ui.sbNewPwd3.value())
+            self.ui.sbCurPwd2.setValue(self.ui.sbNewPwd2.value())
+            self.ui.sbCurPwd1.setValue(self.ui.sbNewPwd1.value())
+
+            self._master_card_ok()
+
+        except Exception as err:
+            self._process_error(err)
+
+    def PasswordCard_clicked(self):
+        if not self._check_connection():
+            return
+
+        try:
+            self.log("\n" + self.tr("Write the password master card"))
+
+            new_password = (self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value())
+            self.sportiduino.init_password_card(new_password)
 
             self.ui.sbCurPwd3.setValue(self.ui.sbNewPwd3.value())
             self.ui.sbCurPwd2.setValue(self.ui.sbNewPwd2.value())

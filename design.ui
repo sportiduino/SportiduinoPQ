@@ -157,7 +157,7 @@
            <locale language="English" country="UnitedStates"/>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_1">
            <attribute name="title">
@@ -885,17 +885,17 @@
              <string>Active Time (h)</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="PassCard">
+           <widget class="QPushButton" name="ConfigCard">
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>340</y>
+              <y>380</y>
               <width>231</width>
               <height>31</height>
              </rect>
             </property>
             <property name="toolTip">
-             <string>Creates the master card to write password and settings to a base station</string>
+             <string>Creates the master card to write settings to a base station</string>
             </property>
             <property name="text">
              <string>Create Config Card</string>
@@ -1202,6 +1202,9 @@
             </property>
            </widget>
            <widget class="QCheckBox" name="cbFastPunch">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -1212,9 +1215,6 @@
             </property>
             <property name="text">
              <string>Fast Punch (deprecated)</string>
-            </property>
-            <property name="enabled">
-             <bool>false</bool>
             </property>
            </widget>
            <widget class="QCheckBox" name="cbAutosleep">
@@ -1231,6 +1231,22 @@
             </property>
             <property name="text">
              <string>AutoSleep</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="PasswordCard">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>340</y>
+              <width>231</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>Creates the master card to write password to a base station</string>
+            </property>
+            <property name="text">
+             <string>Create Password Card</string>
             </property>
            </widget>
           </widget>
