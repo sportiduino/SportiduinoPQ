@@ -1,3 +1,11 @@
+## 2022-03-25 - v0.11.0
+
+- Password master card
+- Fix password saving between sessions
+- Improve GUI
+
+[All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.10.2...v0.11.0)
+
 ## 2022-01-17 - v0.10.2
 
 - QSpinBox for card number

@@ -24,7 +24,7 @@ from six import int2byte
 
 _translate = QCoreApplication.translate
 
-sportiduinopq_version_string = "v0.10.2"
+sportiduinopq_version_string = "v0.11.0"
 
 
 class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
@@ -107,8 +107,11 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self._apply_settings(bs_config, datetime.now())
 
         self.ui.sbCurPwd1.setValue(bs_config.password[0])
+        self.ui.sbNewPwd1.setValue(bs_config.password[0])
         self.ui.sbCurPwd2.setValue(bs_config.password[1])
+        self.ui.sbNewPwd2.setValue(bs_config.password[1])
         self.ui.sbCurPwd3.setValue(bs_config.password[2])
+        self.ui.sbNewPwd3.setValue(bs_config.password[2])
 
         ianaIds = QTimeZone.availableTimeZoneIds()
         all_timezones = sorted({QTimeZone(id).offsetFromUtc(datetime.now()) for id in ianaIds})
@@ -117,6 +120,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         for dt in all_timezones:
             tz = timezone(timedelta(seconds=dt))
             tzname = tz.tzname(None)
+            if tzname == 'UTC':
+                tzname = '00:00'
+            else:
+                tzname = tzname.replace('UTC', '')
             if dt == tzlocaloffset:
                 tzlocalname = tzname
             self.ui.cbTimeZone.addItem(tzname, dt)

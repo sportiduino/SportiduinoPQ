@@ -157,7 +157,7 @@
            <locale language="English" country="UnitedStates"/>
           </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>0</number>
           </property>
           <widget class="QWidget" name="tab_1">
            <attribute name="title">
@@ -1243,7 +1243,7 @@
              </rect>
             </property>
             <property name="toolTip">
-             <string>Creates the master card to write password to a base station</string>
+             <string>Creates the master card to write password to a base station (MS ≥v1.9.0)</string>
             </property>
             <property name="text">
              <string>Create Password Card</string>
@@ -1362,7 +1362,7 @@
               <rect>
                <x>10</x>
                <y>70</y>
-               <width>91</width>
+               <width>121</width>
                <height>31</height>
               </rect>
              </property>
@@ -1373,9 +1373,9 @@
             <widget class="QComboBox" name="cbTimeZone">
              <property name="geometry">
               <rect>
-               <x>100</x>
+               <x>130</x>
                <y>70</y>
-               <width>121</width>
+               <width>91</width>
                <height>31</height>
               </rect>
              </property>
