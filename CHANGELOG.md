@@ -1,6 +1,7 @@
 ## 2022-03-25 - v0.11.0
 
-- Password master card
+- Password Master card
+- Erase station log possibility (FW >= vX.10.0)
 - Fix password saving between sessions
 - Improve GUI
 
