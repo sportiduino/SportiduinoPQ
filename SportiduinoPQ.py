@@ -527,6 +527,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             password = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
             BaseStation.write_settings_by_serial(port, password, bs_config, wakeuptime)
+            #BaseStation.erase_log_by_serial(port)
 
             self.log(self.tr("Settings and password has been written successfully"))
 
