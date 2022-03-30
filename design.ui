@@ -157,7 +157,7 @@
            <locale language="English" country="UnitedStates"/>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_1">
            <attribute name="title">
@@ -981,9 +981,9 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>450</y>
+              <y>430</y>
               <width>231</width>
-              <height>151</height>
+              <height>181</height>
              </rect>
             </property>
             <property name="title">
@@ -1107,6 +1107,22 @@
              </property>
              <property name="maximum">
               <number>255</number>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="eraseLogButton">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>150</y>
+               <width>211</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="toolTip">
+              <string>Erase log of a base station by UART (BS >=vX.10.0)</string>
+             </property>
+             <property name="text">
+              <string>Erase Log</string>
              </property>
             </widget>
            </widget>
@@ -1243,7 +1259,7 @@
              </rect>
             </property>
             <property name="toolTip">
-             <string>Creates the master card to write password to a base station (MS ≥v1.9.0)</string>
+             <string>Creates the master card to write password to a base station (MS >=v1.9.0)</string>
             </property>
             <property name="text">
              <string>Create Password Card</string>

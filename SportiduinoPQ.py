@@ -20,6 +20,7 @@ from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QTimeZone
 from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QMessageBox
 from six import int2byte
 
 _translate = QCoreApplication.translate
@@ -527,6 +528,19 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             #BaseStation.erase_log_by_serial(port)
 
             self.log(self.tr("Settings and password has been written successfully"))
+
+        except Exception as err:
+            self._process_error(err)
+
+    @QtCore.pyqtSlot()
+    def on_eraseLogButton_clicked(self):
+        try:
+            if QMessageBox.question(self, self.tr('Erase log'), self.tr('Are you sure you want to erase the base station log permanently?')) != QMessageBox.Yes:
+                return
+            self.log("\n" + self.tr("Erase log of a base station by UART"))
+            port = self.ui.cbUartPort.currentText()
+            BaseStation.erase_log_by_serial(port)
+            self.log(self.tr("Log has been erased successfully"))
 
         except Exception as err:
             self._process_error(err)
