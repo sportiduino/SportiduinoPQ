@@ -163,7 +163,7 @@ class BaseStation(object):
 
     @classmethod
     def erase_log_by_serial(cls, port):
-        cls._send_command(port, cls.SERIAL_FUNC_ERASE_LOG, timeout=8)
+        cls._send_command(port, cls.SERIAL_FUNC_ERASE_LOG, timeout=12)
 
     @classmethod
     def _send_command(cls, port, code, parameters=None, wait_response=True, timeout=None):
