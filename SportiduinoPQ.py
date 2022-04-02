@@ -94,11 +94,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         tzlocalname = None
         for dt in all_timezones:
             tz = timezone(timedelta(seconds=dt))
-            tzname = tz.tzname(None)
-            if tzname == 'UTC':
-                tzname = '00:00'
-            else:
-                tzname = tzname.replace('UTC', '')
+            tzname = self.getTzName(tz)
             if dt == tzlocaloffset:
                 tzlocalname = tzname
             self.ui.cbTimeZone.addItem(tzname, dt)
@@ -119,6 +115,15 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.config.setValue('settings/'+key, value)
 
         event.accept()
+
+    @staticmethod
+    def getTzName(tz):
+        tzname = tz.tzname(None)
+        if tzname == 'UTC':
+            tzname = '00:00'
+        else:
+            tzname = tzname.replace('UTC', '')
+        return tzname
 
     @QtCore.pyqtSlot()
     def on_connectButton_clicked(self):
@@ -555,7 +560,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.cbMsAntennaGain.setCurrentIndex(ms_config.antenna_gain - 2)
         if ms_config.timezone is not None:
             tz = timezone(ms_config.timezone)
-            self.ui.cbTimeZone.setCurrentText(tz.tzname(None))
+            self.ui.cbTimeZone.setCurrentText(self.getTzName(tz))
 
     @QtCore.pyqtSlot()
     def on_msConfigReadButton_clicked(self):

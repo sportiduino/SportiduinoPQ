@@ -2,13 +2,11 @@
 
 # Form implementation generated from reading ui file 'design.ui'
 #
-# Created by: PyQt5 UI code generator 5.14.1
+# Created by: PyQt5 UI code generator 5.10.1
 #
 # WARNING! All changes made in this file will be lost!
 
-
 from PyQt5 import QtCore, QtGui, QtWidgets
-
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -433,7 +431,7 @@ class Ui_MainWindow(object):
         self.actionOpen_help_txt.setObjectName("actionOpen_help_txt")
 
         self.retranslateUi(MainWindow)
-        self.Log.setCurrentIndex(2)
+        self.Log.setCurrentIndex(0)
         self.cbActiveTime.setCurrentIndex(1)
         self.cbAntennaGain.setCurrentIndex(2)
         self.cbMsAntennaGain.setCurrentIndex(2)
@@ -562,3 +560,4 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+
