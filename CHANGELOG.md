@@ -1,9 +1,30 @@
-## [0.10.0] - 2021-05-14
+## 2022-03-25 - v0.11.0
+
+- Password Master card
+- Erase station log possibility (FW >= vX.10.0)
+- Fix password saving between sessions
+- Improve GUI
+
+[All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.10.2...v0.11.0)
+
+## 2022-01-17 - v0.10.2
+
+- QSpinBox for card number
+- Don't apply datetime from the past
+- Disable deprecated Fast punch config option
+
+[All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.10.1...v0.10.2)
+
+## 2021-10-21 - v0.10.1
+
+- Autobuild with Python 3.8 for Windows 7
+
+## 2021-05-14 - v0.10.0
 - Autosleep option for BS v3.9.0
 - Reset secs to 0 for wakeup timestamp for Sleep Card
 - Lint (Flake8) fixes
 
-## [0.9.0] - 2020-11-09
+## 2020-11-09 - v0.9.0
 - Master station v1.8 support
 - Compatibility with MS v1.6 (only reading card)
 - Added auto card polling mode

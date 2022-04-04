@@ -12,7 +12,7 @@ import design
 from sportiduino import Sportiduino, SportiduinoTimeout
 from basestation import BaseStation
 from datetime import datetime, timedelta, timezone
-from PyQt5 import QtWidgets, QtPrintSupport
+from PyQt5 import QtCore, QtWidgets, QtPrintSupport
 from PyQt5.QtCore import QSizeF, QSettings
 from PyQt5.QtPrintSupport import QPrinter
 from PyQt5.QtCore import QTranslator
@@ -20,11 +20,12 @@ from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QTimeZone
 from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QMessageBox
 from six import int2byte
 
 _translate = QCoreApplication.translate
 
-sportiduinopq_version_string = "v0.10.0"
+sportiduinopq_version_string = "v0.11.0"
 
 
 class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
@@ -69,33 +70,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             availablePorts.sort()
         elif platform.system() == 'Windows':
             availablePorts = ['COM' + str(i) for i in range(32)]
-        self.ui.choiseCom.addItems(availablePorts)
+        self.ui.cbChoiseCom.addItems(availablePorts)
         self.ui.cbUartPort.addItems(availablePorts)
-
-        self.ui.Connect.clicked.connect(self.Connect_clicked)
-        self.ui.ReadCard.clicked.connect(self.ReadCard_clicked)
-        self.ui.InitCard.clicked.connect(self.InitCard_clicked)
-        self.ui.SetTime.clicked.connect(self.SetTime_clicked)
-        self.ui.SetNum.clicked.connect(self.SetNum_clicked)
-        self.ui.SetStart.clicked.connect(self.SetStart_clicked)
-        self.ui.SetFinish.clicked.connect(self.SetFinish_clicked)
-        self.ui.CheckSt.clicked.connect(self.CheckSt_clicked)
-        self.ui.ClearSt.clicked.connect(self.ClearSt_clicked)
-        self.ui.LogCard.clicked.connect(self.LogCard_clicked)
-        self.ui.ReadLog.clicked.connect(self.ReadLog_clicked)
-        self.ui.SleepCard.clicked.connect(self.SleepCard_clicked)
-        self.ui.PassCard.clicked.connect(self.PassCard_clicked)
-        self.ui.SelectPrinter.clicked.connect(self.SelectPrinter_clicked)
-        self.ui.Print.clicked.connect(self.Print_clicked)
-        self.ui.btnApplyPwd.clicked.connect(self.ApplyPwd_clicked)
-        self.ui.btnCreateInfoCard.clicked.connect(self.CreateInfo_clicked)
-        self.ui.btnReadInfo.clicked.connect(self.ReadInfo_clicked)
-        self.ui.btnUartRead.clicked.connect(self.SerialRead_clicked)
-        self.ui.btnUartWrite.clicked.connect(self.SerialWrite_clicked)
-        self.ui.btnClearText.clicked.connect(self.ClearText_clicked)
-        self.ui.btnMsConfigRead.clicked.connect(self.btnMsConfigRead_clicked)
-        self.ui.btnMsConfigWrite.clicked.connect(self.write_ms_config)
-        self.ui.AutoRead.stateChanged.connect(self.autoread_change)
 
         bs_config = BaseStation.Config()
         for key, default_value in vars(bs_config).items():
@@ -106,8 +82,11 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self._apply_settings(bs_config, datetime.now())
 
         self.ui.sbCurPwd1.setValue(bs_config.password[0])
+        self.ui.sbNewPwd1.setValue(bs_config.password[0])
         self.ui.sbCurPwd2.setValue(bs_config.password[1])
+        self.ui.sbNewPwd2.setValue(bs_config.password[1])
         self.ui.sbCurPwd3.setValue(bs_config.password[2])
+        self.ui.sbNewPwd3.setValue(bs_config.password[2])
 
         ianaIds = QTimeZone.availableTimeZoneIds()
         all_timezones = sorted({QTimeZone(id).offsetFromUtc(datetime.now()) for id in ianaIds})
@@ -115,7 +94,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         tzlocalname = None
         for dt in all_timezones:
             tz = timezone(timedelta(seconds=dt))
-            tzname = tz.tzname(None)
+            tzname = self.getTzName(tz)
             if dt == tzlocaloffset:
                 tzlocalname = tzname
             self.ui.cbTimeZone.addItem(tzname, dt)
@@ -123,6 +102,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.cbTimeZone.setCurrentText(tzlocalname)
         else:
             self.ui.cbTimeZone.setCurrentText(timezone(offset=timedelta(0)).tzname(None))
+
+        self.ui.autoReadCheckbox.stateChanged.connect(self.autoreadCheckbox_stateChanged)
 
     def closeEvent(self, event):
         self.config.setValue('geometry', self.saveGeometry())
@@ -135,15 +116,25 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         event.accept()
 
-    def Connect_clicked(self):
+    @staticmethod
+    def getTzName(tz):
+        tzname = tz.tzname(None)
+        if tzname == 'UTC':
+            tzname = '00:00'
+        else:
+            tzname = tzname.replace('UTC', '')
+        return tzname
+
+    @QtCore.pyqtSlot()
+    def on_connectButton_clicked(self):
         if self.connected:
-            self.ui.AutoRead.setChecked(False)
+            self.ui.autoReadCheckbox.setChecked(False)
             self.sportiduino.disconnect()
             self.log('\n' + self.tr("Master station is disconnected"))
             self.connected = False
-            self.ui.Connect.setText(_translate("MainWindow", "Connect"))
+            self.ui.connectButton.setText(_translate("MainWindow", "Connect"))
         else:
-            port = self.ui.choiseCom.currentText()
+            port = self.ui.cbChoiseCom.currentText()
             try:
                 if (port == QCoreApplication.translate("MainWindow", "auto")):
                     self.sportiduino = Sportiduino(debug=True, translator=QCoreApplication.translate)
@@ -155,7 +146,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
                 #self.sportiduino.beep_ok()
                 self.log('\n' + self.tr("Master station {} on port {} is connected").format(self.sportiduino.version, self.sportiduino.port))
-                self.ui.Connect.setText(_translate("MainWindow", "Disconn."))
+                self.ui.connectButton.setText(_translate("MainWindow", "Disconn."))
                 self.connected = True
 
                 self.read_ms_config()
@@ -163,7 +154,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             except Exception as err:
                 self._process_error(err)
 
-    def ReadCard_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_readCardButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -202,13 +194,14 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def InitCard_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_initCardButton_clicked(self):
         if not self._check_connection():
             return
         try:
             self.log("\n" + self.tr("Initialize the participant card"))
 
-            card_num = self.ui.cardNumber.value()
+            card_num = self.ui.sbCardNumber.value()
 
             if (card_num < Sportiduino.MIN_CARD_NUM or card_num > Sportiduino.MAX_CARD_NUM):
                 raise Exception(self.tr("Incorrect card number"))
@@ -218,12 +211,13 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 self.log(self.tr("The participant card No {} ({}) has been initialized successfully")
                         .format(card_num, Sportiduino.card_name(data[0])))
                 if self.ui.AutoIncriment.isChecked():
-                    self.ui.cardNumber.setValue(card_num + 1)
+                    self.ui.sbCardNumber.setValue(card_num + 1)
 
         except Exception as err:
             self._process_error(err)
 
-    def SetNum_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_setNumButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -241,7 +235,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def SetTime_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_setTimeButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -254,7 +249,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def SetStart_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_setStartButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -268,7 +264,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def SetFinish_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_setFinishButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -282,7 +279,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def CheckSt_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_checkStButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -296,7 +294,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def ClearSt_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_clearStButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -310,7 +309,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def LogCard_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_logCardButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -323,7 +323,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def ReadLog_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_readLogButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -348,7 +349,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                     text += ', '.join([str(c) for c in cards])
                 else:
                     for pair in cards:
-                        text += "{:>4} {}".format(*pair) + "\n"
+                        text += "{:>5} {}".format(*pair) + "\n"
                 with open(os.path.join('data', 'station{}_{:%Y%m%d%H%M%S}.csv'.format(data['cp'], datetime.now())), 'w', newline='') as station_backupfile:
                     station_backupfile_writer = csv.writer(station_backupfile, delimiter=',')
                     if isinstance(cards[0], int):
@@ -361,7 +362,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def SleepCard_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_sleepCardButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -374,7 +376,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def PassCard_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_configCardButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -394,7 +397,28 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def ApplyPwd_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_passwordCardButton_clicked(self):
+        if not self._check_connection():
+            return
+
+        try:
+            self.log("\n" + self.tr("Write the password master card"))
+
+            new_password = (self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value())
+            self.sportiduino.init_password_card(new_password)
+
+            self.ui.sbCurPwd3.setValue(self.ui.sbNewPwd3.value())
+            self.ui.sbCurPwd2.setValue(self.ui.sbNewPwd2.value())
+            self.ui.sbCurPwd1.setValue(self.ui.sbNewPwd1.value())
+
+            self._master_card_ok()
+
+        except Exception as err:
+            self._process_error(err)
+
+    @QtCore.pyqtSlot()
+    def on_applyPwdButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -408,7 +432,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def CreateInfo_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_createInfoCardButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -421,7 +446,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def ReadInfo_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_readInfoButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -453,14 +479,16 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         self._logger(text)
 
-    def SelectPrinter_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_selectPrinterButton_clicked(self):
         dialog = QtPrintSupport.QPrintDialog(self.printer)
         dialog.setWindowTitle(self.tr("Printer Selection"))
         if dialog.exec_() == QtWidgets.QDialog.Accepted:
             self.printer = dialog.printer()
             self.ui.printerName.setText(self.printer.printerName())
 
-    def Print_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_printButton_clicked(self):
         try:
             #self.printer.setPageMargins(3,3,3,3,QPrinter.Millimeter)
 
@@ -475,7 +503,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def SerialRead_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_serialReadButton_clicked(self):
         try:
             self.log("\n" + self.tr("Reads info about a base station by UART"))
 
@@ -489,7 +518,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def SerialWrite_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_serialWriteButton_clicked(self):
         try:
             self.log("\n" + self.tr("Writes settings and password to a base station by UART"))
             port = self.ui.cbUartPort.currentText()
@@ -500,13 +530,28 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             password = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
             BaseStation.write_settings_by_serial(port, password, bs_config, wakeuptime)
+            #BaseStation.erase_log_by_serial(port)
 
             self.log(self.tr("Settings and password has been written successfully"))
 
         except Exception as err:
             self._process_error(err)
 
-    def ClearText_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_eraseLogButton_clicked(self):
+        try:
+            if QMessageBox.question(self, self.tr('Erase log'), self.tr('Are you sure you want to erase the base station log permanently?')) != QMessageBox.Yes:
+                return
+            self.log("\n" + self.tr("Erase log of a base station by UART"))
+            port = self.ui.cbUartPort.currentText()
+            BaseStation.erase_log_by_serial(port)
+            self.log(self.tr("Log has been erased successfully"))
+
+        except Exception as err:
+            self._process_error(err)
+
+    @QtCore.pyqtSlot()
+    def on_clearTextButton_clicked(self):
         self.ui.plainTextEdit.setPlainText('')
 
     def read_ms_config(self):
@@ -515,9 +560,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.cbMsAntennaGain.setCurrentIndex(ms_config.antenna_gain - 2)
         if ms_config.timezone is not None:
             tz = timezone(ms_config.timezone)
-            self.ui.cbTimeZone.setCurrentText(tz.tzname(None))
+            self.ui.cbTimeZone.setCurrentText(self.getTzName(tz))
 
-    def btnMsConfigRead_clicked(self):
+    @QtCore.pyqtSlot()
+    def on_msConfigReadButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -527,8 +573,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         except Exception as err:
             self._process_error(err)
 
-    def autoread_change(self):
-        if self.ui.AutoRead.isChecked():
+    @QtCore.pyqtSlot()
+    def autoreadCheckbox_stateChanged(self):
+        if self.ui.autoReadCheckbox.isChecked():
             if not self._check_connection():
                 return
             self.prev_card_number = -1
@@ -537,13 +584,14 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         else:
             self.log("\n" + self.tr("Stop polling cards"))
             self.timer.stop()
-        self.ui.ReadCard.setEnabled(not self.ui.AutoRead.isChecked())
-        self.ui.InitCard.setEnabled(not self.ui.AutoRead.isChecked())
-        self.ui.tab_2.setEnabled(not self.ui.AutoRead.isChecked())
-        self.ui.tab_3.setEnabled(not self.ui.AutoRead.isChecked())
-        self.ui.tab_4.setEnabled(not self.ui.AutoRead.isChecked())
+        self.ui.readCardButton.setEnabled(not self.ui.autoReadCheckbox.isChecked())
+        self.ui.initCardButton.setEnabled(not self.ui.autoReadCheckbox.isChecked())
+        self.ui.tab_2.setEnabled(not self.ui.autoReadCheckbox.isChecked())
+        self.ui.tab_3.setEnabled(not self.ui.autoReadCheckbox.isChecked())
+        self.ui.tab_4.setEnabled(not self.ui.autoReadCheckbox.isChecked())
 
-    def write_ms_config(self):
+    @QtCore.pyqtSlot()
+    def on_msConfigWriteButton_clicked(self):
         if not self._check_connection():
             return
 
@@ -555,7 +603,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
     def _show_card_data(self, data, card_type=None):
         if self.ui.AutoPrint.isChecked():
-            self.ClearText_clicked()
+            self.on_clearTextButton_clicked()
 
         text = []
         if card_type is not None:
@@ -576,8 +624,10 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 text.append(self.tr("Master card to sleep a base station"))
             elif master_type == Sportiduino.MASTER_CARD_READ_BACKUP:
                 text.append(self.tr("Master card to get punches log of a base station"))
-            elif master_type == Sportiduino.MASTER_CARD_SET_PASS:
-                text.append(self.tr("Master card to write password and settings to a base station"))
+            elif master_type == Sportiduino.MASTER_CARD_SET_CONFIG:
+                text.append(self.tr("Master card to write settings to a base station"))
+            elif master_type == Sportiduino.MASTER_CARD_SET_PASSWORD:
+                text.append(self.tr("Master card to write password to a base station"))
             else:
                 text.append(self.tr("Uninitialized card"))
 
@@ -622,7 +672,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.log('\n'.join(text))
 
         if self.ui.AutoPrint.isChecked():
-            self.Print_clicked()
+            self.on_printButton_clicked()
 
     def _save_card_data_to_file(self, data):
         if 'master_card_flag' in data:
@@ -720,7 +770,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.log(self.tr("Version: {}").format(bs_state.version))
 
         # apply settings to ui
-        self._apply_settings(bs_state.config, bs_state.wakeuptime)
+        self._apply_settings(bs_state.config, bs_state.wakeuptime if bs_state.wakeuptime > datetime.now() else datetime.now())
 
         self.log(self.tr("Settings:"))
 

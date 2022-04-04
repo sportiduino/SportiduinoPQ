@@ -52,26 +52,26 @@ class Sportiduino(object):
     CLEAR_STATION  = 249
 
     # Protocol commands
-    CMD_INIT_TIMECARD     = b'\x41'
-    CMD_INIT_CP_NUM_CARD  = b'\x42'
-    CMD_INIT_PASSWDCARD   = b'\x43'  # deprecated
-    CMD_INIT_CARD         = b'\x44'
-    CMD_WRITE_PAGES6_7    = b'\x45'
-    CMD_READ_VERS         = b'\x46'
-    CMD_INIT_BACKUPREADER = b'\x47'
-    CMD_READ_BACKUPREADER = b'\x48'
-    CMD_SET_READ_MODE     = b'\x49'  # deprecated
-    CMD_WRITE_SETTINGS    = b'\x4a'
-    CMD_READ_CARD         = b'\x4b'
-    CMD_READ_RAW          = b'\x4c'
-    CMD_READ_SETTINGS     = b'\x4d'
-    CMD_INIT_SLEEPCARD    = b'\x4e'
-    CMD_APPLY_PWD         = b'\x4f'
-    CMD_INIT_STATECARD    = b'\x50'
-    CMD_READ_CARD_TYPE    = b'\x51'
-    CMD_BEEP_ERROR        = b'\x58'
-    CMD_BEEP_OK           = b'\x59'
-    CMD_INIT_CONFIG_CARD  = b'\x5a'
+    CMD_INIT_TIMECARD      = b'\x41'
+    CMD_INIT_CP_NUM_CARD   = b'\x42'
+    CMD_INIT_PASSWORD_CARD = b'\x43'
+    CMD_INIT_CARD          = b'\x44'
+    CMD_WRITE_PAGES6_7     = b'\x45'
+    CMD_READ_VERS          = b'\x46'
+    CMD_INIT_BACKUPREADER  = b'\x47'
+    CMD_READ_BACKUPREADER  = b'\x48'
+    CMD_SET_READ_MODE      = b'\x49'  # deprecated
+    CMD_WRITE_SETTINGS     = b'\x4a'
+    CMD_READ_CARD          = b'\x4b'
+    CMD_READ_RAW           = b'\x4c'
+    CMD_READ_SETTINGS      = b'\x4d'
+    CMD_INIT_SLEEPCARD     = b'\x4e'
+    CMD_APPLY_PWD          = b'\x4f'
+    CMD_INIT_STATECARD     = b'\x50'
+    CMD_READ_CARD_TYPE     = b'\x51'
+    CMD_BEEP_ERROR         = b'\x58'
+    CMD_BEEP_OK            = b'\x59'
+    CMD_INIT_CONFIG_CARD   = b'\x5a'
 
     # Protocol responses
     RESP_BACKUP         = b'\x61'
@@ -97,7 +97,8 @@ class Sportiduino(object):
     MASTER_CARD_SET_NUMBER   = b'\xFB'
     MASTER_CARD_SLEEP        = b'\xFC'
     MASTER_CARD_READ_BACKUP  = b'\xFD'
-    MASTER_CARD_SET_PASS     = b'\xFE'
+    MASTER_CARD_SET_CONFIG   = b'\xFE'
+    MASTER_CARD_SET_PASSWORD = b'\xFF'
 
     MIN_CARD_NUM = 1
     MAX_CARD_NUM = 65000
@@ -444,6 +445,15 @@ class Sportiduino(object):
         """Initialize card for writing configuration to base station.
         """
         self._send_command(Sportiduino.CMD_INIT_CONFIG_CARD, bs_config_data, wait_response=True)
+
+    def init_password_card(self, new_password):
+        """Initialize card for writing new password to base station.
+        """
+        params = b''
+        params += int2byte(new_password[0])
+        params += int2byte(new_password[1])
+        params += int2byte(new_password[2])
+        self._send_command(Sportiduino.CMD_INIT_PASSWORD_CARD, params, wait_response=True)
 
     def init_state_card(self):
         params = b''

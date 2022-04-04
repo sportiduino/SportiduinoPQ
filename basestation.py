@@ -21,6 +21,7 @@ class BaseStation(object):
 
     SERIAL_FUNC_READ_INFO       = b'\xF0'
     SERIAL_FUNC_WRITE_SETTINGS  = b'\xF1'
+    SERIAL_FUNC_ERASE_LOG       = b'\xF2'
 
     SERIAL_RESP_STATUS = b'\x01'
     SERIAL_RESP_INFO   = b'\x02'
@@ -161,6 +162,10 @@ class BaseStation(object):
         cls._send_command(port, cls.SERIAL_FUNC_WRITE_SETTINGS, parameters=params, timeout=8)
 
     @classmethod
+    def erase_log_by_serial(cls, port):
+        cls._send_command(port, cls.SERIAL_FUNC_ERASE_LOG, timeout=12)
+
+    @classmethod
     def _send_command(cls, port, code, parameters=None, wait_response=True, timeout=None):
         timeout = timeout if timeout is not None else 1
         serial = Serial(port, baudrate=9600, timeout=timeout)
@@ -174,7 +179,6 @@ class BaseStation(object):
     def _preprocess_response(cls, resp_code, data):
         if resp_code == cls.SERIAL_RESP_STATUS:
             err_code = data[0]
-            print(err_code)
             if err_code == cls.SERIAL_ERROR_FUNC:
                 raise SportiduinoException(Sportiduino._translate("sportiduino", "Invalid function code"))
             elif err_code == cls.SERIAL_ERROR_CRC:

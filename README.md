@@ -10,8 +10,9 @@
 Simple GUI software based on [Python module](https://github.com/sportiduino/sportiduinoPython) 
 and PyQt5 for working with [Sportiduino](https://github.com/sportiduino/sportiduino) the electronic timing system for orienteering.
 
-- [Manual](https://github.com/sportiduino/sportiduino/blob/master/Doc/en/UserManual.md)
+- [Manual](https://github.com/sportiduino/sportiduino/blob/master/docs/en/UserManual.md)
 - [Downloads](https://github.com/sportiduino/SportiduinoPQ/releases)
+- [Changelog](CHANGELOG.md)
 
 
 ## Installation

@@ -23,7 +23,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QPushButton" name="Connect">
+         <widget class="QPushButton" name="connectButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
             <horstretch>0</horstretch>
@@ -71,7 +71,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="choiseCom">
+         <widget class="QComboBox" name="cbChoiseCom">
           <property name="font">
            <font>
             <pointsize>12</pointsize>
@@ -163,7 +163,7 @@
            <attribute name="title">
             <string>Main</string>
            </attribute>
-           <widget class="QPushButton" name="Print">
+           <widget class="QPushButton" name="printButton">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -176,7 +176,7 @@
              <string>Print</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="SelectPrinter">
+           <widget class="QPushButton" name="selectPrinterButton">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -189,7 +189,7 @@
              <string>Select Printer</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="ReadCard">
+           <widget class="QPushButton" name="readCardButton">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -263,7 +263,7 @@
              <enum>Qt::Horizontal</enum>
             </property>
            </widget>
-           <widget class="QPushButton" name="InitCard">
+           <widget class="QPushButton" name="initCardButton">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -292,7 +292,7 @@
              <string>AutoIncriment</string>
             </property>
            </widget>
-           <widget class="QSpinBox" name="cardNumber">
+           <widget class="QSpinBox" name="sbCardNumber">
             <property name="geometry">
              <rect>
               <x>110</x>
@@ -311,7 +311,7 @@
              <number>1</number>
             </property>
             <property name="maximum">
-             <number>65000</number>
+             <number>65500</number>
             </property>
            </widget>
            <widget class="QLabel" name="label_11">
@@ -327,7 +327,7 @@
              <string>Card No</string>
             </property>
            </widget>
-           <widget class="QCheckBox" name="AutoRead">
+           <widget class="QCheckBox" name="autoReadCheckbox">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -363,7 +363,7 @@
             <property name="title">
              <string>Sleep Card</string>
             </property>
-            <widget class="QPushButton" name="SleepCard">
+            <widget class="QPushButton" name="sleepCardButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -440,7 +440,7 @@
             <property name="title">
              <string>Dump Card</string>
             </property>
-            <widget class="QPushButton" name="ReadLog">
+            <widget class="QPushButton" name="readLogButton">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -464,7 +464,7 @@
               <string>Read</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="LogCard">
+            <widget class="QPushButton" name="logCardButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -499,7 +499,7 @@
             <property name="title">
              <string>StationNum Card</string>
             </property>
-            <widget class="QPushButton" name="SetNum">
+            <widget class="QPushButton" name="setNumButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -518,7 +518,7 @@
               <string>Set Num</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="SetStart">
+            <widget class="QPushButton" name="setStartButton">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -537,7 +537,7 @@
               <string>Set Start</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="SetFinish">
+            <widget class="QPushButton" name="setFinishButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -556,7 +556,7 @@
               <string>Set Finish</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="CheckSt">
+            <widget class="QPushButton" name="checkStButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -580,7 +580,7 @@
               <string>Check St</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="ClearSt">
+            <widget class="QPushButton" name="clearStButton">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -642,7 +642,7 @@
             <property name="title">
              <string>Date/Time Card</string>
             </property>
-            <widget class="QPushButton" name="SetTime">
+            <widget class="QPushButton" name="setTimeButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -677,7 +677,7 @@
             <property name="title">
              <string>State Card</string>
             </property>
-            <widget class="QPushButton" name="btnCreateInfoCard">
+            <widget class="QPushButton" name="createInfoCardButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -696,7 +696,7 @@
               <string>Create</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="btnReadInfo">
+            <widget class="QPushButton" name="readInfoButton">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -734,7 +734,7 @@
             <property name="title">
              <string>Password</string>
             </property>
-            <widget class="QPushButton" name="btnApplyPwd">
+            <widget class="QPushButton" name="applyPwdButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -885,17 +885,17 @@
              <string>Active Time (h)</string>
             </property>
            </widget>
-           <widget class="QPushButton" name="PassCard">
+           <widget class="QPushButton" name="configCardButton">
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>340</y>
+              <y>380</y>
               <width>231</width>
               <height>31</height>
              </rect>
             </property>
             <property name="toolTip">
-             <string>Creates the master card to write password and settings to a base station</string>
+             <string>Creates the master card to write settings to a base station</string>
             </property>
             <property name="text">
              <string>Create Config Card</string>
@@ -981,9 +981,9 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>450</y>
+              <y>430</y>
               <width>231</width>
-              <height>151</height>
+              <height>181</height>
              </rect>
             </property>
             <property name="title">
@@ -1055,7 +1055,7 @@
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
              </property>
             </widget>
-            <widget class="QPushButton" name="btnUartRead">
+            <widget class="QPushButton" name="serialReadButton">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -1071,7 +1071,7 @@
               <string>Read</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="btnUartWrite">
+            <widget class="QPushButton" name="serialWriteButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -1107,6 +1107,22 @@
              </property>
              <property name="maximum">
               <number>255</number>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="eraseLogButton">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>150</y>
+               <width>211</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="toolTip">
+              <string>Erase log of a base station by UART (BS >=vX.10.0)</string>
+             </property>
+             <property name="text">
+              <string>Erase Log</string>
              </property>
             </widget>
            </widget>
@@ -1202,6 +1218,9 @@
             </property>
            </widget>
            <widget class="QCheckBox" name="cbFastPunch">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -1211,7 +1230,7 @@
              </rect>
             </property>
             <property name="text">
-             <string>Fast Punch</string>
+             <string>Fast Punch (deprecated)</string>
             </property>
            </widget>
            <widget class="QCheckBox" name="cbAutosleep">
@@ -1228,6 +1247,22 @@
             </property>
             <property name="text">
              <string>AutoSleep</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="passwordCardButton">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>340</y>
+              <width>231</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>Creates the master card to write password to a base station (MS >=v1.9.0)</string>
+            </property>
+            <property name="text">
+             <string>Create Password Card</string>
             </property>
            </widget>
           </widget>
@@ -1306,7 +1341,7 @@
               </property>
              </item>
             </widget>
-            <widget class="QPushButton" name="btnMsConfigRead">
+            <widget class="QPushButton" name="msConfigReadButton">
              <property name="geometry">
               <rect>
                <x>10</x>
@@ -1322,7 +1357,7 @@
               <string>Read</string>
              </property>
             </widget>
-            <widget class="QPushButton" name="btnMsConfigWrite">
+            <widget class="QPushButton" name="msConfigWriteButton">
              <property name="geometry">
               <rect>
                <x>120</x>
@@ -1343,7 +1378,7 @@
               <rect>
                <x>10</x>
                <y>70</y>
-               <width>91</width>
+               <width>121</width>
                <height>31</height>
               </rect>
              </property>
@@ -1354,9 +1389,9 @@
             <widget class="QComboBox" name="cbTimeZone">
              <property name="geometry">
               <rect>
-               <x>100</x>
+               <x>130</x>
                <y>70</y>
-               <width>121</width>
+               <width>91</width>
                <height>31</height>
               </rect>
              </property>
@@ -1399,7 +1434,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="btnClearText">
+       <widget class="QPushButton" name="clearTextButton">
         <property name="font">
          <font>
           <pointsize>12</pointsize>
@@ -1436,8 +1471,8 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>Connect</tabstop>
-  <tabstop>choiseCom</tabstop>
+  <tabstop>connectButton</tabstop>
+  <tabstop>cbChoiseCom</tabstop>
  </tabstops>
  <resources/>
  <connections/>

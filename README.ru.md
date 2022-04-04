@@ -10,8 +10,9 @@
 Простая GUI программа для работы с системой электронной отметки для спортивного ориентирования [Sportiduino](https://github.com/sportiduino/sportiduino),
 основанная на [Python модуле](https://github.com/sportiduino/sportiduinoPython) и PyQt5.
 
-- [Руководство пользователя](https://github.com/sportiduino/sportiduino/blob/master/Doc/ru/UserManual.md)
+- [Руководство пользователя](https://github.com/sportiduino/sportiduino/blob/master/docs/ru/UserManual.md)
 - [Скачать](https://github.com/sportiduino/SportiduinoPQ/releases)
+- [Список изменений](CHANGELOG.ru.md)
 
 
 ## Установка
