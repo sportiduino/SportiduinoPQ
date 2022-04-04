@@ -103,7 +103,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         else:
             self.ui.cbTimeZone.setCurrentText(timezone(offset=timedelta(0)).tzname(None))
 
-        self.ui.autoReadCheckbox.stateChanged.connect(self.autoreadCheckbox_stateChanged)
+        self.ui.cbAutoRead.stateChanged.connect(self.cbAutoRead_stateChanged)
 
     def closeEvent(self, event):
         self.config.setValue('geometry', self.saveGeometry())
@@ -128,7 +128,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
     @QtCore.pyqtSlot()
     def on_connectButton_clicked(self):
         if self.connected:
-            self.ui.autoReadCheckbox.setChecked(False)
+            self.ui.cbAutoRead.setChecked(False)
             self.sportiduino.disconnect()
             self.log('\n' + self.tr("Master station is disconnected"))
             self.connected = False
@@ -206,11 +206,14 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             if (card_num < Sportiduino.MIN_CARD_NUM or card_num > Sportiduino.MAX_CARD_NUM):
                 raise Exception(self.tr("Incorrect card number"))
 
-            code, data = self.sportiduino.init_card(card_num)
+            enable_fast_punch = False
+            if self.ui.cbFastPunch.isChecked():
+                enable_fast_punch = True
+            code, data = self.sportiduino.init_card(card_num, fast_punch=enable_fast_punch)
             if code == Sportiduino.RESP_OK:
                 self.log(self.tr("The participant card No {} ({}) has been initialized successfully")
                         .format(card_num, Sportiduino.card_name(data[0])))
-                if self.ui.AutoIncriment.isChecked():
+                if self.ui.cbAutoIncriment.isChecked():
                     self.ui.sbCardNumber.setValue(card_num + 1)
 
         except Exception as err:
@@ -574,8 +577,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
-    def autoreadCheckbox_stateChanged(self):
-        if self.ui.autoReadCheckbox.isChecked():
+    def cbAutoRead_stateChanged(self):
+        if self.ui.cbAutoRead.isChecked():
             if not self._check_connection():
                 return
             self.prev_card_number = -1
@@ -584,11 +587,11 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         else:
             self.log("\n" + self.tr("Stop polling cards"))
             self.timer.stop()
-        self.ui.readCardButton.setEnabled(not self.ui.autoReadCheckbox.isChecked())
-        self.ui.initCardButton.setEnabled(not self.ui.autoReadCheckbox.isChecked())
-        self.ui.tab_2.setEnabled(not self.ui.autoReadCheckbox.isChecked())
-        self.ui.tab_3.setEnabled(not self.ui.autoReadCheckbox.isChecked())
-        self.ui.tab_4.setEnabled(not self.ui.autoReadCheckbox.isChecked())
+        self.ui.readCardButton.setEnabled(not self.ui.cbAutoRead.isChecked())
+        self.ui.initCardButton.setEnabled(not self.ui.cbAutoRead.isChecked())
+        self.ui.tab_2.setEnabled(not self.ui.cbAutoRead.isChecked())
+        self.ui.tab_3.setEnabled(not self.ui.cbAutoRead.isChecked())
+        self.ui.tab_4.setEnabled(not self.ui.cbAutoRead.isChecked())
 
     @QtCore.pyqtSlot()
     def on_msConfigWriteButton_clicked(self):
@@ -602,7 +605,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     def _show_card_data(self, data, card_type=None):
-        if self.ui.AutoPrint.isChecked():
+        if self.ui.cbAutoPrint.isChecked():
             self.on_clearTextButton_clicked()
 
         text = []
@@ -671,7 +674,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         self.log('\n'.join(text))
 
-        if self.ui.AutoPrint.isChecked():
+        if self.ui.cbAutoPrint.isChecked():
             self.on_printButton_clicked()
 
     def _save_card_data_to_file(self, data):

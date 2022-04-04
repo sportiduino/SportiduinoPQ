@@ -2,11 +2,13 @@
 
 # Form implementation generated from reading ui file 'design.ui'
 #
-# Created by: PyQt5 UI code generator 5.10.1
+# Created by: PyQt5 UI code generator 5.14.1
 #
 # WARNING! All changes made in this file will be lost!
 
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -92,9 +94,9 @@ class Ui_MainWindow(object):
         self.readCardButton = QtWidgets.QPushButton(self.tab_1)
         self.readCardButton.setGeometry(QtCore.QRect(10, 10, 221, 61))
         self.readCardButton.setObjectName("readCardButton")
-        self.AutoPrint = QtWidgets.QCheckBox(self.tab_1)
-        self.AutoPrint.setGeometry(QtCore.QRect(10, 230, 191, 31))
-        self.AutoPrint.setObjectName("AutoPrint")
+        self.cbAutoPrint = QtWidgets.QCheckBox(self.tab_1)
+        self.cbAutoPrint.setGeometry(QtCore.QRect(10, 230, 191, 31))
+        self.cbAutoPrint.setObjectName("cbAutoPrint")
         self.printerName = QtWidgets.QLabel(self.tab_1)
         self.printerName.setGeometry(QtCore.QRect(10, 160, 221, 31))
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
@@ -117,9 +119,9 @@ class Ui_MainWindow(object):
         self.initCardButton = QtWidgets.QPushButton(self.tab_1)
         self.initCardButton.setGeometry(QtCore.QRect(10, 340, 221, 61))
         self.initCardButton.setObjectName("initCardButton")
-        self.AutoIncriment = QtWidgets.QCheckBox(self.tab_1)
-        self.AutoIncriment.setGeometry(QtCore.QRect(10, 410, 221, 31))
-        self.AutoIncriment.setObjectName("AutoIncriment")
+        self.cbAutoIncriment = QtWidgets.QCheckBox(self.tab_1)
+        self.cbAutoIncriment.setGeometry(QtCore.QRect(10, 410, 221, 31))
+        self.cbAutoIncriment.setObjectName("cbAutoIncriment")
         self.sbCardNumber = QtWidgets.QSpinBox(self.tab_1)
         self.sbCardNumber.setGeometry(QtCore.QRect(110, 290, 121, 31))
         self.sbCardNumber.setFrame(True)
@@ -130,9 +132,12 @@ class Ui_MainWindow(object):
         self.label_11 = QtWidgets.QLabel(self.tab_1)
         self.label_11.setGeometry(QtCore.QRect(10, 290, 91, 31))
         self.label_11.setObjectName("label_11")
-        self.autoReadCheckbox = QtWidgets.QCheckBox(self.tab_1)
-        self.autoReadCheckbox.setGeometry(QtCore.QRect(10, 80, 191, 31))
-        self.autoReadCheckbox.setObjectName("autoReadCheckbox")
+        self.cbAutoRead = QtWidgets.QCheckBox(self.tab_1)
+        self.cbAutoRead.setGeometry(QtCore.QRect(10, 80, 191, 31))
+        self.cbAutoRead.setObjectName("cbAutoRead")
+        self.cbFastPunch = QtWidgets.QCheckBox(self.tab_1)
+        self.cbFastPunch.setGeometry(QtCore.QRect(10, 450, 221, 31))
+        self.cbFastPunch.setObjectName("cbFastPunch")
         self.Log.addTab(self.tab_1, "")
         self.tab_2 = QtWidgets.QWidget()
         self.tab_2.setObjectName("tab_2")
@@ -355,10 +360,10 @@ class Ui_MainWindow(object):
         self.cbCheckInitTime = QtWidgets.QCheckBox(self.tab_3)
         self.cbCheckInitTime.setGeometry(QtCore.QRect(10, 90, 221, 31))
         self.cbCheckInitTime.setObjectName("cbCheckInitTime")
-        self.cbFastPunch = QtWidgets.QCheckBox(self.tab_3)
-        self.cbFastPunch.setEnabled(False)
-        self.cbFastPunch.setGeometry(QtCore.QRect(10, 170, 221, 31))
-        self.cbFastPunch.setObjectName("cbFastPunch")
+        self.cbFastPunch1 = QtWidgets.QCheckBox(self.tab_3)
+        self.cbFastPunch1.setEnabled(False)
+        self.cbFastPunch1.setGeometry(QtCore.QRect(10, 170, 221, 31))
+        self.cbFastPunch1.setObjectName("cbFastPunch1")
         self.cbAutosleep = QtWidgets.QCheckBox(self.tab_3)
         self.cbAutosleep.setGeometry(QtCore.QRect(10, 130, 221, 31))
         self.cbAutosleep.setObjectName("cbAutosleep")
@@ -449,13 +454,14 @@ class Ui_MainWindow(object):
         self.selectPrinterButton.setText(_translate("MainWindow", "Select Printer"))
         self.readCardButton.setToolTip(_translate("MainWindow", "Reads a participant card"))
         self.readCardButton.setText(_translate("MainWindow", "Read Card"))
-        self.AutoPrint.setText(_translate("MainWindow", "AutoPrint"))
+        self.cbAutoPrint.setText(_translate("MainWindow", "AutoPrint"))
         self.initCardButton.setToolTip(_translate("MainWindow", "Inits a participant card"))
         self.initCardButton.setText(_translate("MainWindow", "Init Card"))
-        self.AutoIncriment.setText(_translate("MainWindow", "AutoIncriment"))
+        self.cbAutoIncriment.setText(_translate("MainWindow", "AutoIncriment"))
         self.label_11.setText(_translate("MainWindow", "Card No"))
-        self.autoReadCheckbox.setToolTip(_translate("MainWindow", "Continuous card read mode"))
-        self.autoReadCheckbox.setText(_translate("MainWindow", "AutoRead"))
+        self.cbAutoRead.setToolTip(_translate("MainWindow", "Continuous card read mode"))
+        self.cbAutoRead.setText(_translate("MainWindow", "AutoRead"))
+        self.cbFastPunch.setText(_translate("MainWindow", "Fast Punch"))
         self.Log.setTabText(self.Log.indexOf(self.tab_1), _translate("MainWindow", "Main"))
         self.groupBox.setTitle(_translate("MainWindow", "Sleep Card"))
         self.sleepCardButton.setToolTip(_translate("MainWindow", "Creates the master card to force a base station to sleep and to wake-up at competion date"))
@@ -525,7 +531,7 @@ class Ui_MainWindow(object):
         self.cbStartFinish.setText(_translate("MainWindow", "Start / Finish"))
         self.cbCheckInitTime.setToolTip(_translate("MainWindow", "If card has invalid InitTime don\'t punch"))
         self.cbCheckInitTime.setText(_translate("MainWindow", "Check InitTime"))
-        self.cbFastPunch.setText(_translate("MainWindow", "Fast Punch (deprecated)"))
+        self.cbFastPunch1.setText(_translate("MainWindow", "Fast Punch (deprecated)"))
         self.cbAutosleep.setToolTip(_translate("MainWindow", "Autosleep BS after 48 h"))
         self.cbAutosleep.setText(_translate("MainWindow", "AutoSleep"))
         self.passwordCardButton.setToolTip(_translate("MainWindow", "Creates the master card to write password to a base station (MS >=v1.9.0)"))
@@ -560,4 +566,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
