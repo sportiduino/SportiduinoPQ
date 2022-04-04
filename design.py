@@ -125,7 +125,7 @@ class Ui_MainWindow(object):
         self.sbCardNumber.setFrame(True)
         self.sbCardNumber.setAlignment(QtCore.Qt.AlignRight)
         self.sbCardNumber.setMinimum(1)
-        self.sbCardNumber.setMaximum(65500)
+        self.sbCardNumber.setMaximum(65535)
         self.sbCardNumber.setObjectName("sbCardNumber")
         self.label_11 = QtWidgets.QLabel(self.tab_1)
         self.label_11.setGeometry(QtCore.QRect(10, 290, 91, 31))

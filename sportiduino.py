@@ -101,7 +101,7 @@ class Sportiduino(object):
     MASTER_CARD_SET_PASSWORD = b'\xFF'
 
     MIN_CARD_NUM = 1
-    MAX_CARD_NUM = 65000
+    MAX_CARD_NUM = 65535
 
     class Version(object):
         """Sportiduino version."""
