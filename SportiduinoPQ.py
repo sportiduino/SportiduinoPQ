@@ -207,7 +207,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 raise Exception(self.tr("Incorrect card number"))
 
             enable_fast_punch = False
-            if self.ui.cbFastPunch.isChecked():
+            if self.ui.cbFastPunchCard.isChecked():
                 enable_fast_punch = True
             code, data = self.sportiduino.init_card(card_num, fast_punch=enable_fast_punch)
             if code == Sportiduino.RESP_OK:
@@ -746,20 +746,20 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
         self.ui.cbActiveTime.setCurrentIndex(bs_config.active_mode_duration)
 
-        self.ui.cbStartFinish.setChecked(bs_config.check_start_finish)
+        self.ui.cbStartAsCheck.setChecked(bs_config.start_as_check)
         self.ui.cbCheckInitTime.setChecked(bs_config.check_card_init_time)
         self.ui.cbAutosleep.setChecked(bs_config.autosleep)
-        self.ui.cbFastPunch.setChecked(bs_config.fast_punch)
+        self.ui.cbFastPunchConfig.setChecked(bs_config.enable_fast_punch)
 
         self.ui.cbAntennaGain.setCurrentIndex(bs_config.antenna_gain - 2)
 
     def _get_config_from_ui(self):
         bs_config = BaseStation.Config()
         bs_config.active_mode_duration = self.ui.cbActiveTime.currentIndex()
-        bs_config.check_start_finish = self.ui.cbStartFinish.isChecked()
+        bs_config.start_as_check = self.ui.cbStartAsCheck.isChecked()
         bs_config.check_card_init_time = self.ui.cbCheckInitTime.isChecked()
         bs_config.autosleep = self.ui.cbAutosleep.isChecked()
-        bs_config.fast_punch = self.ui.cbFastPunch.isChecked()
+        bs_config.enable_fast_punch = self.ui.cbFastPunchConfig.isChecked()
         bs_config.antenna_gain = self.ui.cbAntennaGain.currentIndex() + 2
         bs_config.password = [self.ui.sbNewPwd1.value(), self.ui.sbNewPwd2.value(), self.ui.sbNewPwd3.value()]
 
@@ -789,14 +789,14 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.log(text)
 
         self.log(self.tr("   Active time (h): {}").format(self.ui.cbActiveTime.currentText()))
-        if bs_state.config.check_start_finish:
+        if bs_state.config.start_as_check:
             self.log(self.tr("   Check start/finish flag"))
         if bs_state.config.check_card_init_time:
             self.log(self.tr("   Check card init time flag"))
         if bs_state.config.autosleep:
             self.log(self.tr("   Autosleep flag"))
 
-        if bs_state.config.fast_punch:
+        if bs_state.config.enable_fast_punch:
             self.log(self.tr("   Fast punch flag"))
         self.log(self.tr("   Antenna Gain: {}").format(self.ui.cbAntennaGain.currentText()))
 

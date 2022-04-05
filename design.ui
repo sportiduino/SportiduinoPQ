@@ -343,7 +343,7 @@
              <string>AutoRead</string>
             </property>
            </widget>
-           <widget class="QCheckBox" name="cbFastPunch">
+           <widget class="QCheckBox" name="cbFastPunchCard">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -351,6 +351,10 @@
               <width>221</width>
               <height>31</height>
              </rect>
+            </property>
+            <property name="toolTip">
+             <string>Experimental new fast punch mode.&lt;p&gt;
+If enabled a special sign will be written to the card which will be read by the station &gt;=vX.10.0</string>
             </property>
             <property name="text">
              <string>Fast Punch</string>
@@ -1132,7 +1136,7 @@
               </rect>
              </property>
              <property name="toolTip">
-              <string>Erase log of a base station by UART (BS &gt;=vX.10.0)</string>
+              <string>Erase log of a base station by UART (&gt;=vX.10.0)</string>
              </property>
              <property name="text">
               <string>Erase Log</string>
@@ -1198,7 +1202,7 @@
              <string>Antenna Gain</string>
             </property>
            </widget>
-           <widget class="QCheckBox" name="cbStartFinish">
+           <widget class="QCheckBox" name="cbStartAsCheck">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -1208,10 +1212,10 @@
              </rect>
             </property>
             <property name="toolTip">
-             <string>Check start / finish punches</string>
+             <string>If enabled &lt;b&gt;Start station&lt;/b&gt; check that no punches at card</string>
             </property>
             <property name="text">
-             <string>Start / Finish</string>
+             <string>Start as Check</string>
             </property>
            </widget>
            <widget class="QCheckBox" name="cbCheckInitTime">
@@ -1230,9 +1234,9 @@
              <string>Check InitTime</string>
             </property>
            </widget>
-           <widget class="QCheckBox" name="cbFastPunchDeprecated">
+           <widget class="QCheckBox" name="cbFastPunchConfig">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="geometry">
              <rect>
@@ -1242,8 +1246,11 @@
               <height>31</height>
              </rect>
             </property>
+            <property name="toolTip">
+             <string>if enabled &lt;b&gt;Clear station&lt;/b&gt; (&amp;gt;=vX.10.0) set new fast punch mode for card</string>
+            </property>
             <property name="text">
-             <string>Fast Punch (deprecated)</string>
+             <string>Fast Punch</string>
             </property>
            </widget>
            <widget class="QCheckBox" name="cbAutosleep">
@@ -1256,7 +1263,7 @@
              </rect>
             </property>
             <property name="toolTip">
-             <string>Autosleep BS after 48 h</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Autosleep station ~48 hours after last punch + time in active mode&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string>AutoSleep</string>

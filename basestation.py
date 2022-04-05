@@ -61,10 +61,10 @@ class BaseStation(object):
         def __init__(self):
             self.num = 0
             self.active_mode_duration = 2  # hours
-            self.check_start_finish = False
+            self.start_as_check = False
             self.check_card_init_time = False
             self.autosleep = False
-            self.fast_punch = False
+            self.enable_fast_punch = False
             self.antenna_gain = BaseStation.ANTENNA_GAIN_33DB
             self.password = [0, 0, 0]
 
@@ -76,10 +76,10 @@ class BaseStation(object):
             active_mode_bits = config_data[1] & 0x7
             config.active_mode_duration = byte2int(active_mode_bits)
 
-            config.check_start_finish = config_data[1] & 0x08 > 0
+            config.start_as_check = config_data[1] & 0x08 > 0
             config.check_card_init_time = config_data[1] & 0x10 > 0
             config.autosleep = config_data[1] & 0x20 > 0
-            config.fast_punch = config_data[1] & 0x40 > 0
+            config.enable_fast_punch = config_data[1] & 0x80 > 0
 
             config.antenna_gain = byte2int(config_data[2])
             return config
@@ -90,14 +90,14 @@ class BaseStation(object):
 
             flags = self.active_mode_duration
 
-            if self.check_start_finish:
+            if self.start_as_check:
                 flags |= 0x08
             if self.check_card_init_time:
                 flags |= 0x10
             if self.autosleep:
                 flags |= 0x20
-            if self.fast_punch:
-                flags |= 0x40
+            if self.enable_fast_punch:
+                flags |= 0x80
             config_data += int2byte(flags)
             config_data += int2byte(self.antenna_gain)
             config_data += int2byte(self.password[0])
