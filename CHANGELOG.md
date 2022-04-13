@@ -1,7 +1,10 @@
-## 2022-03-25 - v0.11.0
+# SportiduinoPQ Changelog
+
+## 2022-04-13 - v0.11.0
 
 - Password Master card
-- Erase station log possibility (FW >= vX.10.0)
+- Erase station log possibility (BS >= vX.10.0)
+- New fast punch mode (BS >= vX.10.0)
 - Fix password saving between sessions
 - Improve GUI
 
