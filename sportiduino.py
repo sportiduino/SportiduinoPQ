@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-#    Copyright 2018 - 2020 Semyon Yakimov <sdyakimov@gmail.com>
+#    Copyright 2018-2019 Anton Sysoev
+#    Copyright 2018-2022 Semyon Yakimov <sdyakimov@gmail.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -17,7 +18,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-sportiduino.py - Classes to work with Sportiduino v1.2.0 and above.
+sportiduino.py - Classes to work with Sportiduino v1.2.0 or greater.
 """
 
 from six import int2byte, byte2int, iterbytes, print_, PY3
