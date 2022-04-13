@@ -46,9 +46,9 @@ jobs:
       - name: Generate Changelog
         run: |
           # Get text after ## ... <version> from changelog.ru.md and changelog.en.md
-          sed -n "/^##.*${{ github.ref_name }}$/,/^##/{/^##/d ; p}" CHANGELOG.ru.md | sed -z "s/^\n*//g" - > ${{ github.workspace }}-CHANGELOG.txt
+          sed -n "/^##.*${{ github.ref_name }}.*$/,/^##/{/^##/d ; p}" CHANGELOG.ru.md | sed -z "s/^\n*//g" - > ${{ github.workspace }}-CHANGELOG.txt
           printf "\n---\n" >> ${{ github.workspace }}-CHANGELOG.txt
-          sed -n "/^##.*${{ github.ref_name }}$/,/^##/{/^##/d ; p}" CHANGELOG.md | sed -z "s/^\n*//g" - >> ${{ github.workspace }}-CHANGELOG.txt
+          sed -n "/^##.*${{ github.ref_name }}.*$/,/^##/{/^##/d ; p}" CHANGELOG.md | sed -z "s/^\n*//g" - >> ${{ github.workspace }}-CHANGELOG.txt
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')

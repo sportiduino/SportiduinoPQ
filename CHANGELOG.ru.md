@@ -1,6 +1,6 @@
 # Список изменений SportiduinoPQ
 
-## 2022-04-13 - v0.11.0
+## v0.11.0 - 2022-04-13
 
 - Мастер чип пароля
 - Очистка лога станции (прошивка >= vX.10.0)
@@ -10,7 +10,7 @@
 
 [Все изменения](https://github.com/sportiduino/sportiduinopq/compare/v0.10.2...v0.11.0)
 
-## 2022-01-17 - v0.10.2
+## v0.10.2 - 2022-01-17
 
 - QSpinBox для номера чипа
 - Не используются datetime из прошлого (чип сна)
@@ -18,8 +18,12 @@
 
 [Все изменения](https://github.com/sportiduino/sportiduinopq/compare/v0.10.1...v0.10.2)
 
-## 2021-10-21 - v0.10.1
+## v0.10.1 - 2021-10-21
 
 - Автосборка с Python 3.8 для Windows 7
 
+## v0.10.0 - 2021-05-14
+- Опция автосна для BS v3.9.0
+- Reset secs to 0 for wakeup timestamp for Sleep Card
+- Исправления предупреждений Lint (Flake8)
 

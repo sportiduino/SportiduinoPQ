@@ -1,6 +1,6 @@
 # SportiduinoPQ Changelog
 
-## 2022-04-13 - v0.11.0
+## v0.11.0 - 2022-04-13
 
 - Password Master card
 - Erase station log possibility (BS >= vX.10.0)
@@ -10,7 +10,7 @@
 
 [All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.10.2...v0.11.0)
 
-## 2022-01-17 - v0.10.2
+## v0.10.2 - 2022-01-17
 
 - QSpinBox for card number
 - Don't apply datetime from the past
@@ -18,16 +18,20 @@
 
 [All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.10.1...v0.10.2)
 
-## 2021-10-21 - v0.10.1
+## v0.10.1 - 2021-10-21
 
 - Autobuild with Python 3.8 for Windows 7
 
-## 2021-05-14 - v0.10.0
+[All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.10.0...v0.10.1)
+
+## v0.10.0 - 2021-05-14
 - Autosleep option for BS v3.9.0
 - Reset secs to 0 for wakeup timestamp for Sleep Card
 - Lint (Flake8) fixes
 
-## 2020-11-09 - v0.9.0
+[All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.9.0...v0.10.0)
+
+## v0.9.0 - 2020-11-09
 - Master station v1.8 support
 - Compatibility with MS v1.6 (only reading card)
 - Added auto card polling mode
