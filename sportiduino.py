@@ -460,19 +460,20 @@ class Sportiduino(object):
         params = b''
         self._send_command(Sportiduino.CMD_INIT_STATECARD, params, wait_response=True)
 
-    def read_state_card(self):
-        pageData = self.read_card_raw()
+    def read_state_card(self, data=None):
+        if data is None:
+            data = self.read_card_raw()
 
-        if pageData[4][2] != 255 or pageData[4][1] != byte2int(Sportiduino.MASTER_CARD_GET_STATE):
+        if data[4][2] != 255 or data[4][1] != byte2int(Sportiduino.MASTER_CARD_GET_STATE):
             raise SportiduinoException(Sportiduino._translate("sportiduino", "The state-card not found"))
 
         state = {}
-        state['version'] = pageData[8][0:3]
-        state['config'] = pageData[9]
-        state['battery'] = byte2int(pageData[10][0])
-        state['mode'] = byte2int(pageData[10][1])
-        state['timestamp'] = datetime.fromtimestamp(Sportiduino._to_int(pageData[11][0:4]))
-        state['wakeuptime'] = datetime.fromtimestamp(Sportiduino._to_int(pageData[12][0:4]))
+        state['version'] = data[8][0:3]
+        state['config'] = data[9]
+        state['battery'] = byte2int(data[10][0])
+        state['mode'] = byte2int(data[10][1])
+        state['timestamp'] = datetime.fromtimestamp(Sportiduino._to_int(data[11][0:4]))
+        state['wakeuptime'] = datetime.fromtimestamp(Sportiduino._to_int(data[12][0:4]))
 
         return state
 
@@ -654,6 +655,7 @@ class Sportiduino(object):
     @staticmethod
     def raw_data_to_card_data(data):
         ret = {}
+        ret['rawdata'] = data
         master_card_byte = byte2int(data[4][2])
         if master_card_byte == 0xFF:
             ret['master_card_flag'] = True

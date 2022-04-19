@@ -1436,7 +1436,7 @@ If enabled a special sign will be written to the card which will be read by the 
        <enum>QLayout::SetDefaultConstraint</enum>
       </property>
       <item>
-       <widget class="QPlainTextEdit" name="plainTextEdit">
+       <widget class="QTextEdit" name="logText">
         <property name="font">
          <font>
           <family>Monospace</family>

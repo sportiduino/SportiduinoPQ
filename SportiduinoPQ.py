@@ -477,28 +477,16 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         try:
             self.log("\n" + self.tr("Read the card contained a base station state"))
 
-            state = self.sportiduino.read_state_card()
-
-            bs_state = BaseStation.State()
-            bs_state.version = Sportiduino.Version(*state['version'])
-            bs_state.config = BaseStation.Config.unpack(state['config'])
-
-            bs_state.battery = BaseStation.Battery(state['battery'])
-            bs_state.mode = state['mode']
-
-            bs_state.timestamp = state['timestamp']
-            bs_state.wakeuptime = state['wakeuptime']
-
-            self._show_base_station_state(bs_state)
+            self._read_state_card()
 
         except Exception as err:
             self._process_error(err)
 
     def log(self, text):
         print(text)
-        self.ui.plainTextEdit.appendPlainText(text)
+        self.ui.logText.append(text)
         # Scroll down
-        self.ui.plainTextEdit.verticalScrollBar().setValue(self.ui.plainTextEdit.verticalScrollBar().maximum())
+        self.ui.logText.verticalScrollBar().setValue(self.ui.logText.verticalScrollBar().maximum())
 
         self._logger(text)
 
@@ -519,7 +507,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             page_size.setHeight(self.printer.height())
             page_size.setWidth(self.printer.width())
 
-            text_document = self.ui.plainTextEdit.document().clone()
+            text_document = self.ui.logText.document().clone()
             text_document.setPageSize(page_size)
             text_document.setDocumentMargin(0.0)
             text_document.print(self.printer)
@@ -553,7 +541,6 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             password = (self.ui.sbCurPwd1.value(), self.ui.sbCurPwd2.value(), self.ui.sbCurPwd3.value())
             BaseStation.write_settings_by_serial(port, password, bs_config, wakeuptime)
-            #BaseStation.erase_log_by_serial(port)
 
             self.log(self.tr("Settings and password has been written successfully"))
 
@@ -575,7 +562,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
     @QtCore.pyqtSlot()
     def on_clearTextButton_clicked(self):
-        self.ui.plainTextEdit.setPlainText('')
+        self.ui.logText.clear()
 
     def read_ms_config(self):
         ms_config = self.sportiduino.read_settings()
@@ -639,6 +626,9 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
 
             if master_type == Sportiduino.MASTER_CARD_GET_STATE:
                 text.append(self.tr("Master card to get info about a base station"))
+                self.log('\n'.join(text))
+                text = []
+                self._read_state_card(data['rawdata'])
             elif master_type == Sportiduino.MASTER_CARD_SET_TIME:
                 text.append(self.tr("Master card to set time of a base station"))
             elif master_type == Sportiduino.MASTER_CARD_SET_NUMBER:
@@ -653,44 +643,45 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 text.append(self.tr("Master card to write password to a base station"))
             else:
                 text.append(self.tr("Uninitialized card"))
+            self.log('\n'.join(text))
+            return
 
-        else:
-            # show participant card info
-            card_number = data['card_number']
-            init_time = -1
-            if 'init_timestamp' in data:
-                init_time = (data['init_timestamp'])
+        # show participant card info
+        card_number = data['card_number']
+        init_time = -1
+        if 'init_timestamp' in data:
+            init_time = (data['init_timestamp'])
 
-            if init_time != 0 and card_number >= Sportiduino.MIN_CARD_NUM and card_number <= Sportiduino.MAX_CARD_NUM:
-                punches_count = 0
+        if init_time != 0 and card_number >= Sportiduino.MIN_CARD_NUM and card_number <= Sportiduino.MAX_CARD_NUM:
+            punches_count = 0
 
-                text.append(self.tr("Participant card No {}").format(card_number))
-                if init_time > 0:
-                    text.append(self.tr("Init time {}").format(datetime.fromtimestamp(init_time)))
+            text.append(self.tr("Participant card No {}").format(card_number))
+            if init_time > 0:
+                text.append(self.tr("Init time {}").format(datetime.fromtimestamp(init_time)))
 
-                text.append(self.tr("Punches (Check point - Time):"))
-                punch_str = "{:>5} - {}"
-                if 'start' in data:
-                    text.append(punch_str.format(self.tr("Start"), data["start"]))
+            text.append(self.tr("Punches (Check point - Time):"))
+            punch_str = "{:>5} - {}"
+            if 'start' in data:
+                text.append(punch_str.format(self.tr("Start"), data["start"]))
 
-                punches = data['punches']
-                for punch in punches:
-                    punches_count += 1
+            punches = data['punches']
+            for punch in punches:
+                punches_count += 1
 
-                    cp = punch[0]
-                    cp_time = punch[1]
+                cp = punch[0]
+                cp_time = punch[1]
 
-                    text.append(punch_str.format(cp, cp_time))
+                text.append(punch_str.format(cp, cp_time))
 
-                if 'finish' in data:
-                    text.append(punch_str.format(self.tr("Finish"), data["finish"]))
+            if 'finish' in data:
+                text.append(punch_str.format(self.tr("Finish"), data["finish"]))
 
-                if punches_count == 0:
-                    text.append(self.tr("No punches"))
-                else:
-                    text.append(self.tr("Total punches {}").format(punches_count))
+            if punches_count == 0:
+                text.append(self.tr("No punches"))
             else:
-                text.append(self.tr("Uninitialized card"))
+                text.append(self.tr("Total punches {}").format(punches_count))
+        else:
+            text.append(self.tr("Uninitialized card"))
 
         self.log('\n'.join(text))
 
@@ -827,7 +818,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         if(bs_state.battery.isOk):
             self.log(self.tr("Battery: OK") + voltageText)
         else:
-            self.log(self.tr("Battery: Low") + voltageText)
+            self.log("<b>" + self.tr("Battery: Low") + voltageText + "</b>")
 
         if(bs_state.mode == BaseStation.MODE_ACTIVE):
             self.log(self.tr("Mode: Active"))
@@ -837,11 +828,29 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log(self.tr("Mode: Sleep"))
 
         text = self.tr("Clock: {}").format(bs_state.timestamp)
+        print(bs_state.timestamp, datetime.now() - timedelta(minutes=1))
+        if bs_state.timestamp < (datetime.now() - timedelta(minutes=1)):
+            text = "<b>" + text + "</b"
         self.log(text)
         text = self.tr("Alarm: {}").format(bs_state.wakeuptime)
         self.log(text)
 
         self.log(self.tr("Settings displayed by UI has been chaged to the base station settings"))
+
+    def _read_state_card(self, data=None):
+        state = self.sportiduino.read_state_card(data)
+
+        bs_state = BaseStation.State()
+        bs_state.version = Sportiduino.Version(*state['version'])
+        bs_state.config = BaseStation.Config.unpack(state['config'])
+
+        bs_state.battery = BaseStation.Battery(state['battery'])
+        bs_state.mode = state['mode']
+
+        bs_state.timestamp = state['timestamp']
+        bs_state.wakeuptime = state['wakeuptime']
+
+        self._show_base_station_state(bs_state)
 
     def _process_error(self, err):
         self.log(self.tr("Error: {}").format(err))
