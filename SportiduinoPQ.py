@@ -28,6 +28,7 @@ import time
 import json
 import csv
 import design
+import functools
 
 from sportiduino import Sportiduino, SportiduinoTimeout
 from basestation import BaseStation
@@ -145,7 +146,19 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             tzname = tzname.replace('UTC', '')
         return tzname
 
+    def block_gui(func):
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            self.setCursor(QtCore.Qt.WaitCursor)
+            #self.ui.centralwidget.setEnabled(False)
+            #QtWidgets.QApplication.processEvents(QtCore.QEventLoop.ExcludeUserInputEvents)
+            func(self, *args, **kwargs)
+            self.unsetCursor()
+            #self.ui.centralwidget.setEnabled(True)
+        return wrapper
+
     @QtCore.pyqtSlot()
+    @block_gui
     def on_connectButton_clicked(self):
         if self.connected:
             self.ui.cbAutoRead.setChecked(False)
@@ -175,6 +188,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
                 self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_readCardButton_clicked(self):
         if not self._check_connection():
             return
@@ -215,6 +229,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_initCardButton_clicked(self):
         if not self._check_connection():
             return
@@ -240,6 +255,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_setNumButton_clicked(self):
         if not self._check_connection():
             return
@@ -259,6 +275,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_setTimeButton_clicked(self):
         if not self._check_connection():
             return
@@ -273,6 +290,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_setStartButton_clicked(self):
         if not self._check_connection():
             return
@@ -288,6 +306,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_setFinishButton_clicked(self):
         if not self._check_connection():
             return
@@ -303,6 +322,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_checkStButton_clicked(self):
         if not self._check_connection():
             return
@@ -318,6 +338,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_clearStButton_clicked(self):
         if not self._check_connection():
             return
@@ -333,6 +354,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_logCardButton_clicked(self):
         if not self._check_connection():
             return
@@ -347,6 +369,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_readLogButton_clicked(self):
         if not self._check_connection():
             return
@@ -386,6 +409,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_sleepCardButton_clicked(self):
         if not self._check_connection():
             return
@@ -400,6 +424,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_configCardButton_clicked(self):
         if not self._check_connection():
             return
@@ -421,6 +446,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_passwordCardButton_clicked(self):
         if not self._check_connection():
             return
@@ -441,6 +467,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_applyPwdButton_clicked(self):
         if not self._check_connection():
             return
@@ -456,6 +483,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_createInfoCardButton_clicked(self):
         if not self._check_connection():
             return
@@ -470,6 +498,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_readInfoButton_clicked(self):
         if not self._check_connection():
             return
@@ -515,6 +544,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_serialReadButton_clicked(self):
         try:
             self.log("\n" + self.tr("Reads info about a base station by UART"))
@@ -530,6 +560,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_serialWriteButton_clicked(self):
         try:
             self.log("\n" + self.tr("Writes settings and password to a base station by UART"))
@@ -548,6 +579,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self._process_error(err)
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_eraseLogButton_clicked(self):
         try:
             if QMessageBox.question(self, self.tr('Erase log'), self.tr('Are you sure you want to erase the base station log permanently?')) != QMessageBox.Yes:
@@ -573,6 +605,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.cbTimeZone.setCurrentText(self.getTzName(tz))
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_msConfigReadButton_clicked(self):
         if not self._check_connection():
             return
@@ -601,6 +634,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.tab_4.setEnabled(not self.ui.cbAutoRead.isChecked())
 
     @QtCore.pyqtSlot()
+    @block_gui
     def on_msConfigWriteButton_clicked(self):
         if not self._check_connection():
             return
@@ -610,6 +644,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.sportiduino.write_settings(self.ui.cbMsAntennaGain.currentIndex() + 2, tz)
         except Exception as err:
             self._process_error(err)
+
 
     def _show_card_data(self, data, card_type=None):
         if self.ui.cbAutoPrint.isChecked():
@@ -828,9 +863,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log(self.tr("Mode: Sleep"))
 
         text = self.tr("Clock: {}").format(bs_state.timestamp)
-        print(bs_state.timestamp, datetime.now() - timedelta(minutes=1))
         if bs_state.timestamp < (datetime.now() - timedelta(minutes=1)):
-            text = "<b>" + text + "</b"
+            text = "<b>" + text + "</b>"
         self.log(text)
         text = self.tr("Alarm: {}").format(bs_state.wakeuptime)
         self.log(text)
