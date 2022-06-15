@@ -863,7 +863,8 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.log(self.tr("Mode: Sleep"))
 
         text = self.tr("Clock: {}").format(bs_state.timestamp)
-        if bs_state.timestamp < (datetime.now() - timedelta(minutes=1)):
+        if bs_state.timestamp < (datetime.now() - timedelta(minutes=1)) \
+                or bs_state.timestamp > (datetime.now() + timedelta(minutes=1)):
             text = "<b>" + text + "</b>"
         self.log(text)
         text = self.tr("Alarm: {}").format(bs_state.wakeuptime)
