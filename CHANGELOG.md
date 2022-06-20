@@ -1,5 +1,12 @@
 # SportiduinoPQ Changelog
 
+## v0.11.1 - 2022-06-20
+
+- Bold text for low battery or incorrect time of BS
+- Wait cursor
+
+[All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.11.0...v0.11.1)
+
 ## v0.11.0 - 2022-04-13
 
 - Password Master card
