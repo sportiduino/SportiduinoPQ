@@ -87,7 +87,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         availablePorts = []
         if platform.system() == 'Linux':
             availablePorts = [os.path.join('/dev', f) for f in os.listdir('/dev') if
-                              re.match('ttyUSB.+', f)]
+                              re.match('ttyUSB.+|ttyACM.+', f)]
             availablePorts.sort()
         elif platform.system() == 'Windows':
             availablePorts = ['COM' + str(i) for i in range(32)]
