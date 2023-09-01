@@ -1,5 +1,12 @@
 # SportiduinoPQ Changelog
 
+## v0.12.0 - 2023-09-01
+
+- Added refresh ports buttons
+- Fixed widget width for correct text view
+
+[All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.11.1...v0.12.0)
+
 ## v0.11.1 - 2022-06-20
 
 - Bold text for low battery or incorrect time of BS

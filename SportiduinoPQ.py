@@ -41,12 +41,12 @@ from PyQt5.QtCore import QLocale
 from PyQt5.QtCore import QCoreApplication
 from PyQt5.QtCore import QTimeZone
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QStyle
 from six import int2byte
 
 _translate = QCoreApplication.translate
 
-sportiduinopq_version_string = "v0.11.1"
+sportiduinopq_version_string = "v0.12.0"
 
 
 class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
@@ -56,6 +56,11 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         self.setWindowTitle("SportiduinoPQ {}".format(sportiduinopq_version_string))
+
+        pixmapi = QStyle.SP_BrowserReload
+        icon = self.style().standardIcon(pixmapi)
+        self.ui.refreshPortsButton1.setIcon(icon)
+        self.ui.refreshPortsButton2.setIcon(icon)
 
         self.config = config
         geometry = self.config.value('geometry')
@@ -84,15 +89,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.poll_card)
 
-        availablePorts = []
-        if platform.system() == 'Linux':
-            availablePorts = [os.path.join('/dev', f) for f in os.listdir('/dev') if
-                              re.match('ttyUSB.+|ttyACM.+', f)]
-            availablePorts.sort()
-        elif platform.system() == 'Windows':
-            availablePorts = ['COM' + str(i) for i in range(32)]
-        self.ui.cbChoiseCom.addItems(availablePorts)
-        self.ui.cbUartPort.addItems(availablePorts)
+        self.refreshPorts()
 
         bs_config = BaseStation.Config()
         for key, default_value in vars(bs_config).items():
@@ -156,6 +153,30 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.unsetCursor()
             #self.ui.centralwidget.setEnabled(True)
         return wrapper
+
+    def refreshPorts(self):
+        availablePorts = []
+        if platform.system() == 'Linux':
+            availablePorts = [os.path.join('/dev', f) for f in os.listdir('/dev') if
+                              re.match('ttyUSB.+|ttyACM.+', f)]
+            availablePorts.sort()
+        elif platform.system() == 'Windows':
+            availablePorts = ['COM' + str(i) for i in range(32)]
+        self.ui.cbChoiseCom.clear()
+        self.ui.cbChoiseCom.addItem("auto")
+        self.ui.cbChoiseCom.addItems(availablePorts)
+        self.ui.cbUartPort.clear()
+        self.ui.cbUartPort.addItems(availablePorts)
+
+    @QtCore.pyqtSlot()
+    @block_gui
+    def on_refreshPortsButton1_clicked(self):
+        self.refreshPorts()
+
+    @QtCore.pyqtSlot()
+    @block_gui
+    def on_refreshPortsButton2_clicked(self):
+        self.refreshPorts()
 
     @QtCore.pyqtSlot()
     @block_gui
