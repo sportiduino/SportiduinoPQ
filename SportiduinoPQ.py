@@ -163,7 +163,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
         elif platform.system() == 'Windows':
             availablePorts = ['COM' + str(i) for i in range(32)]
         self.ui.cbChoiseCom.clear()
-        self.ui.cbChoiseCom.addItem("auto")
+        self.ui.cbChoiseCom.addItem(QCoreApplication.translate("MainWindow", "auto"))
         self.ui.cbChoiseCom.addItems(availablePorts)
         self.ui.cbUartPort.clear()
         self.ui.cbUartPort.addItems(availablePorts)
