@@ -46,7 +46,7 @@ from six import int2byte
 
 _translate = QCoreApplication.translate
 
-sportiduinopq_version_string = "v0.12.0"
+sportiduinopq_version_string = "v0.12.1"
 
 
 class SportiduinoPqMainWindow(QtWidgets.QMainWindow):

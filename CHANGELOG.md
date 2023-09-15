@@ -1,5 +1,11 @@
 # SportiduinoPQ Changelog
 
+## v0.12.1 - 2023-09-15
+
+- Fix 'auto' port
+
+[All changes](https://github.com/sportiduino/sportiduinopq/compare/v0.12.0...v0.12.1)
+
 ## v0.12.0 - 2023-09-01
 
 - Added refresh ports buttons
