@@ -17,7 +17,7 @@
 
 ## Установка
 
-Вы можете скачать портативную скомпилированную версию программы (exe файл) для Windows систем, установка не требуется.
+Вы можете скачать портативную скомпилированную версию программы (EXE файл) для Windows систем, установка не требуется.
 
 Или программу можно запустить под Python3.
 Для этого установите [Python](https://www.python.org/).
@@ -28,14 +28,18 @@
 pip install -r requirements.txt
 ```
 
-Для генерации exe файла запустите:
+Для генерации EXE файла запустите:
 
 ```commandline
 pip install pyinstaller
 pyinstaller --onefile --noconsole --add-data translation/*.qm;translation/ SportiduinoPQ.py
 ```
 
-## Usage
+## Запуск
+
+### Windows
+
+Запустите `SportiduinoPQ.exe`
 
 ### Linux
 
@@ -44,8 +48,4 @@ pyinstaller --onefile --noconsole --add-data translation/*.qm;translation/ Sport
 ```sh
 ./SportiduinoPQ.py
 ```
-
-### Windows
-
-Запустите `SportiduinoPQ.exe`
 
