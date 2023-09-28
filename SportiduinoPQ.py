@@ -122,6 +122,7 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             self.ui.cbTimeZone.setCurrentText(timezone(offset=timedelta(0)).tzname(None))
 
         self.ui.cbAutoRead.stateChanged.connect(self.cbAutoRead_stateChanged)
+        self.ui.cbOnlyClean.stateChanged.connect(self.cbOnlyClean_stateChanged)
 
     def closeEvent(self, event):
         self.config.setValue('geometry', self.saveGeometry())
@@ -269,11 +270,15 @@ class SportiduinoPqMainWindow(QtWidgets.QMainWindow):
             if code == Sportiduino.RESP_OK:
                 self.log(self.tr("The participant card No {} ({}) has been initialized successfully")
                         .format(card_num, Sportiduino.card_name(data[0])))
-                if self.ui.cbAutoIncriment.isChecked():
+                if self.ui.cbAutoIncriment.isChecked() and not self.ui.cbOnlyClean.isChecked():
                     self.ui.sbCardNumber.setValue(card_num + 1)
 
         except Exception as err:
             self._process_error(err)
+
+    @QtCore.pyqtSlot()
+    def cbOnlyClean_stateChanged(self):
+        self.ui.sbCardNumber.setEnabled(not self.ui.cbOnlyClean.isChecked())
 
     @QtCore.pyqtSlot()
     @block_gui

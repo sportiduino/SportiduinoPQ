@@ -384,7 +384,7 @@
             <property name="geometry">
              <rect>
               <x>10</x>
-              <y>450</y>
+              <y>470</y>
               <width>221</width>
               <height>31</height>
              </rect>
@@ -395,6 +395,19 @@ If enabled a special sign will be written to the card which will be read by the 
             </property>
             <property name="text">
              <string>Fast Punch</string>
+            </property>
+           </widget>
+           <widget class="QCheckBox" name="cbOnlyClean">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>440</y>
+              <width>221</width>
+              <height>31</height>
+             </rect>
+            </property>
+            <property name="text">
+             <string>Only Clean</string>
             </property>
            </widget>
           </widget>
